@@ -6,7 +6,9 @@ import { BrainCircuit, ArrowUp, ArrowLeft, RotateCcw, Check, X } from 'lucide-re
 import { useTextLines } from '@/hooks/useTextLines';
 import type { CoachMessage } from '@/types';
 
-const STORAGE_KEY = 'bq-coach-history';
+const STORAGE_KEY          = 'bq-coach-history';
+const APPLIED_KEY          = 'bq-coach-applied';
+const DISMISSED_KEY        = 'bq-coach-dismissed';
 
 const INITIAL_MESSAGE: CoachMessage = {
   role: 'assistant',
@@ -225,6 +227,27 @@ export default function CoachPage() {
         if (Array.isArray(parsed) && parsed.length > 0) setMessages(parsed);
       }
     } catch {}
+
+    // Restore applied/dismissed sets from localStorage
+    try {
+      const savedApplied = localStorage.getItem(APPLIED_KEY);
+      if (savedApplied) setAppliedDates(new Set(JSON.parse(savedApplied) as string[]));
+    } catch {}
+    try {
+      const savedDismissed = localStorage.getItem(DISMISSED_KEY);
+      if (savedDismissed) setDismissedDates(new Set(JSON.parse(savedDismissed) as string[]));
+    } catch {}
+
+    // Also fetch current overrides from DB so applied state matches reality
+    fetch('/api/workouts/override')
+      .then(r => r.json())
+      .then((data: Array<{ date: string }>) => {
+        if (Array.isArray(data)) {
+          setAppliedDates(prev => new Set([...prev, ...data.map(o => o.date)]));
+        }
+      })
+      .catch(() => {});
+
     setHydrated(true);
   }, []);
 
@@ -232,6 +255,16 @@ export default function CoachPage() {
     if (!hydrated) return;
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-60))); } catch {}
   }, [messages, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    try { localStorage.setItem(APPLIED_KEY,   JSON.stringify([...appliedDates]));   } catch {}
+  }, [appliedDates, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    try { localStorage.setItem(DISMISSED_KEY, JSON.stringify([...dismissedDates])); } catch {}
+  }, [dismissedDates, hydrated]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -248,7 +281,11 @@ export default function CoachPage() {
     setMessages([INITIAL_MESSAGE]);
     setAppliedDates(new Set());
     setDismissedDates(new Set());
-    try { localStorage.removeItem(STORAGE_KEY); } catch {}
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(APPLIED_KEY);
+      localStorage.removeItem(DISMISSED_KEY);
+    } catch {}
   }
 
   async function applyModification(mod: ParsedMod) {
