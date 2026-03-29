@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<properties>
+  <property id="AppUrl" type="string">https://your-app.vercel.app</property>
+</properties>

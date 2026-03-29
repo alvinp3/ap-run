@@ -1,0 +1,250 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import AppHeader from '@/components/layout/AppHeader';
+import AppNav from '@/components/layout/AppNav';
+import CoachFAB from '@/components/coach/CoachFAB';
+import WorkoutBadge from '@/components/ui/WorkoutBadge';
+import { getCurrentWeek, getPhaseForWeek, getWeekByNumber, allWeeks } from '@/data/training-plan';
+import { formatMiles, formatDuration, isToday, isPast, getWorkoutColor } from '@/utils/workout';
+import type { WorkoutDay } from '@/types';
+
+export default function WeekPage() {
+  const [weekNum, setWeekNum] = useState<number>(1);
+  const [logs, setLogs] = useState<Record<string, { completed: boolean; skipped: boolean }>>({});
+
+  const today = new Date();
+
+  useEffect(() => {
+    const cw = getCurrentWeek(today);
+    setWeekNum(cw?.week ?? 1);
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/logs')
+      .then((r) => r.json())
+      .then((data: Array<{ date: string; completed: boolean; skipped: boolean }>) => {
+        const map: Record<string, { completed: boolean; skipped: boolean }> = {};
+        if (Array.isArray(data)) {
+          data.forEach((l) => { map[l.date] = l; });
+        }
+        setLogs(map);
+      })
+      .catch(() => {});
+  }, []);
+
+  const week = getWeekByNumber(weekNum);
+  const phase = getPhaseForWeek(weekNum);
+
+  const totalWeeks = allWeeks.length;
+  const canGoBack = weekNum > 1;
+  const canGoForward = weekNum < totalWeeks;
+
+  const completedMiles = week?.days
+    .filter((d) => logs[d.date]?.completed)
+    .reduce((sum, d) => sum + d.miles, 0) ?? 0;
+
+  return (
+    <div className="min-h-dvh flex flex-col" style={{ background: 'var(--bg-primary)' }}>
+      <AppHeader />
+
+      <main className="flex-1 overflow-y-auto px-4 pb-32 pt-4 max-w-lg mx-auto w-full">
+        {/* Week navigation */}
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={() => setWeekNum((w) => Math.max(1, w - 1))}
+            disabled={!canGoBack}
+            className="btn-secondary"
+            style={{ padding: '8px 16px', minHeight: 40, opacity: canGoBack ? 1 : 0.3 }}
+          >
+            ←
+          </button>
+          <div className="text-center">
+            {phase && (
+              <div
+                className="text-xs font-semibold tracking-wide"
+                style={{ color: phase.color, fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+              >
+                PHASE {phase.phase} · {phase.name.toUpperCase()}
+              </div>
+            )}
+            <div
+              className="text-lg font-black"
+              style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)' }}
+            >
+              Week {weekNum} of {totalWeeks}
+            </div>
+            {week && (
+              <div
+                className="text-xs"
+                style={{ color: 'var(--text-tertiary)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+              >
+                {new Date(week.startDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                {' – '}
+                {new Date(week.days[6].date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              </div>
+            )}
+          </div>
+          <button
+            onClick={() => setWeekNum((w) => Math.min(totalWeeks, w + 1))}
+            disabled={!canGoForward}
+            className="btn-secondary"
+            style={{ padding: '8px 16px', minHeight: 40, opacity: canGoForward ? 1 : 0.3 }}
+          >
+            →
+          </button>
+        </div>
+
+        {/* Down week badge */}
+        {week?.isDownWeek && (
+          <div
+            className="rounded-xl px-4 py-2 mb-4 text-sm font-medium text-center"
+            style={{ background: 'rgba(168,85,247,0.1)', color: '#A855F7', border: '1px solid rgba(168,85,247,0.2)' }}
+          >
+            Recovery week — reduced volume and intensity
+          </div>
+        )}
+
+        {/* Day cards */}
+        <div className="space-y-2 mb-4">
+          {week?.days.map((day: WorkoutDay) => {
+            const log = logs[day.date];
+            const isCurrentDay = isToday(day.date);
+            const isPastDay = isPast(day.date) && !isCurrentDay;
+            const color = getWorkoutColor(day.type);
+
+            return (
+              <Link
+                key={day.date}
+                href={`/workout/${day.date}`}
+                className="card flex items-center gap-3 min-h-0"
+                style={{
+                  padding: '12px 14px',
+                  borderColor: isCurrentDay ? `${color}55` : 'var(--border-subtle)',
+                  boxShadow: isCurrentDay ? `0 0 16px ${color}15` : undefined,
+                  textDecoration: 'none',
+                  transition: 'background 0.15s',
+                }}
+              >
+                {/* Day/Date */}
+                <div
+                  className="flex-shrink-0 text-center"
+                  style={{ width: 44 }}
+                >
+                  <div
+                    className="text-xs font-semibold"
+                    style={{
+                      color: isCurrentDay ? color : 'var(--text-tertiary)',
+                      fontFamily: 'Plus Jakarta Sans, sans-serif',
+                    }}
+                  >
+                    {day.day.slice(0, 3).toUpperCase()}
+                  </div>
+                  <div
+                    className="text-lg font-black leading-none"
+                    style={{
+                      fontFamily: 'Outfit, sans-serif',
+                      color: isCurrentDay ? color : 'var(--text-primary)',
+                    }}
+                  >
+                    {new Date(day.date + 'T00:00:00').getDate()}
+                  </div>
+                </div>
+
+                {/* Color dot */}
+                <div
+                  className="w-2 h-2 rounded-full flex-shrink-0"
+                  style={{ background: color }}
+                />
+
+                {/* Workout info */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <WorkoutBadge type={day.type} size="sm" />
+                    {day.hasStrength && (
+                      <span
+                        className="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
+                        style={{ background: 'rgba(168,85,247,0.12)', color: '#A855F7' }}
+                      >
+                        + Strength
+                      </span>
+                    )}
+                    {isCurrentDay && (
+                      <span
+                        className="text-[10px] px-1.5 py-0.5 rounded-full font-semibold"
+                        style={{ background: `${color}20`, color }}
+                      >
+                        TODAY
+                      </span>
+                    )}
+                  </div>
+                  <div
+                    className="text-xs truncate"
+                    style={{
+                      color: 'var(--text-secondary)',
+                      fontFamily: 'Plus Jakarta Sans, sans-serif',
+                    }}
+                  >
+                    {day.description.substring(0, 70)}{day.description.length > 70 ? '…' : ''}
+                  </div>
+                </div>
+
+                {/* Right: miles + status */}
+                <div className="flex-shrink-0 flex flex-col items-end gap-1">
+                  {day.miles > 0 && (
+                    <span
+                      className="text-sm font-bold"
+                      style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--text-primary)' }}
+                    >
+                      {formatMiles(day.miles)}mi
+                    </span>
+                  )}
+                  {day.estimatedMinutes > 0 && (
+                    <span
+                      className="text-xs"
+                      style={{ color: 'var(--text-tertiary)', fontFamily: 'JetBrains Mono, monospace' }}
+                    >
+                      {formatDuration(day.estimatedMinutes)}
+                    </span>
+                  )}
+                  {log?.completed && <span className="text-base">✅</span>}
+                  {log?.skipped && <span className="text-base opacity-50">⏭️</span>}
+                  {!log && isPastDay && day.type !== 'rest' && (
+                    <span className="text-base opacity-30">○</span>
+                  )}
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Weekly totals */}
+        {week && (
+          <div className="card" style={{ padding: '14px 16px' }}>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>
+                Week Total
+              </span>
+              <span className="text-sm font-bold" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+                {formatMiles(completedMiles)} / {week.totalMiles} mi planned
+              </span>
+            </div>
+            <div className="progress-bar mt-2">
+              <div
+                className="progress-fill"
+                style={{
+                  width: `${Math.min(100, (completedMiles / week.totalMiles) * 100)}%`,
+                  background: 'var(--accent-teal)',
+                }}
+              />
+            </div>
+          </div>
+        )}
+      </main>
+
+      <AppNav />
+      <CoachFAB />
+    </div>
+  );
+}

@@ -1,0 +1,29 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="19" fill="#0F172A"/>
+
+  <!-- Teal accent circle -->
+  <circle cx="256" cy="220" r="160" fill="none" stroke="#2DD4BF" stroke-width="8" opacity="0.15"/>
+
+  <!-- Running figure (simplified) -->
+  <!-- Head -->
+  <circle cx="256" cy="145" r="30" fill="#2DD4BF"/>
+
+  <!-- Body -->
+  <path d="M256 175 L240 260 L225 330" stroke="#2DD4BF" stroke-width="14" stroke-linecap="round" fill="none"/>
+  <path d="M256 175 L272 260 L287 330" stroke="#1E9B8A" stroke-width="14" stroke-linecap="round" fill="none"/>
+
+  <!-- Arms -->
+  <path d="M250 200 L210 240 L195 225" stroke="#2DD4BF" stroke-width="12" stroke-linecap="round" fill="none"/>
+  <path d="M262 200 L302 225 L317 210" stroke="#1E9B8A" stroke-width="12" stroke-linecap="round" fill="none"/>
+
+  <!-- BQ text at bottom -->
+  <text x="256" y="410"
+    font-family="'Arial Black', sans-serif"
+    font-size="80"
+    font-weight="900"
+    fill="#2DD4BF"
+    text-anchor="middle"
+    letter-spacing="-2">BQ</text>
+</svg>

@@ -1,0 +1,183 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@import "tailwindcss";
+
+/* ============================================================
+   Design System — Precision Athletic
+   ============================================================ */
+:root {
+  --bg-primary: #0F172A;
+  --bg-card: #1E293B;
+  --bg-card-hover: #334155;
+  --bg-input: #0F172A;
+  --border-subtle: #334155;
+  --border-accent: #475569;
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-tertiary: #64748B;
+  --accent-teal: #2DD4BF;
+  --accent-teal-glow: rgba(45, 212, 191, 0.15);
+  --accent-amber: #F59E0B;
+  --accent-amber-glow: rgba(245, 158, 11, 0.15);
+  --accent-red: #EF4444;
+  --accent-blue: #3B82F6;
+  --accent-green: #22C55E;
+  --accent-purple: #A855F7;
+  --easy: #22C55E;
+  --intervals: #EF4444;
+  --tempo: #F59E0B;
+  --long-run: #3B82F6;
+  --marathon-pace: #3B82F6;
+  --rest: #64748B;
+  --race: #EF4444;
+  --strength: #A855F7;
+  --recovery: #A855F7;
+  --phase-1: #22C55E;
+  --phase-2: #F59E0B;
+  --phase-3: #3B82F6;
+  --phase-4: #A855F7;
+  --phase-5: #EF4444;
+}
+
+[data-theme="light"] {
+  --bg-primary: #F1F5F9;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F8FAFC;
+  --bg-input: #F8FAFC;
+  --border-subtle: #E2E8F0;
+  --border-accent: #CBD5E1;
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-tertiary: #94A3B8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  min-height: 100dvh;
+  overscroll-behavior: none;
+}
+
+h1, h2, h3, h4, h5, h6 { font-family: 'Outfit', sans-serif; line-height: 1.2; }
+
+.mono, .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-card); }
+::-webkit-scrollbar-thumb { background: var(--border-accent); border-radius: 3px; }
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.badge-easy      { background: rgba(34,197,94,0.15);   color: #22C55E; }
+.badge-intervals { background: rgba(239,68,68,0.15);   color: #EF4444; }
+.badge-tempo     { background: rgba(245,158,11,0.15);  color: #F59E0B; }
+.badge-long      { background: rgba(59,130,246,0.15);  color: #3B82F6; }
+.badge-rest      { background: rgba(100,116,139,0.15); color: #94A3B8; }
+.badge-race      { background: rgba(239,68,68,0.20);   color: #EF4444; }
+.badge-recovery  { background: rgba(168,85,247,0.15);  color: #A855F7; }
+.badge-strength  { background: rgba(168,85,247,0.15);  color: #A855F7; }
+.badge-phase-1   { background: rgba(34,197,94,0.15);   color: #22C55E; }
+.badge-phase-2   { background: rgba(245,158,11,0.15);  color: #F59E0B; }
+.badge-phase-3   { background: rgba(59,130,246,0.15);  color: #3B82F6; }
+.badge-phase-4   { background: rgba(168,85,247,0.15);  color: #A855F7; }
+.badge-phase-5   { background: rgba(239,68,68,0.15);   color: #EF4444; }
+
+.btn-teal {
+  background: var(--accent-teal);
+  color: #0F172A;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  min-height: 48px;
+}
+.btn-teal:hover  { opacity: 0.9; transform: translateY(-1px); }
+.btn-teal:active { transform: translateY(0); }
+
+.btn-secondary {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+  min-height: 48px;
+}
+.btn-secondary:hover { background: var(--border-accent); }
+
+.progress-bar { background: var(--border-subtle); border-radius: 99px; overflow: hidden; height: 8px; }
+.progress-fill { height: 100%; border-radius: 99px; transition: width 0.5s ease; }
+
+.divider { border: none; border-top: 1px solid var(--border-subtle); margin: 16px 0; }
+
+input, textarea, select {
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  outline: none;
+  width: 100%;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent-teal);
+  box-shadow: 0 0 0 3px var(--accent-teal-glow);
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 var(--accent-teal-glow); }
+  50%       { box-shadow: 0 0 0 8px var(--accent-teal-glow); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes checkmark {
+  0%   { transform: scale(0) rotate(-45deg); opacity: 0; }
+  60%  { transform: scale(1.2) rotate(0deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-fade-in-up { animation: fadeInUp 0.4s ease forwards; }
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom, 16px); }
+.safe-top    { padding-top: env(safe-area-inset-top, 0); }
+
+@media (max-width: 640px) {
+  .card { padding: 16px; border-radius: 14px; }
+  body  { font-size: 15px; }
+}
