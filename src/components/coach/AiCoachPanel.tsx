@@ -191,7 +191,7 @@ export default function AiCoachPanel({ isOpen, onClose, context }: AiCoachPanelP
           height: '80dvh',
           maxHeight: 680,
           paddingBottom: 'env(safe-area-inset-bottom, 16px)',
-          maxWidth: 375,
+          maxWidth: 430,
           left: '50%',
           transform: 'translateX(-50%)',
         }}

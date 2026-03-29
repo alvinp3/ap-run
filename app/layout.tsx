@@ -40,13 +40,11 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
       <body className="min-h-full flex flex-col items-center" style={{ background: '#050505' }}>
-        {/* Obsidian container — 375px shell with side borders on desktop */}
+        {/* Obsidian container — full width on mobile, capped at 430px on desktop */}
         <div
           className="w-full flex flex-col min-h-full"
           style={{
-            maxWidth: 375,
-            borderLeft:  '1px solid #2A2A2A',
-            borderRight: '1px solid #2A2A2A',
+            maxWidth: 430,
             minHeight: '100dvh',
           }}
         >
