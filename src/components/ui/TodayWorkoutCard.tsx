@@ -6,6 +6,11 @@ import type { WorkoutDay, WorkoutLog } from '@/types';
 import WorkoutBadge from './WorkoutBadge';
 import PhaseBadge from './PhaseBadge';
 import { formatDate, formatDuration, formatMiles, isHeatSeason, getWorkoutColor } from '@/utils/workout';
+import { useTextLines } from '@/hooks/useTextLines';
+
+const DESCRIPTION_FONT      = '14px DM Sans, sans-serif';
+const DESCRIPTION_LINE_H    = 22; // px, matches leading-relaxed at 14px
+const DESCRIPTION_MAX_LINES = 3;
 
 interface TodayWorkoutCardProps {
   workout: WorkoutDay & { weekNumber: number; isDownWeek: boolean };
@@ -33,6 +38,14 @@ export default function TodayWorkoutCard({
   const [completing, setCompleting] = useState(false);
   const [completed, setCompleted] = useState(log?.completed ?? false);
   const [showSuccessAnim, setShowSuccessAnim] = useState(false);
+  const [descExpanded, setDescExpanded] = useState(false);
+
+  const { lineCount, containerRef } = useTextLines(
+    workout.description,
+    DESCRIPTION_FONT,
+    DESCRIPTION_LINE_H
+  );
+  const descTruncated = lineCount !== null && lineCount > DESCRIPTION_MAX_LINES;
 
   const isRest = workout.type === 'rest';
   const workoutColor = getWorkoutColor(workout.type);
@@ -78,7 +91,7 @@ export default function TodayWorkoutCard({
             {workout.isDownWeek && (
               <span
                 className="text-xs px-2 py-0.5 rounded-full font-semibold"
-                style={{ background: 'rgba(168,85,247,0.15)', color: '#A855F7' }}
+                style={{ background: 'rgba(139,92,246,0.15)', color: '#8B5CF6' }}
               >
                 DOWN WEEK
               </span>
@@ -86,7 +99,7 @@ export default function TodayWorkoutCard({
           </div>
           <div
             className="text-xs"
-            style={{ color: 'var(--text-tertiary)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+            style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Sans, sans-serif' }}
           >
             Week {workout.weekNumber} of {totalWeeks}
           </div>
@@ -95,7 +108,7 @@ export default function TodayWorkoutCard({
         {/* Date */}
         <div
           className="text-sm mb-2"
-          style={{ color: 'var(--text-secondary)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+          style={{ color: 'var(--text-secondary)', fontFamily: 'DM Sans, sans-serif' }}
         >
           {formatDate(workout.date)}
         </div>
@@ -106,7 +119,7 @@ export default function TodayWorkoutCard({
           {workout.miles > 0 && (
             <span
               className="text-2xl font-bold"
-              style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--text-primary)' }}
+              style={{ fontFamily: 'DM Mono, monospace', color: 'var(--text-primary)' }}
             >
               {formatMiles(workout.miles)}
               <span
@@ -120,7 +133,7 @@ export default function TodayWorkoutCard({
           {workout.estimatedMinutes && workout.estimatedMinutes > 0 && (
             <span
               className="text-sm"
-              style={{ color: 'var(--text-tertiary)', fontFamily: 'JetBrains Mono, monospace' }}
+              style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Mono, monospace' }}
             >
               ~{formatDuration(workout.estimatedMinutes)}
             </span>
@@ -141,11 +154,30 @@ export default function TodayWorkoutCard({
         )}
 
         {/* Description */}
-        <div
-          className="text-sm leading-relaxed mb-4"
-          style={{ color: 'var(--text-secondary)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
-        >
-          {workout.description}
+        <div className="mb-4">
+          <div
+            ref={containerRef}
+            className="text-sm leading-relaxed"
+            style={{
+              color: 'var(--text-secondary)',
+              fontFamily: 'DM Sans, sans-serif',
+              overflow: 'hidden',
+              display: '-webkit-box',
+              WebkitBoxOrient: 'vertical',
+              WebkitLineClamp: descExpanded ? 'unset' : DESCRIPTION_MAX_LINES,
+            } as React.CSSProperties}
+          >
+            {workout.description}
+          </div>
+          {descTruncated && (
+            <button
+              onClick={() => setDescExpanded(!descExpanded)}
+              className="text-xs mt-1"
+              style={{ color: 'var(--accent-teal)', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+            >
+              {descExpanded ? 'Show less' : 'Show more'}
+            </button>
+          )}
         </div>
 
         {/* Heat-adjusted paces (shown if heat season + phase 2/3) */}
@@ -156,13 +188,13 @@ export default function TodayWorkoutCard({
           >
             <div
               className="text-xs font-semibold mb-2"
-              style={{ color: '#F59E0B', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+              style={{ color: '#F59E0B', fontFamily: 'DM Sans, sans-serif' }}
             >
               Heat-Adjusted Paces
             </div>
             <div
               className="text-xs grid grid-cols-2 gap-x-4 gap-y-1"
-              style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--text-secondary)' }}
+              style={{ fontFamily: 'DM Mono, monospace', color: 'var(--text-secondary)' }}
             >
               <span>Easy:</span>      <span style={{ color: '#F59E0B' }}>8:15-9:00/mi</span>
               <span>Tempo:</span>     <span style={{ color: '#F59E0B' }}>6:25-6:45/mi</span>

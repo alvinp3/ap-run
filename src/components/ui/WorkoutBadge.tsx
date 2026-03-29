@@ -19,7 +19,7 @@ export default function WorkoutBadge({ type, size = 'md', className = '' }: Work
   return (
     <span
       className={`inline-flex items-center rounded-full ${getWorkoutBadgeClass(type)} ${sizeClasses[size]} ${className}`}
-      style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+      style={{ fontFamily: 'DM Sans, sans-serif' }}
     >
       {getWorkoutLabel(type)}
     </span>

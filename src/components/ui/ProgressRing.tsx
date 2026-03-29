@@ -13,7 +13,7 @@ export default function ProgressRing({
   percent,
   size = 80,
   strokeWidth = 6,
-  color = '#2DD4BF',
+  color = '#8B5CF6',
   label,
   sublabel,
 }: ProgressRingProps) {
@@ -32,7 +32,7 @@ export default function ProgressRing({
           cy={cy}
           r={radius}
           fill="none"
-          stroke="rgba(51,65,85,0.6)"
+          stroke="rgba(255,255,255,0.08)"
           strokeWidth={strokeWidth}
         />
         {/* Progress */}
@@ -55,7 +55,7 @@ export default function ProgressRing({
             <span
               className="font-bold leading-none"
               style={{
-                fontFamily: 'JetBrains Mono, monospace',
+                fontFamily: 'DM Mono, monospace',
                 fontSize: size > 90 ? '18px' : '14px',
                 color: 'var(--text-primary)',
               }}
@@ -69,7 +69,7 @@ export default function ProgressRing({
               style={{
                 fontSize: size > 90 ? '10px' : '9px',
                 color: 'var(--text-tertiary)',
-                fontFamily: 'Plus Jakarta Sans, sans-serif',
+                fontFamily: 'DM Sans, sans-serif',
               }}
             >
               {sublabel}

@@ -15,18 +15,18 @@ export default function GrasslandsRacePage() {
 
       <main className="flex-1 overflow-y-auto px-4 pb-32 pt-4 max-w-lg mx-auto w-full">
         {/* Hero */}
-        <div className="card mb-4" style={{ borderColor: 'rgba(168,85,247,0.4)', background: 'linear-gradient(135deg, #1E293B, #1a1232)' }}>
-          <div className="text-xs font-semibold tracking-widest mb-1" style={{ color: '#A855F7' }}>
+        <div className="card mb-4" style={{ borderColor: 'rgba(6,182,212,0.4)', background: 'linear-gradient(135deg, rgba(17,17,19,0.9), rgba(6,30,40,0.9))' }}>
+          <div className="text-xs font-semibold tracking-widest mb-1" style={{ color: '#8B5CF6' }}>
             2027 GRASSLANDS TRAIL RUN 100-MILE
           </div>
-          <div className="text-3xl font-black" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)' }}>
+          <div className="text-3xl font-black" style={{ fontFamily: 'Space Grotesk, sans-serif', color: 'var(--text-primary)' }}>
             Sub-24 Hours
           </div>
           <div className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
             March 20-21, 2027 · LBJ Grasslands, Decatur, TX · First 100-Miler
           </div>
           <div className="mt-3 flex items-center gap-3">
-            <div className="text-2xl font-black" style={{ fontFamily: 'JetBrains Mono, monospace', color: '#A855F7' }}>
+            <div className="text-2xl font-black" style={{ fontFamily: 'DM Mono, monospace', color: '#8B5CF6' }}>
               {days > 0 ? days : '🏆'}
             </div>
             <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
@@ -46,19 +46,19 @@ export default function GrasslandsRacePage() {
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span style={{ color: 'var(--text-secondary)' }}>Overall target</span>
-              <span style={{ color: '#A855F7', fontFamily: 'JetBrains Mono, monospace' }}>
+              <span style={{ color: '#8B5CF6', fontFamily: 'DM Mono, monospace' }}>
                 {grasslandsRacePlan.pacing.overall}
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span style={{ color: 'var(--text-secondary)' }}>Flat sections</span>
-              <span style={{ color: '#22C55E', fontFamily: 'JetBrains Mono, monospace' }}>
+              <span style={{ color: '#22C55E', fontFamily: 'DM Mono, monospace' }}>
                 {grasslandsRacePlan.pacing.flats}
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span style={{ color: 'var(--text-secondary)' }}>Uphills & aid stations</span>
-              <span style={{ color: '#F59E0B', fontFamily: 'JetBrains Mono, monospace' }}>
+              <span style={{ color: '#F59E0B', fontFamily: 'DM Mono, monospace' }}>
                 {grasslandsRacePlan.pacing.uphills}
               </span>
             </div>
@@ -161,10 +161,10 @@ export default function GrasslandsRacePage() {
               { segment: 'Miles 1-30',   calPerHour: '250-300', options: 'Gels, chews, PB&J, bananas', color: '#22C55E' },
               { segment: 'Miles 30-60',  calPerHour: '200-250', options: 'Potatoes, broth, quesadillas, pretzels', color: '#F59E0B' },
               { segment: 'Miles 60-80',  calPerHour: '150-200', options: 'Broth, flat Coke, ginger chews, watermelon', color: '#EF4444' },
-              { segment: 'Miles 80-100', calPerHour: '100-200', options: 'Whatever you tolerate; Coke + broth', color: '#A855F7' },
+              { segment: 'Miles 80-100', calPerHour: '100-200', options: 'Whatever you tolerate; Coke + broth', color: '#8B5CF6' },
             ].map(({ segment, calPerHour, options, color }) => (
               <div key={segment} className="flex gap-3 items-start">
-                <span className="text-xs font-bold w-24 flex-shrink-0" style={{ color, fontFamily: 'JetBrains Mono, monospace' }}>
+                <span className="text-xs font-bold w-24 flex-shrink-0" style={{ color, fontFamily: 'DM Mono, monospace' }}>
                   {segment}
                 </span>
                 <div>

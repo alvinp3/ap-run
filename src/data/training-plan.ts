@@ -692,7 +692,7 @@ export const trainingPhases: TrainingPhase[] = [
     endWeek: 42,
     startDate: '2026-12-07',
     endDate: '2027-01-17',
-    color: '#A855F7',
+    color: '#8B5CF6',
     weeks: phase4Weeks,
   },
   {

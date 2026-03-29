@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { WeatherData, TrainingAdvisory } from '@/types';
+import type { WeatherData, TrainingAdvisory, HourlyWeather } from '@/types';
 import { calculateHeatIndex } from '@/utils/workout';
 
 // Training window options stored in bq-settings as trainingWindow
@@ -88,6 +88,24 @@ function getAdvisory(weather: WeatherData): TrainingAdvisory | null {
   return null;
 }
 
+function wmoToEmoji(code: number): string {
+  if (code === 95 || code === 96 || code === 99) return '⛈️';
+  if ((code >= 61 && code <= 67) || (code >= 80 && code <= 82)) return '🌧️';
+  if (code >= 51 && code <= 57) return '🌦️';
+  if (code >= 71 && code <= 86) return '❄️';
+  if (code === 45 || code === 48) return '🌫️';
+  if (code === 3) return '☁️';
+  if (code === 2) return '⛅';
+  if (code === 1) return '🌤️';
+  return '☀️';
+}
+
+function formatHour(h: number): string {
+  if (h === 0)  return '12a';
+  if (h === 12) return '12p';
+  return h < 12 ? `${h}a` : `${h - 12}p`;
+}
+
 const advisoryColors = {
   info:    { bg: 'rgba(59,130,246,0.1)',  border: 'rgba(59,130,246,0.3)',  text: '#3B82F6' },
   warning: { bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.3)',  text: '#F59E0B' },
@@ -162,7 +180,7 @@ export default function WeatherStrip({ className = '' }: WeatherStripProps) {
             <span className="text-xl">{icon}</span>
             <span
               className="font-bold"
-              style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--text-primary)' }}
+              style={{ fontFamily: 'DM Mono, monospace', color: 'var(--text-primary)' }}
             >
               {Math.round(weather.temp)}°F
             </span>
@@ -193,6 +211,40 @@ export default function WeatherStrip({ className = '' }: WeatherStripProps) {
         </div>
       </div>
 
+      {/* Expanded hourly forecast */}
+      {expanded && weather.hourly && weather.hourly.length > 0 && (
+        <div
+          className="card overflow-x-auto"
+          style={{ padding: '10px 12px' }}
+        >
+          <div className="flex gap-3" style={{ minWidth: 'max-content' }}>
+            {weather.hourly.map((h: HourlyWeather) => (
+              <div
+                key={h.hour}
+                className="flex flex-col items-center gap-0.5"
+                style={{ minWidth: 40 }}
+              >
+                <span className="text-xs" style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Mono, monospace' }}>
+                  {formatHour(h.hour)}
+                </span>
+                <span className="text-base leading-none">{wmoToEmoji(h.code)}</span>
+                <span
+                  className="text-xs font-semibold"
+                  style={{ fontFamily: 'DM Mono, monospace', color: 'var(--text-primary)' }}
+                >
+                  {h.temp}°
+                </span>
+                {h.windSpeed > 10 && (
+                  <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
+                    {h.windSpeed}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Advisory banner */}
       {advisory && (
         <div
@@ -205,7 +257,7 @@ export default function WeatherStrip({ className = '' }: WeatherStripProps) {
           <span className="text-base">{advisory.icon}</span>
           <span
             className="text-sm font-medium"
-            style={{ color: advisoryColors[advisory.level].text, fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+            style={{ color: advisoryColors[advisory.level].text, fontFamily: 'DM Sans, sans-serif' }}
           >
             {advisory.message}
           </span>

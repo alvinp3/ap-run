@@ -37,7 +37,7 @@ export default function GearPage() {
       <AppHeader title="Gear Checklists" />
 
       <main className="flex-1 overflow-y-auto px-4 pb-32 pt-4 max-w-lg mx-auto w-full">
-        <h1 className="text-2xl font-black mb-1" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)' }}>
+        <h1 className="text-2xl font-black mb-1" style={{ fontFamily: 'Space Grotesk, sans-serif', color: 'var(--text-primary)' }}>
           Gear Checklists
         </h1>
         <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
@@ -47,8 +47,8 @@ export default function GearPage() {
         {/* Race selector */}
         <div className="flex gap-2 mb-4">
           {[
-            { id: 'houston' as const, label: '🏆 Houston Marathon', color: '#2DD4BF' },
-            { id: 'grasslands' as const, label: '🌟 Grasslands 100', color: '#A855F7' },
+            { id: 'houston' as const, label: '🏆 Houston Marathon', color: '#8B5CF6' },
+            { id: 'grasslands' as const, label: '🌟 Grasslands 100', color: '#06B6D4' },
           ].map(({ id, label, color }) => (
             <button
               key={id}
@@ -59,7 +59,7 @@ export default function GearPage() {
                 border: `1px solid ${activeRace === id ? color : 'var(--border-subtle)'}`,
                 color: activeRace === id ? color : 'var(--text-secondary)',
                 minHeight: 44,
-                fontFamily: 'Plus Jakarta Sans, sans-serif',
+                fontFamily: 'DM Sans, sans-serif',
               }}
             >
               {label}
@@ -71,7 +71,7 @@ export default function GearPage() {
         <div className="card mb-4" style={{ padding: '12px 16px' }}>
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>Packed</span>
-            <span className="text-sm font-bold" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+            <span className="text-sm font-bold" style={{ fontFamily: 'DM Mono, monospace' }}>
               {checkedCount} / {items.length}
             </span>
           </div>
@@ -80,7 +80,7 @@ export default function GearPage() {
               className="progress-fill"
               style={{
                 width: `${(checkedCount / items.length) * 100}%`,
-                background: activeRace === 'houston' ? '#2DD4BF' : '#A855F7',
+                background: activeRace === 'houston' ? '#8B5CF6' : '#06B6D4',
               }}
             />
           </div>
@@ -98,7 +98,7 @@ export default function GearPage() {
             <div key={category} className="mb-4">
               <div
                 className="text-xs font-semibold tracking-widest uppercase mb-2 px-1"
-                style={{ color: 'var(--text-tertiary)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+                style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Sans, sans-serif' }}
               >
                 {category}
               </div>
@@ -117,15 +117,15 @@ export default function GearPage() {
                       className="w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0"
                       style={{
                         borderColor: checkedItems[item.id]
-                          ? (activeRace === 'houston' ? '#2DD4BF' : '#A855F7')
+                          ? (activeRace === 'houston' ? '#8B5CF6' : '#06B6D4')
                           : 'var(--border-accent)',
                         background: checkedItems[item.id]
-                          ? (activeRace === 'houston' ? 'rgba(45,212,191,0.15)' : 'rgba(168,85,247,0.15)')
+                          ? (activeRace === 'houston' ? 'rgba(139,92,246,0.15)' : 'rgba(6,182,212,0.15)')
                           : 'transparent',
                       }}
                     >
                       {checkedItems[item.id] && (
-                        <span className="text-xs font-bold" style={{ color: activeRace === 'houston' ? '#2DD4BF' : '#A855F7' }}>✓</span>
+                        <span className="text-xs font-bold" style={{ color: activeRace === 'houston' ? '#8B5CF6' : '#06B6D4' }}>✓</span>
                       )}
                     </div>
                     <span
@@ -133,7 +133,7 @@ export default function GearPage() {
                       style={{
                         color: checkedItems[item.id] ? 'var(--text-tertiary)' : 'var(--text-primary)',
                         textDecoration: checkedItems[item.id] ? 'line-through' : 'none',
-                        fontFamily: 'Plus Jakarta Sans, sans-serif',
+                        fontFamily: 'DM Sans, sans-serif',
                       }}
                     >
                       {item.name}

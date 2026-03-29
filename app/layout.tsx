@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0F172A",
+  themeColor: "#050505",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -39,8 +39,19 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col items-center" style={{ background: '#050505' }}>
+        {/* Obsidian container — 375px shell with side borders on desktop */}
+        <div
+          className="w-full flex flex-col min-h-full"
+          style={{
+            maxWidth: 375,
+            borderLeft:  '1px solid #2A2A2A',
+            borderRight: '1px solid #2A2A2A',
+            minHeight: '100dvh',
+          }}
+        >
         {children}
+        </div>
         <Script id="register-sw" strategy="afterInteractive">{`
           if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {

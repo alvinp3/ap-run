@@ -22,7 +22,7 @@ export default function NutritionPage() {
       <AppHeader title="Nutrition Guide" />
 
       <main className="flex-1 overflow-y-auto px-4 pb-32 pt-4 max-w-lg mx-auto w-full">
-        <h1 className="text-2xl font-black mb-1" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)' }}>
+        <h1 className="text-2xl font-black mb-1" style={{ fontFamily: 'Space Grotesk, sans-serif', color: 'var(--text-primary)' }}>
           Nutrition Guide
         </h1>
         <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
@@ -35,7 +35,7 @@ export default function NutritionPage() {
             <div className="text-xs font-semibold tracking-wide mb-2" style={{ color: '#F59E0B' }}>
               CURRENT PHASE {currentPhase} TARGETS
             </div>
-            <div className="text-3xl font-black mb-3" style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--text-primary)' }}>
+            <div className="text-3xl font-black mb-3" style={{ fontFamily: 'DM Mono, monospace', color: 'var(--text-primary)' }}>
               {currentNutrition.calories}
               <span className="text-sm font-normal ml-1" style={{ color: 'var(--text-secondary)' }}>cal/day</span>
             </div>
@@ -46,8 +46,8 @@ export default function NutritionPage() {
                 { label: 'Fat', value: currentNutrition.fat, color: '#F59E0B' },
               ].map(({ label, value, color }) => (
                 <div key={label} className="text-center">
-                  <div className="text-sm font-bold" style={{ color, fontFamily: 'Plus Jakarta Sans, sans-serif' }}>{label}</div>
-                  <div className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)', fontFamily: 'JetBrains Mono, monospace' }}>{value}</div>
+                  <div className="text-sm font-bold" style={{ color, fontFamily: 'DM Sans, sans-serif' }}>{label}</div>
+                  <div className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)', fontFamily: 'DM Mono, monospace' }}>{value}</div>
                 </div>
               ))}
             </div>
@@ -91,7 +91,7 @@ export default function NutritionPage() {
                   <span className="text-xl">{emoji}</span>
                   <div>
                     <div className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{p}</div>
-                    <div className="text-xs" style={{ color, fontFamily: 'JetBrains Mono, monospace' }}>
+                    <div className="text-xs" style={{ color, fontFamily: 'DM Mono, monospace' }}>
                       {timing} · {detail}
                     </div>
                   </div>
@@ -120,7 +120,7 @@ export default function NutritionPage() {
                     <th
                       key={h}
                       className="text-left pb-2 pr-3"
-                      style={{ color: 'var(--text-tertiary)', fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 600 }}
+                      style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Sans, sans-serif', fontWeight: 600 }}
                     >
                       {h}
                     </th>
@@ -130,19 +130,19 @@ export default function NutritionPage() {
               <tbody>
                 {nutritionTargets.map((n) => (
                   <tr key={n.phase} style={{ borderTop: '1px solid var(--border-subtle)' }}>
-                    <td className="py-2 pr-3 font-semibold" style={{ color: n.phase === currentPhase ? 'var(--accent-teal)' : 'var(--text-secondary)' }}>
+                    <td className="py-2 pr-3 font-semibold" style={{ color: n.phase === currentPhase ? '#8B5CF6' : 'var(--text-secondary)' }}>
                       P{n.phase}
                     </td>
-                    <td className="py-2 pr-3" style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--text-primary)' }}>
+                    <td className="py-2 pr-3" style={{ fontFamily: 'DM Mono, monospace', color: 'var(--text-primary)' }}>
                       {n.calories}
                     </td>
-                    <td className="py-2 pr-3" style={{ fontFamily: 'JetBrains Mono, monospace', color: '#3B82F6' }}>
+                    <td className="py-2 pr-3" style={{ fontFamily: 'DM Mono, monospace', color: '#3B82F6' }}>
                       {n.carbs.split(' ')[0]}
                     </td>
-                    <td className="py-2 pr-3" style={{ fontFamily: 'JetBrains Mono, monospace', color: '#EF4444' }}>
+                    <td className="py-2 pr-3" style={{ fontFamily: 'DM Mono, monospace', color: '#EF4444' }}>
                       {n.protein.split(' ')[0]}
                     </td>
-                    <td className="py-2" style={{ fontFamily: 'JetBrains Mono, monospace', color: '#F59E0B' }}>
+                    <td className="py-2" style={{ fontFamily: 'DM Mono, monospace', color: '#F59E0B' }}>
                       {n.fat.split(' ')[0]}
                     </td>
                   </tr>
@@ -162,14 +162,14 @@ export default function NutritionPage() {
               <div key={time} className="flex items-start gap-3">
                 <span
                   className="text-xs font-bold flex-shrink-0 w-16"
-                  style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--accent-teal)' }}
+                  style={{ fontFamily: 'DM Mono, monospace', color: '#8B5CF6' }}
                 >
                   {time}
                 </span>
                 <span className="text-xs flex-1" style={{ color: 'var(--text-secondary)' }}>{meal}</span>
                 <span
                   className="text-xs flex-shrink-0"
-                  style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--text-tertiary)' }}
+                  style={{ fontFamily: 'DM Mono, monospace', color: 'var(--text-tertiary)' }}
                 >
                   {calories}
                 </span>
@@ -183,7 +183,7 @@ export default function NutritionPage() {
           <div className="text-sm font-bold mb-2 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
             🏆 Houston Carb Load Protocol
           </div>
-          <div className="text-xs mb-2" style={{ color: '#F59E0B', fontFamily: 'JetBrains Mono, monospace' }}>
+          <div className="text-xs mb-2" style={{ color: '#F59E0B', fontFamily: 'DM Mono, monospace' }}>
             {houstonCarbLoad.timing} · {houstonCarbLoad.target}
           </div>
           <div className="flex flex-wrap gap-2 mb-2">
@@ -211,7 +211,7 @@ export default function NutritionPage() {
               <div key={segment} className="flex gap-3 items-start">
                 <span
                   className="text-xs font-bold w-24 flex-shrink-0"
-                  style={{ fontFamily: 'JetBrains Mono, monospace', color: '#A855F7' }}
+                  style={{ fontFamily: 'DM Mono, monospace', color: '#8B5CF6' }}
                 >
                   {segment}
                 </span>

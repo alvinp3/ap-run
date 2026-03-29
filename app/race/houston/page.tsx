@@ -15,11 +15,11 @@ export default function HoustonRacePage() {
 
       <main className="flex-1 overflow-y-auto px-4 pb-32 pt-4 max-w-lg mx-auto w-full">
         {/* Hero */}
-        <div className="card mb-4" style={{ borderColor: 'rgba(45,212,191,0.4)', background: 'linear-gradient(135deg, #1E293B, #162032)' }}>
-          <div className="text-xs font-semibold tracking-widest mb-1" style={{ color: 'var(--accent-teal)' }}>
+        <div className="card mb-4" style={{ borderColor: 'rgba(139,92,246,0.4)', background: 'linear-gradient(135deg, rgba(17,17,19,0.9), rgba(22,20,50,0.9))' }}>
+          <div className="text-xs font-semibold tracking-widest mb-1" style={{ color: '#8B5CF6' }}>
             2027 CHEVRON HOUSTON MARATHON
           </div>
-          <div className="text-3xl font-black" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)' }}>
+          <div className="text-3xl font-black" style={{ fontFamily: 'Space Grotesk, sans-serif', color: 'var(--text-primary)' }}>
             Sub-2:50:00
           </div>
           <div className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
@@ -28,7 +28,7 @@ export default function HoustonRacePage() {
           <div className="mt-3 flex items-center gap-2">
             <div
               className="text-2xl font-black"
-              style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--accent-teal)' }}
+              style={{ fontFamily: 'DM Mono, monospace', color: '#8B5CF6' }}
             >
               {days > 0 ? days : '🎉'}
             </div>
@@ -52,7 +52,7 @@ export default function HoustonRacePage() {
               <div key={segment} className="flex gap-3 items-start">
                 <div
                   className="text-xs font-bold w-24 flex-shrink-0 pt-0.5"
-                  style={{ fontFamily: 'JetBrains Mono, monospace', color }}
+                  style={{ fontFamily: 'DM Mono, monospace', color }}
                 >
                   {segment}
                 </div>
@@ -65,7 +65,7 @@ export default function HoustonRacePage() {
           </div>
           <div
             className="mt-3 pt-3 text-sm font-bold text-center"
-            style={{ borderTop: '1px solid var(--border-subtle)', color: 'var(--accent-teal)', fontFamily: 'JetBrains Mono, monospace' }}
+            style={{ borderTop: '1px solid var(--border-subtle)', color: '#8B5CF6', fontFamily: 'DM Mono, monospace' }}
           >
             {houstonRacePlan.pacing.halfSplit}
           </div>
@@ -78,25 +78,25 @@ export default function HoustonRacePage() {
           </div>
           <div className="space-y-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
             <div className="flex items-start gap-2">
-              <span style={{ color: 'var(--accent-teal)', fontFamily: 'JetBrains Mono, monospace', flexShrink: 0, width: 64 }}>
+              <span style={{ color: '#8B5CF6', fontFamily: 'DM Mono, monospace', flexShrink: 0, width: 64 }}>
                 {houstonRacePlan.morning.wakeUp}
               </span>
               <span>Wake up. Eat breakfast immediately.</span>
             </div>
             <div className="flex items-start gap-2">
-              <span style={{ color: 'var(--text-tertiary)', fontFamily: 'JetBrains Mono, monospace', flexShrink: 0, width: 64 }}>
+              <span style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Mono, monospace', flexShrink: 0, width: 64 }}>
                 Breakfast
               </span>
               <span>{houstonRacePlan.morning.breakfast}</span>
             </div>
             <div className="flex items-start gap-2">
-              <span style={{ color: 'var(--text-tertiary)', fontFamily: 'JetBrains Mono, monospace', flexShrink: 0, width: 64 }}>
+              <span style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Mono, monospace', flexShrink: 0, width: 64 }}>
                 Arrive
               </span>
               <span>{houstonRacePlan.morning.arrive}</span>
             </div>
             <div className="flex items-start gap-2">
-              <span style={{ color: 'var(--text-tertiary)', fontFamily: 'JetBrains Mono, monospace', flexShrink: 0, width: 64 }}>
+              <span style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Mono, monospace', flexShrink: 0, width: 64 }}>
                 Warmup
               </span>
               <span>{houstonRacePlan.morning.warmup}</span>
@@ -129,7 +129,7 @@ export default function HoustonRacePage() {
               <div key={mile} className="flex gap-3">
                 <div
                   className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0"
-                  style={{ background: 'rgba(239,68,68,0.12)', color: '#EF4444', fontFamily: 'JetBrains Mono, monospace' }}
+                  style={{ background: 'rgba(239,68,68,0.12)', color: '#EF4444', fontFamily: 'DM Mono, monospace' }}
                 >
                   {mile}
                 </div>
@@ -144,9 +144,9 @@ export default function HoustonRacePage() {
         {/* BQ context */}
         <div
           className="card mb-4"
-          style={{ background: 'rgba(45,212,191,0.05)', borderColor: 'rgba(45,212,191,0.2)' }}
+          style={{ background: 'rgba(139,92,246,0.05)', borderColor: 'rgba(139,92,246,0.2)' }}
         >
-          <div className="text-sm font-bold mb-2" style={{ color: 'var(--accent-teal)' }}>
+          <div className="text-sm font-bold mb-2" style={{ color: '#8B5CF6' }}>
             Boston Qualifier Context
           </div>
           <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
@@ -154,7 +154,7 @@ export default function HoustonRacePage() {
           </div>
           <div
             className="mt-2 text-sm font-bold"
-            style={{ color: 'var(--accent-teal)', fontFamily: 'JetBrains Mono, monospace' }}
+            style={{ color: '#8B5CF6', fontFamily: 'DM Mono, monospace' }}
           >
             Target: 2:50:00 → BQ safety buffer: 5:00
           </div>

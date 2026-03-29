@@ -113,7 +113,7 @@ export default function GarminSettingsPage() {
       <main className="flex-1 overflow-y-auto px-4 pb-32 pt-4 max-w-lg mx-auto w-full">
         <h1
           className="text-2xl font-black mb-1"
-          style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)' }}
+          style={{ fontFamily: 'Space Grotesk, sans-serif', color: 'var(--text-primary)' }}
         >
           Garmin Connect
         </h1>
@@ -126,7 +126,7 @@ export default function GarminSettingsPage() {
           <div className="flex items-center gap-3 mb-4">
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
-              style={{ background: 'rgba(45,212,191,0.1)' }}
+              style={{ background: 'rgba(139,92,246,0.1)' }}
             >
               ⌚
             </div>
@@ -134,11 +134,11 @@ export default function GarminSettingsPage() {
               <div className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>Garmin Forerunner 745</div>
               <div
                 className="text-xs mt-0.5 flex items-center gap-1.5"
-                style={{ color: status.connected ? '#22C55E' : '#64748B' }}
+                style={{ color: status.connected ? '#22C55E' : 'rgba(255,255,255,0.35)' }}
               >
                 <span
                   className="w-1.5 h-1.5 rounded-full inline-block"
-                  style={{ background: status.connected ? '#22C55E' : '#64748B' }}
+                  style={{ background: status.connected ? '#22C55E' : 'rgba(255,255,255,0.35)' }}
                 />
                 {statusLoading ? 'Checking…' : status.connected ? 'Connected' : 'Not connected'}
               </div>
@@ -216,12 +216,12 @@ export default function GarminSettingsPage() {
         </div>
 
         {/* Watch widget */}
-        <div className="card mb-4" style={{ borderColor: 'rgba(45,212,191,0.2)' }}>
+        <div className="card mb-4" style={{ borderColor: 'rgba(139,92,246,0.2)' }}>
           <div className="text-sm font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
             Connect IQ Watch Widget
           </div>
           <div className="text-xs mb-2" style={{ color: 'var(--text-secondary)' }}>
-            See today&apos;s workout on your wrist. Source is in <code style={{ color: 'var(--accent-teal)' }}>/garmin-widget/</code> — load via Connect IQ SDK and sideload to your FR745.
+            See today&apos;s workout on your wrist. Source is in <code style={{ color: '#8B5CF6' }}>/garmin-widget/</code> — load via Connect IQ SDK and sideload to your FR745.
           </div>
         </div>
       </main>
@@ -236,7 +236,7 @@ export default function GarminSettingsPage() {
 function StatusTile({ label, value, color }: { label: string; value: string; color: string }) {
   return (
     <div className="rounded-xl p-3 text-center" style={{ background: 'var(--bg-primary)' }}>
-      <div className="text-sm font-bold truncate" style={{ color, fontFamily: 'JetBrains Mono, monospace' }}>
+      <div className="text-sm font-bold truncate" style={{ color, fontFamily: 'DM Mono, monospace' }}>
         {value}
       </div>
       <div className="text-xs mt-0.5" style={{ color: 'var(--text-tertiary)' }}>{label}</div>
@@ -262,7 +262,7 @@ function ActionCard({
       <div className="flex items-start gap-3 mb-3">
         <div
           className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5"
-          style={{ background: 'rgba(45,212,191,0.15)', color: 'var(--accent-teal)' }}
+          style={{ background: 'rgba(139,92,246,0.15)', color: '#8B5CF6' }}
         >
           {step}
         </div>
@@ -289,9 +289,9 @@ function ActionCard({
         disabled={isLoading}
         className="w-full py-2.5 rounded-xl text-sm font-semibold"
         style={{
-          background: isLoading ? 'rgba(45,212,191,0.08)' : 'rgba(45,212,191,0.12)',
-          border: '1px solid rgba(45,212,191,0.3)',
-          color: 'var(--accent-teal)',
+          background: isLoading ? 'rgba(139,92,246,0.08)' : 'rgba(139,92,246,0.12)',
+          border: '1px solid rgba(139,92,246,0.3)',
+          color: '#8B5CF6',
           minHeight: 44,
           opacity: isLoading ? 0.7 : 1,
         }}

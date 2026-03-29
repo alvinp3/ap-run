@@ -92,7 +92,19 @@ export async function GET(request: Request) {
     const description = wmoToDescription(code);
     const heatIndex   = calculateHeatIndex(temp, humidity);
 
-    const data = { temp, feelsLike, humidity, windSpeed, description, icon: String(code), heatIndex };
+    // Build hourly array for hours 5–21 (useful for the expanded forecast strip)
+    const hourly = Array.from({ length: 17 }, (_, i) => {
+      const hr = i + 5; // 5 AM through 9 PM
+      return {
+        hour:      hr,
+        temp:      Math.round(h.temperature_2m[hr]),
+        feelsLike: Math.round(h.apparent_temperature[hr]),
+        code:      h.weathercode[hr],
+        windSpeed: Math.round(h.windspeed_10m[hr]),
+      };
+    });
+
+    const data = { temp, feelsLike, humidity, windSpeed, description, icon: String(code), heatIndex, hourly };
 
     weatherCache.set(cacheKey, { data, timestamp: Date.now() });
     return NextResponse.json(data);

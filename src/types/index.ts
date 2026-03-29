@@ -50,6 +50,14 @@ export interface WorkoutLog {
   completedAt?: string;
 }
 
+export interface HourlyWeather {
+  hour: number;
+  temp: number;
+  feelsLike: number;
+  code: number;
+  windSpeed: number;
+}
+
 export interface WeatherData {
   temp: number;
   feelsLike: number;
@@ -58,6 +66,7 @@ export interface WeatherData {
   description: string;
   icon: string;
   heatIndex?: number;
+  hourly?: HourlyWeather[];
 }
 
 export interface TrainingAdvisory {

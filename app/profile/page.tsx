@@ -80,18 +80,18 @@ export default function ProfilePage() {
 
       <main className="flex-1 overflow-y-auto px-4 pb-32 pt-4 max-w-lg mx-auto w-full">
         {/* Hero */}
-        <div className="card mb-4" style={{ borderColor: 'rgba(45,212,191,0.3)' }}>
+        <div className="card mb-4" style={{ borderColor: 'rgba(139,92,246,0.3)' }}>
           <div className="flex items-center gap-4">
             <div
               className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0"
-              style={{ background: 'rgba(45,212,191,0.1)' }}
+              style={{ background: 'rgba(139,92,246,0.1)' }}
             >
               🏃
             </div>
             <div className="flex-1">
               <div
                 className="text-xl font-black"
-                style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)' }}
+                style={{ fontFamily: 'Space Grotesk, sans-serif', color: 'var(--text-primary)' }}
               >
                 {athleteProfile.name}
               </div>
@@ -105,22 +105,22 @@ export default function ProfilePage() {
           </div>
 
           <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-            <Stat label="Marathon PR" value={athleteProfile.marathonPR} color="var(--accent-teal)" />
+            <Stat label="Marathon PR" value={athleteProfile.marathonPR} color="#8B5CF6" />
             <Stat label="Week" value={currentWeek ? String(currentWeek.week) : '—'} color="#F59E0B" />
-            <Stat label="Phase" value={phase ? `P${phase.phase}` : '—'} color="#A855F7" />
+            <Stat label="Phase" value={phase ? `P${phase.phase}` : '—'} color="#8B5CF6" />
           </div>
         </div>
 
         {/* Race countdowns */}
         <div className="grid grid-cols-2 gap-3 mb-4">
           {[
-            { label: 'Houston', days: houstonDays, color: 'var(--accent-teal)', goal: 'Sub-2:50' },
-            { label: 'Grasslands', days: grasslandsDays, color: '#A855F7', goal: 'Sub-24hr' },
+            { label: 'Houston', days: houstonDays, color: '#8B5CF6', goal: 'Sub-2:50' },
+            { label: 'Grasslands', days: grasslandsDays, color: '#06B6D4', goal: 'Sub-24hr' },
           ].map(({ label, days, color, goal }) => (
             <div key={label} className="card text-center" style={{ padding: 14 }}>
               <div
                 className="text-3xl font-black"
-                style={{ fontFamily: 'JetBrains Mono, monospace', color }}
+                style={{ fontFamily: 'DM Mono, monospace', color }}
               >
                 {days > 0 ? days : '✓'}
               </div>
@@ -138,7 +138,7 @@ export default function ProfilePage() {
             Training Stats
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <StatCard label="Weeks Done" value={String(completedWeeks)} sub="of 51" color="var(--accent-teal)" />
+            <StatCard label="Weeks Done" value={String(completedWeeks)} sub="of 51" color="#8B5CF6" />
             <StatCard label="Completion" value={`${completionRate}%`} sub="workout rate" color="#22C55E" />
             <StatCard label="Miles Logged" value={formatMiles(loggedMiles)} sub="tracked" color="#3B82F6" />
             <StatCard label="Plan Miles" value={Math.round(totalPlannedMiles).toString()} sub="total" color="#F59E0B" />
@@ -147,14 +147,14 @@ export default function ProfilePage() {
           <div className="mt-3">
             <div className="flex justify-between text-xs mb-1">
               <span style={{ color: 'var(--text-tertiary)' }}>Overall progress</span>
-              <span style={{ color: 'var(--accent-teal)', fontFamily: 'JetBrains Mono, monospace' }}>
+              <span style={{ color: '#8B5CF6', fontFamily: 'DM Mono, monospace' }}>
                 {Math.round((completedWeeks / 51) * 100)}%
               </span>
             </div>
             <div className="progress-bar">
               <div
                 className="progress-fill"
-                style={{ width: `${(completedWeeks / 51) * 100}%`, background: 'var(--accent-teal)' }}
+                style={{ width: `${(completedWeeks / 51) * 100}%`, background: 'linear-gradient(135deg, #8B5CF6, #6366F1, #06B6D4)' }}
               />
             </div>
           </div>
@@ -177,7 +177,7 @@ export default function ProfilePage() {
                 <Stat label="Body Battery" value={`${garmin.bodyBattery}%`} color="#F59E0B" />
               )}
               {garmin.hrv && (
-                <Stat label="HRV" value={`${garmin.hrv}ms`} color="#A855F7" />
+                <Stat label="HRV" value={`${garmin.hrv}ms`} color="#8B5CF6" />
               )}
               {garmin.stressScore && (
                 <Stat label="Stress" value={String(garmin.stressScore)} color="#3B82F6" />
@@ -215,7 +215,7 @@ export default function ProfilePage() {
                 <div key={run.date} className="flex items-center gap-3">
                   <div
                     className="w-10 h-10 rounded-xl flex items-center justify-center text-xs font-bold flex-shrink-0"
-                    style={{ background: 'rgba(45,212,191,0.1)', color: 'var(--accent-teal)', fontFamily: 'JetBrains Mono, monospace' }}
+                    style={{ background: 'rgba(139,92,246,0.1)', color: '#8B5CF6', fontFamily: 'DM Mono, monospace' }}
                   >
                     {run.distance.toFixed(1)}
                   </div>
@@ -226,7 +226,7 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-xs font-bold" style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--accent-teal)' }}>
+                    <div className="text-xs font-bold" style={{ fontFamily: 'DM Mono, monospace', color: '#8B5CF6' }}>
                       {run.avgPace}/mi
                     </div>
                     {run.avgHR > 0 && (
@@ -257,7 +257,7 @@ export default function ProfilePage() {
                 >
                   <div
                     className="w-2 h-2 rounded-full flex-shrink-0"
-                    style={{ background: isMain ? (race.name.includes('Houston') ? 'var(--accent-teal)' : '#A855F7') : '#F59E0B' }}
+                    style={{ background: isMain ? (race.name.includes('Houston') ? '#8B5CF6' : '#06B6D4') : '#F59E0B' }}
                   />
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
@@ -267,7 +267,7 @@ export default function ProfilePage() {
                       {isMain && (
                         <span
                           className="text-xs px-1.5 py-0.5 rounded-full font-semibold"
-                          style={{ background: 'rgba(45,212,191,0.1)', color: 'var(--accent-teal)' }}
+                          style={{ background: 'rgba(139,92,246,0.1)', color: '#8B5CF6' }}
                         >
                           A
                         </span>
@@ -304,7 +304,7 @@ export default function ProfilePage() {
                     <th
                       key={h}
                       className="text-left pb-2 pr-3"
-                      style={{ color: 'var(--text-tertiary)', fontWeight: 600, fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+                      style={{ color: 'var(--text-tertiary)', fontWeight: 600, fontFamily: 'DM Sans, sans-serif' }}
                     >
                       {h}
                     </th>
@@ -315,10 +315,10 @@ export default function ProfilePage() {
                 {trainingPaces.map((p) => (
                   <tr key={p.zone} style={{ borderTop: '1px solid var(--border-subtle)' }}>
                     <td className="py-1.5 pr-3 font-semibold" style={{ color: 'var(--text-secondary)' }}>{p.zone}</td>
-                    <td className="py-1.5 pr-3" style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--text-primary)' }}>
+                    <td className="py-1.5 pr-3" style={{ fontFamily: 'DM Mono, monospace', color: 'var(--text-primary)' }}>
                       {p.normalPace}
                     </td>
-                    <td className="py-1.5" style={{ fontFamily: 'JetBrains Mono, monospace', color: '#F59E0B' }}>
+                    <td className="py-1.5" style={{ fontFamily: 'DM Mono, monospace', color: '#F59E0B' }}>
                       {p.heatAdjusted}
                     </td>
                   </tr>
@@ -335,7 +335,7 @@ export default function ProfilePage() {
           </div>
           <div className="space-y-2">
             {hrZones.map((z, i) => {
-              const colors = ['#3B82F6', '#22C55E', '#F59E0B', '#EF4444', '#A855F7'];
+              const colors = ['#3B82F6', '#22C55E', '#F59E0B', '#EF4444', '#8B5CF6'];
               return (
                 <div key={z.zone} className="flex items-center gap-3">
                   <div
@@ -347,7 +347,7 @@ export default function ProfilePage() {
                   <div className="flex-1 text-sm" style={{ color: 'var(--text-secondary)' }}>{z.use}</div>
                   <div
                     className="text-xs font-bold"
-                    style={{ fontFamily: 'JetBrains Mono, monospace', color: colors[i] }}
+                    style={{ fontFamily: 'DM Mono, monospace', color: colors[i] }}
                   >
                     {z.pct}
                   </div>
@@ -369,7 +369,7 @@ export default function ProfilePage() {
 function Stat({ label, value, color }: { label: string; value: string; color: string }) {
   return (
     <div>
-      <div className="text-lg font-black" style={{ fontFamily: 'JetBrains Mono, monospace', color }}>
+      <div className="text-lg font-black" style={{ fontFamily: 'DM Mono, monospace', color }}>
         {value}
       </div>
       <div className="text-xs mt-0.5" style={{ color: 'var(--text-tertiary)' }}>{label}</div>
@@ -381,9 +381,9 @@ function StatCard({ label, value, sub, color }: { label: string; value: string; 
   return (
     <div
       className="rounded-xl p-3 text-center"
-      style={{ background: 'var(--bg-primary)' }}
+      style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 12 }}
     >
-      <div className="text-xl font-black" style={{ fontFamily: 'JetBrains Mono, monospace', color }}>
+      <div className="text-xl font-black" style={{ fontFamily: 'DM Mono, monospace', color }}>
         {value}
       </div>
       <div className="text-xs mt-0.5" style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{label}</div>

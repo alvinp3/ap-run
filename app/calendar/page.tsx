@@ -24,13 +24,13 @@ export default function CalendarPage() {
         <div className="mb-4">
           <h1
             className="text-2xl font-black"
-            style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)' }}
+            style={{ fontFamily: 'Space Grotesk, sans-serif', color: 'var(--text-primary)' }}
           >
             51-Week Plan
           </h1>
           <p
             className="text-sm mt-1"
-            style={{ color: 'var(--text-secondary)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+            style={{ color: 'var(--text-secondary)', fontFamily: 'DM Sans, sans-serif' }}
           >
             March 30, 2026 → March 21, 2027
           </p>
@@ -49,13 +49,13 @@ export default function CalendarPage() {
               <div>
                 <div
                   className="text-sm font-bold"
-                  style={{ fontFamily: 'Outfit, sans-serif', color: phase.color }}
+                  style={{ fontFamily: 'Space Grotesk, sans-serif', color: phase.color }}
                 >
                   Phase {phase.phase}: {phase.name}
                 </div>
                 <div
                   className="text-xs"
-                  style={{ color: 'var(--text-tertiary)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+                  style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Sans, sans-serif' }}
                 >
                   Weeks {phase.startWeek}–{phase.endWeek} · {phase.startDate} to {phase.endDate}
                 </div>
@@ -86,7 +86,7 @@ export default function CalendarPage() {
                         <span
                           className="text-xs font-bold w-16 flex-shrink-0"
                           style={{
-                            fontFamily: 'JetBrains Mono, monospace',
+                            fontFamily: 'DM Mono, monospace',
                             color: isCurrentWeek ? phase.color : 'var(--text-tertiary)',
                           }}
                         >
@@ -96,7 +96,7 @@ export default function CalendarPage() {
                         {/* Date range */}
                         <span
                           className="text-xs flex-shrink-0 hidden sm:inline"
-                          style={{ color: 'var(--text-tertiary)', fontFamily: 'JetBrains Mono, monospace' }}
+                          style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Mono, monospace' }}
                         >
                           {new Date(week.startDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                         </span>
@@ -114,7 +114,7 @@ export default function CalendarPage() {
                           {week.isDownWeek && (
                             <span
                               className="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
-                              style={{ background: 'rgba(168,85,247,0.12)', color: '#A855F7' }}
+                              style={{ background: 'rgba(139,92,246,0.12)', color: '#8B5CF6' }}
                             >
                               DOWN
                             </span>
@@ -132,7 +132,7 @@ export default function CalendarPage() {
                         {/* Mileage */}
                         <span
                           className="text-sm font-bold flex-shrink-0"
-                          style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--text-primary)' }}
+                          style={{ fontFamily: 'DM Mono, monospace', color: 'var(--text-primary)' }}
                         >
                           {formatMiles(week.totalMiles)} mi
                         </span>
@@ -170,7 +170,7 @@ export default function CalendarPage() {
                             >
                               <span
                                 className="text-xs w-8 flex-shrink-0"
-                                style={{ color: 'var(--text-tertiary)', fontFamily: 'JetBrains Mono, monospace' }}
+                                style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Mono, monospace' }}
                               >
                                 {day.day.slice(0, 2)}
                               </span>
@@ -184,7 +184,7 @@ export default function CalendarPage() {
                               {day.miles > 0 && (
                                 <span
                                   className="text-xs flex-shrink-0"
-                                  style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--text-tertiary)' }}
+                                  style={{ fontFamily: 'DM Mono, monospace', color: 'var(--text-tertiary)' }}
                                 >
                                   {day.miles}mi
                                 </span>

@@ -17,7 +17,7 @@ export default function RaceCountdown({
   name,
   date,
   emoji = '🏁',
-  color = '#2DD4BF',
+  color = '#8B5CF6',
   totalWeeks,
   currentWeek,
   isActive = false,
@@ -50,20 +50,20 @@ export default function RaceCountdown({
           <span className="text-base">{emoji}</span>
           <span
             className="text-xs font-semibold tracking-wide truncate"
-            style={{ color: 'var(--text-secondary)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+            style={{ color: 'var(--text-secondary)', fontFamily: 'DM Sans, sans-serif' }}
           >
             {name.toUpperCase()}
           </span>
         </div>
         <div
           className="text-3xl font-black leading-none"
-          style={{ fontFamily: 'Outfit, sans-serif', color: isComplete ? color : 'var(--text-primary)' }}
+          style={{ fontFamily: 'Space Grotesk, sans-serif', color: isComplete ? color : 'var(--text-primary)' }}
         >
           {isComplete ? 'DONE!' : `${days}`}
           {!isComplete && (
             <span
               className="text-sm font-semibold ml-1"
-              style={{ color: 'var(--text-secondary)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+              style={{ color: 'var(--text-secondary)', fontFamily: 'DM Sans, sans-serif' }}
             >
               days
             </span>
@@ -71,7 +71,7 @@ export default function RaceCountdown({
         </div>
         <div
           className="text-xs mt-1 truncate"
-          style={{ color: 'var(--text-tertiary)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+          style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Sans, sans-serif' }}
         >
           {dateStr}
         </div>

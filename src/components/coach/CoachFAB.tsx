@@ -19,23 +19,24 @@ export default function CoachFAB({ context }: CoachFABProps) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="fixed z-30 flex flex-col items-center justify-center gap-0.5 text-center"
+        className="fixed z-30 flex items-center justify-center"
         style={{
-          right: 20,
-          bottom: 'calc(env(safe-area-inset-bottom, 16px) + 72px)',
-          width: 56,
-          height: 56,
-          borderRadius: '50%',
-          background: 'var(--accent-teal)',
-          color: '#0F172A',
-          boxShadow: '0 4px 20px rgba(45,212,191,0.4)',
+          right: 16,
+          bottom: 'calc(env(safe-area-inset-bottom, 16px) + 16px)',
+          width: 48,
+          height: 48,
+          borderRadius: 0,
+          background: '#B388FF',
+          color: '#000000',
+          border: 'none',
           minHeight: 'unset',
-          animation: 'pulse-glow 3s ease-in-out infinite',
         }}
         title="Open AI Coach"
         aria-label="Open AI Coach"
       >
-        <span className="text-xl leading-none">🤖</span>
+        <span className="material-symbols-outlined" style={{ fontSize: 22, fontVariationSettings: "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20" }}>
+          psychology
+        </span>
       </button>
 
       <AiCoachPanel

@@ -40,7 +40,7 @@ export default function RecoveryPage() {
       <AppHeader title="Recovery & Mobility" />
 
       <main className="flex-1 overflow-y-auto px-4 pb-32 pt-4 max-w-lg mx-auto w-full">
-        <h1 className="text-2xl font-black mb-1" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)' }}>
+        <h1 className="text-2xl font-black mb-1" style={{ fontFamily: 'Space Grotesk, sans-serif', color: 'var(--text-primary)' }}>
           Recovery Hub
         </h1>
         <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
@@ -48,11 +48,11 @@ export default function RecoveryPage() {
         </p>
 
         {/* Today's recovery card */}
-        <div className="card mb-4" style={{ borderColor: 'rgba(45,212,191,0.3)' }}>
+        <div className="card mb-4" style={{ borderColor: 'rgba(139,92,246,0.3)' }}>
           <div className="flex items-center gap-2 mb-3">
             <span className="text-lg">💪</span>
             <div>
-              <div className="text-sm font-bold" style={{ color: 'var(--accent-teal)' }}>
+              <div className="text-sm font-bold" style={{ color: '#8B5CF6' }}>
                 Today&apos;s Recovery Protocol
               </div>
               <div className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
@@ -65,13 +65,13 @@ export default function RecoveryPage() {
               <div key={step.order} className="flex gap-3">
                 <div
                   className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
-                  style={{ background: 'rgba(45,212,191,0.15)', color: 'var(--accent-teal)' }}
+                  style={{ background: 'rgba(139,92,246,0.15)', color: '#8B5CF6' }}
                 >
                   {step.order}
                 </div>
                 <div className="flex-1">
                   <div className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{step.tool}</div>
-                  <div className="text-xs mt-0.5" style={{ color: '#F59E0B', fontFamily: 'JetBrains Mono, monospace' }}>
+                  <div className="text-xs mt-0.5" style={{ color: '#F59E0B', fontFamily: 'DM Mono, monospace' }}>
                     {step.duration}
                   </div>
                   <div className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>{step.targets}</div>
@@ -197,13 +197,13 @@ export default function RecoveryPage() {
                     <div className="text-xs mt-0.5" style={{ color: 'var(--text-tertiary)' }}>
                       {ex.muscles}
                     </div>
-                    <div className="text-xs mt-1 italic" style={{ color: 'var(--accent-teal)' }}>
+                    <div className="text-xs mt-1 italic" style={{ color: '#8B5CF6' }}>
                       {ex.note}
                     </div>
                   </div>
                   <div
                     className="text-xs font-bold flex-shrink-0 text-right"
-                    style={{ fontFamily: 'JetBrains Mono, monospace', color: '#A855F7' }}
+                    style={{ fontFamily: 'DM Mono, monospace', color: '#8B5CF6' }}
                   >
                     {ex.sets}×{ex.reps}
                   </div>

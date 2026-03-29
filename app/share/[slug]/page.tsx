@@ -20,12 +20,12 @@ export default function SharePage() {
   const houstonDays = getDaysUntil('2027-01-17');
   const grasslandsDays = getDaysUntil('2027-03-20');
 
-  const workoutColor = todayWorkout ? getWorkoutColor(todayWorkout.type) : '#2DD4BF';
+  const workoutColor = todayWorkout ? getWorkoutColor(todayWorkout.type) : '#8B5CF6';
 
   return (
     <div
       className="min-h-dvh"
-      style={{ background: 'var(--bg-primary)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+      style={{ background: 'var(--bg-primary)', fontFamily: 'DM Sans, sans-serif' }}
     >
       {/* Header */}
       <div
@@ -36,7 +36,7 @@ export default function SharePage() {
           <span className="text-xl">🏃</span>
           <span
             className="font-black text-lg"
-            style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--accent-teal)' }}
+            style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#8B5CF6' }}
           >
             BQ Training
           </span>
@@ -51,7 +51,7 @@ export default function SharePage() {
         <div className="mb-4">
           <h1
             className="text-2xl font-black"
-            style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)' }}
+            style={{ fontFamily: 'Space Grotesk, sans-serif', color: 'var(--text-primary)' }}
           >
             Training for Houston + Grasslands 100
           </h1>
@@ -63,11 +63,11 @@ export default function SharePage() {
         {/* Race countdowns */}
         <div className="grid grid-cols-2 gap-3 mb-4">
           {[
-            { name: '🏆 Houston Marathon', date: '2027-01-17', days: houstonDays, color: '#2DD4BF', goal: 'Sub-2:50' },
-            { name: '🌟 Grasslands 100', date: '2027-03-20', days: grasslandsDays, color: '#A855F7', goal: 'Sub-24hr' },
+            { name: '🏆 Houston Marathon', date: '2027-01-17', days: houstonDays, color: '#8B5CF6', goal: 'Sub-2:50' },
+            { name: '🌟 Grasslands 100', date: '2027-03-20', days: grasslandsDays, color: '#06B6D4', goal: 'Sub-24hr' },
           ].map(({ name, days, color, goal }) => (
             <div key={name} className="card text-center" style={{ padding: '14px' }}>
-              <div className="text-2xl font-black" style={{ fontFamily: 'JetBrains Mono, monospace', color }}>
+              <div className="text-2xl font-black" style={{ fontFamily: 'DM Mono, monospace', color }}>
                 {days > 0 ? days : '✓'}
               </div>
               <div className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>
@@ -104,7 +104,7 @@ export default function SharePage() {
                 {todayWorkout.miles > 0 && (
                   <span
                     className="text-xl font-bold"
-                    style={{ fontFamily: 'JetBrains Mono, monospace' }}
+                    style={{ fontFamily: 'DM Mono, monospace' }}
                   >
                     {formatMiles(todayWorkout.miles)}mi
                   </span>
@@ -126,7 +126,7 @@ export default function SharePage() {
             <div>
               <div
                 className="text-2xl font-black"
-                style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--accent-teal)' }}
+                style={{ fontFamily: 'DM Mono, monospace', color: '#8B5CF6' }}
               >
                 {completedWeeks}
               </div>
@@ -135,7 +135,7 @@ export default function SharePage() {
             <div>
               <div
                 className="text-2xl font-black"
-                style={{ fontFamily: 'JetBrains Mono, monospace', color: '#F59E0B' }}
+                style={{ fontFamily: 'DM Mono, monospace', color: '#F59E0B' }}
               >
                 {Math.round((completedWeeks / 51) * 100)}%
               </div>
@@ -144,7 +144,7 @@ export default function SharePage() {
             <div>
               <div
                 className="text-2xl font-black"
-                style={{ fontFamily: 'JetBrains Mono, monospace', color: '#A855F7' }}
+                style={{ fontFamily: 'DM Mono, monospace', color: '#8B5CF6' }}
               >
                 {currentWeek?.week ?? '—'}
               </div>
@@ -164,7 +164,7 @@ export default function SharePage() {
                 <div key={day.date} className="flex items-center gap-2">
                   <span
                     className="text-xs w-8"
-                    style={{ color: 'var(--text-tertiary)', fontFamily: 'JetBrains Mono, monospace' }}
+                    style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Mono, monospace' }}
                   >
                     {day.day.slice(0, 2)}
                   </span>
@@ -175,7 +175,7 @@ export default function SharePage() {
                   {day.miles > 0 && (
                     <span
                       className="text-xs flex-shrink-0"
-                      style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--text-tertiary)' }}
+                      style={{ fontFamily: 'DM Mono, monospace', color: 'var(--text-tertiary)' }}
                     >
                       {day.miles}mi
                     </span>
@@ -189,7 +189,7 @@ export default function SharePage() {
         {/* Footer */}
         <div className="text-center text-xs py-4" style={{ color: 'var(--text-tertiary)' }}>
           Live training data · Updated daily<br />
-          <span style={{ color: 'var(--accent-teal)' }}>BQ Training App</span>
+          <span style={{ color: '#8B5CF6' }}>BQ Training App</span>
         </div>
       </main>
     </div>

@@ -6,11 +6,11 @@ export function getWorkoutColor(type: WorkoutType): string {
     case 'intervals': return '#EF4444';
     case 'tempo':     return '#F59E0B';
     case 'long':      return '#3B82F6';
-    case 'rest':      return '#64748B';
+    case 'rest':      return 'rgba(255,255,255,0.2)';
     case 'race':      return '#EF4444';
-    case 'recovery':  return '#A855F7';
-    case 'strength':  return '#A855F7';
-    default:          return '#94A3B8';
+    case 'recovery':  return '#8B5CF6';
+    case 'strength':  return '#8B5CF6';
+    default:          return 'rgba(255,255,255,0.35)';
   }
 }
 
@@ -47,7 +47,7 @@ export function getPhaseColor(phase: number): string {
     case 1: return '#22C55E';
     case 2: return '#F59E0B';
     case 3: return '#3B82F6';
-    case 4: return '#A855F7';
+    case 4: return '#8B5CF6';
     case 5: return '#EF4444';
     default: return '#94A3B8';
   }

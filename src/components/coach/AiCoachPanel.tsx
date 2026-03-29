@@ -14,26 +14,20 @@ interface AiCoachPanelProps {
   };
 }
 
-function TypingIndicator() {
+/** Blinking █ cursor shown while AI is generating */
+function StreamingCursor() {
   return (
-    <div className="flex items-center gap-1 px-3 py-2">
-      {[0, 1, 2].map((i) => (
-        <span
-          key={i}
-          className="w-2 h-2 rounded-full"
-          style={{
-            background: 'var(--text-tertiary)',
-            animation: `bounce 1.2s ease-in-out ${i * 0.2}s infinite`,
-          }}
-        />
-      ))}
-      <style>{`
-        @keyframes bounce {
-          0%, 80%, 100% { transform: translateY(0); }
-          40% { transform: translateY(-6px); }
-        }
-      `}</style>
-    </div>
+    <span
+      style={{
+        display: 'inline-block',
+        width: '0.55em',
+        height: '1em',
+        background: '#B388FF',
+        verticalAlign: 'middle',
+        marginLeft: 2,
+        animation: 'blink 1s step-end infinite',
+      }}
+    />
   );
 }
 
@@ -41,18 +35,16 @@ export default function AiCoachPanel({ isOpen, onClose, context }: AiCoachPanelP
   const [messages, setMessages] = useState<CoachMessage[]>([
     {
       role: 'assistant',
-      content: `Hey! I'm Coach — your AI running coach for the Houston Marathon and Grasslands 100 journey.\n\nAsk me anything: training questions, workout modifications, nutrition advice, race strategy, or just need some motivation. What's on your mind?`,
+      content: `Coach online.\n\nAsk me anything: training questions, workout adjustments, nutrition, race strategy. What's on your mind?`,
     },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const inputRef       = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 100);
-    }
+    if (isOpen) setTimeout(() => inputRef.current?.focus(), 100);
   }, [isOpen]);
 
   useEffect(() => {
@@ -77,17 +69,13 @@ export default function AiCoachPanel({ isOpen, onClose, context }: AiCoachPanelP
           context,
         }),
       });
-
       if (!res.ok) throw new Error('Coach unavailable');
       const data = await res.json();
       setMessages((prev) => [...prev, { role: 'assistant', content: data.content }]);
     } catch {
       setMessages((prev) => [
         ...prev,
-        {
-          role: 'assistant',
-          content: 'Sorry, I\'m having trouble connecting right now. Check your internet and try again.',
-        },
+        { role: 'assistant', content: 'Connection error. Check your network and try again.' },
       ]);
     } finally {
       setLoading(false);
@@ -95,17 +83,14 @@ export default function AiCoachPanel({ isOpen, onClose, context }: AiCoachPanelP
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   }
 
   const quickPrompts = [
-    "Why am I doing intervals this week?",
-    "Should I run if my legs are sore?",
-    "Am I on track for sub-2:50?",
-    "What should I eat before a long run?",
+    'Why intervals this week?',
+    'Is soreness normal?',
+    'On track for sub-2:50?',
+    'Pre-long-run nutrition?',
   ];
 
   if (!isOpen) return null;
@@ -115,68 +100,91 @@ export default function AiCoachPanel({ isOpen, onClose, context }: AiCoachPanelP
       {/* Backdrop */}
       <div
         className="fixed inset-0 z-40"
-        style={{ background: 'rgba(0,0,0,0.6)' }}
+        style={{ background: 'rgba(0,0,0,0.85)' }}
         onClick={onClose}
       />
 
-      {/* Panel */}
+      {/* Panel — bottom-sheet, sharp top edge */}
       <div
         className="fixed inset-x-0 bottom-0 z-50 flex flex-col"
         style={{
-          background: 'var(--bg-primary)',
-          borderTop: '1px solid var(--border-subtle)',
-          borderRadius: '20px 20px 0 0',
+          background: '#050505',
+          borderTop: '1px solid #B388FF',
+          borderLeft: '1px solid #2A2A2A',
+          borderRight: '1px solid #2A2A2A',
           height: '80dvh',
           maxHeight: 680,
           paddingBottom: 'env(safe-area-inset-bottom, 16px)',
+          maxWidth: 375,
+          left: '50%',
+          transform: 'translateX(-50%)',
         }}
       >
         {/* Header */}
         <div
           className="flex items-center justify-between px-5 py-3 flex-shrink-0"
-          style={{ borderBottom: '1px solid var(--border-subtle)' }}
+          style={{ borderBottom: '1px solid #2A2A2A' }}
         >
           <div className="flex items-center gap-3">
-            <div
-              className="w-9 h-9 rounded-full flex items-center justify-center text-lg animate-pulse-glow"
-              style={{ background: 'var(--accent-teal-glow)', border: '1px solid var(--accent-teal)' }}
+            <span
+              className="material-symbols-outlined"
+              style={{
+                fontSize: 22,
+                color: '#B388FF',
+                fontVariationSettings: "'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 20",
+              }}
             >
-              🤖
-            </div>
+              psychology
+            </span>
             <div>
               <div
-                className="font-bold text-sm"
-                style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)' }}
+                style={{
+                  fontFamily: 'Space Grotesk, sans-serif',
+                  fontWeight: 400,
+                  fontSize: 13,
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  color: '#B388FF',
+                }}
               >
                 Coach
               </div>
-              <div className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
-                AI Running Coach
+              <div style={{ fontSize: 11, color: '#52525B', fontFamily: 'JetBrains Mono, monospace' }}>
+                AI · Claude
               </div>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-9 h-9 rounded-full flex items-center justify-center text-xl"
-            style={{ background: 'var(--bg-card)', color: 'var(--text-secondary)', minHeight: 'unset' }}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: '#52525B',
+              minHeight: 'unset',
+              padding: '4px 8px',
+              fontSize: 20,
+            }}
           >
             ×
           </button>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+        <div className="flex-1 overflow-y-auto px-4 py-4" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {messages.map((msg, i) => (
-            <div
-              key={i}
-              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
+            <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div
-                className="max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed"
                 style={{
-                  background: msg.role === 'user' ? 'var(--accent-teal)' : 'var(--bg-card)',
-                  color: msg.role === 'user' ? '#0F172A' : 'var(--text-primary)',
-                  fontFamily: 'Plus Jakarta Sans, sans-serif',
+                  maxWidth: '88%',
+                  padding: '10px 14px',
+                  background: msg.role === 'user' ? '#0d0df2' : '#111111',
+                  border: `1px solid ${msg.role === 'user' ? '#0d0df2' : '#2A2A2A'}`,
+                  borderRadius: 0,
+                  color: '#FFFFFF',
+                  fontFamily: 'Manrope, sans-serif',
+                  fontSize: 14,
+                  lineHeight: 1.6,
                   whiteSpace: 'pre-wrap',
                   wordBreak: 'break-word',
                 }}
@@ -188,33 +196,47 @@ export default function AiCoachPanel({ isOpen, onClose, context }: AiCoachPanelP
           {loading && (
             <div className="flex justify-start">
               <div
-                className="rounded-2xl"
-                style={{ background: 'var(--bg-card)' }}
+                style={{
+                  padding: '10px 14px',
+                  background: '#111111',
+                  border: '1px solid #2A2A2A',
+                  borderRadius: 0,
+                  fontSize: 14,
+                  fontFamily: 'Manrope, sans-serif',
+                  color: '#A1A1AA',
+                }}
               >
-                <TypingIndicator />
+                <StreamingCursor />
               </div>
             </div>
           )}
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Quick prompts (show when first message) */}
+        {/* Quick prompts */}
         {messages.length === 1 && (
-          <div className="px-4 pb-2 flex gap-2 overflow-x-auto flex-shrink-0">
+          <div
+            className="px-4 pb-3 flex gap-2 overflow-x-auto flex-shrink-0"
+            style={{ borderTop: '1px solid #2A2A2A', paddingTop: 8 }}
+          >
             {quickPrompts.map((prompt) => (
               <button
                 key={prompt}
-                onClick={() => {
-                  setInput(prompt);
-                  setTimeout(() => inputRef.current?.focus(), 50);
-                }}
-                className="flex-shrink-0 text-xs px-3 py-2 rounded-full"
+                onClick={() => { setInput(prompt); setTimeout(() => inputRef.current?.focus(), 50); }}
                 style={{
-                  background: 'var(--bg-card)',
-                  border: '1px solid var(--border-subtle)',
-                  color: 'var(--text-secondary)',
-                  fontFamily: 'Plus Jakarta Sans, sans-serif',
+                  flexShrink: 0,
+                  background: 'transparent',
+                  border: '1px solid #B388FF',
+                  borderRadius: 0,
+                  color: '#B388FF',
+                  fontFamily: 'Manrope, sans-serif',
+                  fontSize: 11,
+                  fontWeight: 500,
+                  letterSpacing: '0.04em',
+                  padding: '5px 10px',
+                  cursor: 'pointer',
                   minHeight: 'unset',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 {prompt}
@@ -225,44 +247,53 @@ export default function AiCoachPanel({ isOpen, onClose, context }: AiCoachPanelP
 
         {/* Input */}
         <div
-          className="px-4 pb-3 pt-2 flex-shrink-0"
-          style={{ borderTop: '1px solid var(--border-subtle)' }}
+          className="px-4 pt-3 pb-3 flex-shrink-0 flex items-end gap-2"
+          style={{ borderTop: '1px solid #2A2A2A' }}
         >
-          <div className="flex items-end gap-2">
-            <textarea
-              ref={inputRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Ask Coach anything..."
-              rows={1}
-              className="flex-1 resize-none"
-              style={{
-                maxHeight: 120,
-                fontSize: '15px',
-                overflowY: 'auto',
-              }}
-            />
-            <button
-              onClick={sendMessage}
-              disabled={!input.trim() || loading}
-              className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0"
-              style={{
-                background: input.trim() && !loading ? 'var(--accent-teal)' : 'var(--bg-card)',
-                color: input.trim() && !loading ? '#0F172A' : 'var(--text-tertiary)',
-                transition: 'background 0.15s',
-                minHeight: 'unset',
-              }}
-            >
-              <span className="text-lg">↑</span>
-            </button>
-          </div>
-          <div
-            className="text-xs mt-1 text-center"
-            style={{ color: 'var(--text-tertiary)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+          <textarea
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Ask Coach..."
+            rows={1}
+            className="flex-1 resize-none"
+            style={{
+              background: '#0A0A0A',
+              border: '1px solid #2A2A2A',
+              borderRadius: 0,
+              color: '#FFFFFF',
+              fontFamily: 'Manrope, sans-serif',
+              fontSize: 14,
+              padding: '8px 12px',
+              maxHeight: 100,
+              overflowY: 'auto',
+              outline: 'none',
+            }}
+          />
+          <button
+            onClick={sendMessage}
+            disabled={!input.trim() || loading}
+            style={{
+              background: input.trim() && !loading ? '#B388FF' : '#1A1A1A',
+              border: 'none',
+              borderRadius: 0,
+              color: input.trim() && !loading ? '#000000' : '#52525B',
+              width: 40,
+              height: 40,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: input.trim() && !loading ? 'pointer' : 'not-allowed',
+              flexShrink: 0,
+              minHeight: 'unset',
+              transition: 'background 0.12s',
+            }}
           >
-            Powered by Claude · Enter to send
-          </div>
+            <span className="material-symbols-outlined" style={{ fontSize: 18, fontVariationSettings: "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20" }}>
+              arrow_upward
+            </span>
+          </button>
         </div>
       </div>
     </>

@@ -84,7 +84,7 @@ export default function ProgressPage() {
       <main className="flex-1 overflow-y-auto px-4 pb-32 pt-4 max-w-lg mx-auto w-full">
         <h1
           className="text-2xl font-black mb-4"
-          style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)' }}
+          style={{ fontFamily: 'Space Grotesk, sans-serif', color: 'var(--text-primary)' }}
         >
           Training Progress
         </h1>
@@ -92,7 +92,7 @@ export default function ProgressPage() {
         {/* Key stats grid */}
         <div className="grid grid-cols-2 gap-3 mb-6">
           {[
-            { label: 'Miles Logged', value: totalMilesCompleted.toFixed(0), unit: 'mi', color: 'var(--accent-teal)' },
+            { label: 'Miles Logged', value: totalMilesCompleted.toFixed(0), unit: 'mi', color: '#8B5CF6' },
             { label: 'Completion Rate', value: `${completionRate}`, unit: '%', color: '#22C55E' },
             { label: 'Longest Run', value: longestRun.toFixed(1), unit: 'mi', color: '#3B82F6' },
             { label: 'Weeks Done', value: `${completedWeeks}`, unit: '/ 51', color: '#F59E0B' },
@@ -100,7 +100,7 @@ export default function ProgressPage() {
             <div key={label} className="card text-center" style={{ padding: '16px' }}>
               <div
                 className="text-3xl font-black"
-                style={{ fontFamily: 'JetBrains Mono, monospace', color }}
+                style={{ fontFamily: 'DM Mono, monospace', color }}
               >
                 {value}
                 <span className="text-sm font-normal ml-1" style={{ color: 'var(--text-secondary)' }}>
@@ -109,7 +109,7 @@ export default function ProgressPage() {
               </div>
               <div
                 className="text-xs mt-1"
-                style={{ color: 'var(--text-tertiary)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+                style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Sans, sans-serif' }}
               >
                 {label}
               </div>
@@ -122,8 +122,8 @@ export default function ProgressPage() {
           <div className="text-sm font-bold mb-3" style={{ color: 'var(--text-primary)' }}>Race Countdowns</div>
           <div className="space-y-3">
             {[
-              { name: '🏆 Houston Marathon', date: '2027-01-17', days: houstonDays, color: '#2DD4BF', goal: 'Sub-2:50:00' },
-              { name: '🌟 Grasslands 100',   date: '2027-03-20', days: grasslandsDays, color: '#A855F7', goal: 'Sub-24 hours' },
+              { name: '🏆 Houston Marathon', date: '2027-01-17', days: houstonDays, color: '#8B5CF6', goal: 'Sub-2:50:00' },
+              { name: '🌟 Grasslands 100',   date: '2027-03-20', days: grasslandsDays, color: '#06B6D4', goal: 'Sub-24 hours' },
             ].map(({ name, days, color, goal }) => (
               <div key={name}>
                 <div className="flex items-center justify-between mb-1">
@@ -133,7 +133,7 @@ export default function ProgressPage() {
                   </div>
                   <span
                     className="text-lg font-black"
-                    style={{ fontFamily: 'JetBrains Mono, monospace', color }}
+                    style={{ fontFamily: 'DM Mono, monospace', color }}
                   >
                     {days > 0 ? `${days}d` : 'DONE'}
                   </span>
@@ -149,7 +149,7 @@ export default function ProgressPage() {
             <span className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>
               Plan Progress
             </span>
-            <span className="text-sm" style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--text-secondary)' }}>
+            <span className="text-sm" style={{ fontFamily: 'DM Mono, monospace', color: 'var(--text-secondary)' }}>
               {totalMilesCompleted.toFixed(0)} / {totalPlannedMiles} mi
             </span>
           </div>
@@ -158,7 +158,7 @@ export default function ProgressPage() {
               className="progress-fill h-3"
               style={{
                 width: `${Math.min(100, (totalMilesCompleted / totalPlannedMiles) * 100)}%`,
-                background: 'var(--accent-teal)',
+                background: 'linear-gradient(135deg, #8B5CF6, #6366F1, #06B6D4)',
               }}
             />
           </div>
@@ -175,9 +175,9 @@ export default function ProgressPage() {
             </div>
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={weeklyChartData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(71,85,105,0.3)" />
-                <XAxis dataKey="week" tick={{ fill: '#64748B', fontSize: 10 }} interval={3} />
-                <YAxis tick={{ fill: '#64748B', fontSize: 10 }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                <XAxis dataKey="week" tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 10 }} interval={3} />
+                <YAxis tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 10 }} />
                 <Tooltip
                   contentStyle={{
                     background: 'var(--bg-card)',
@@ -187,17 +187,17 @@ export default function ProgressPage() {
                     fontSize: 12,
                   }}
                 />
-                <Line type="monotone" dataKey="planned" stroke="#334155" strokeWidth={2} dot={false} name="Planned" />
-                <Line type="monotone" dataKey="actual" stroke="#2DD4BF" strokeWidth={2} dot={false} name="Actual" />
+                <Line type="monotone" dataKey="planned" stroke="rgba(255,255,255,0.15)" strokeWidth={2} dot={false} name="Planned" />
+                <Line type="monotone" dataKey="actual" stroke="#8B5CF6" strokeWidth={2} dot={false} name="Actual" />
               </LineChart>
             </ResponsiveContainer>
             <div className="flex items-center gap-4 mt-2 justify-center">
               <div className="flex items-center gap-1.5">
-                <div className="w-4 h-0.5" style={{ background: '#334155' }} />
+                <div className="w-4 h-0.5" style={{ background: 'rgba(255,255,255,0.15)' }} />
                 <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Planned</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <div className="w-4 h-0.5" style={{ background: '#2DD4BF' }} />
+                <div className="w-4 h-0.5" style={{ background: '#8B5CF6' }} />
                 <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Actual</span>
               </div>
             </div>
@@ -231,7 +231,7 @@ export default function ProgressPage() {
                       Phase {phase.phase}: {phase.name}
                       {isActive && ' ← NOW'}
                     </span>
-                    <span className="text-xs" style={{ color: 'var(--text-tertiary)', fontFamily: 'JetBrains Mono, monospace' }}>
+                    <span className="text-xs" style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Mono, monospace' }}>
                       {pct}%
                     </span>
                   </div>

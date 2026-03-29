@@ -22,7 +22,7 @@ interface LogState {
 
 function getPhaseColor(phase: number): string {
   const colors: Record<number, string> = {
-    1: '#22C55E', 2: '#F59E0B', 3: '#3B82F6', 4: '#A855F7', 5: '#EF4444',
+    1: '#22C55E', 2: '#F59E0B', 3: '#3B82F6', 4: '#8B5CF6', 5: '#EF4444',
   };
   return colors[phase] ?? '#94A3B8';
 }
@@ -132,7 +132,7 @@ export default function DashboardPage() {
               name="Houston Marathon"
               date={HOUSTON_DATE}
               emoji="🏆"
-              color="#2DD4BF"
+              color="#8B5CF6"
               totalWeeks={TOTAL_WEEKS}
               currentWeek={completedWeeks}
               isActive={getDaysUntil(HOUSTON_DATE) > 0}
@@ -141,7 +141,7 @@ export default function DashboardPage() {
               name="Grasslands 100"
               date={GRASSLANDS_DATE}
               emoji="🌟"
-              color="#A855F7"
+              color="#8B5CF6"
               totalWeeks={TOTAL_WEEKS}
               currentWeek={completedWeeks}
               isActive={getDaysUntil(HOUSTON_DATE) <= 0}
@@ -159,13 +159,13 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between mb-2">
             <h2
               className="text-xs font-semibold tracking-widest uppercase"
-              style={{ color: 'var(--text-tertiary)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+              style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Sans, sans-serif' }}
             >
               Today&apos;s Training
             </h2>
             <span
               className="text-xs"
-              style={{ color: 'var(--text-tertiary)', fontFamily: 'JetBrains Mono, monospace' }}
+              style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Mono, monospace' }}
             >
               {today.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
             </span>
@@ -187,7 +187,7 @@ export default function DashboardPage() {
           ) : (
             <div className="card text-center py-8">
               <div className="text-4xl mb-3">🎉</div>
-              <div className="text-lg font-bold" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)' }}>
+              <div className="text-lg font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif', color: 'var(--text-primary)' }}>
                 Training Complete!
               </div>
               <div className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
@@ -205,7 +205,7 @@ export default function DashboardPage() {
                 <span className="text-xs font-semibold tracking-wide" style={{ color: 'var(--text-secondary)' }}>
                   WEEK {currentWeek.week} MILEAGE
                 </span>
-                <span className="text-sm font-bold" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+                <span className="text-sm font-bold" style={{ fontFamily: 'DM Mono, monospace' }}>
                   {formatMiles(weekCompletedMiles)} / {currentWeek.totalMiles} mi
                 </span>
               </div>
@@ -214,12 +214,12 @@ export default function DashboardPage() {
                   className="progress-fill"
                   style={{
                     width: `${Math.min(100, (weekCompletedMiles / currentWeek.totalMiles) * 100)}%`,
-                    background: 'var(--accent-teal)',
+                    background: 'linear-gradient(135deg, #8B5CF6, #6366F1, #06B6D4)',
                   }}
                 />
               </div>
               {currentWeek.isDownWeek && (
-                <div className="text-xs mt-1.5" style={{ color: '#A855F7' }}>
+                <div className="text-xs mt-1.5" style={{ color: '#8B5CF6' }}>
                   Recovery week — reduced volume
                 </div>
               )}
@@ -233,7 +233,7 @@ export default function DashboardPage() {
             <div className="card flex items-center gap-3" style={{ padding: '12px 16px' }}>
               <span className="text-2xl">🔥</span>
               <div>
-                <span className="text-xl font-black" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                <span className="text-xl font-black" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                   {streak}
                 </span>
                 <span className="text-sm ml-1.5" style={{ color: 'var(--text-secondary)' }}>
@@ -254,7 +254,7 @@ export default function DashboardPage() {
               <div className="flex items-center gap-4 flex-wrap">
                 {garminHealth.restingHR && (
                   <div className="text-center">
-                    <div className="text-lg font-bold" style={{ fontFamily: 'JetBrains Mono, monospace', color: '#EF4444' }}>
+                    <div className="text-lg font-bold" style={{ fontFamily: 'DM Mono, monospace', color: '#EF4444' }}>
                       {garminHealth.restingHR}
                     </div>
                     <div className="text-xs" style={{ color: 'var(--text-tertiary)' }}>RHR</div>
@@ -262,7 +262,7 @@ export default function DashboardPage() {
                 )}
                 {garminHealth.sleepScore && (
                   <div className="text-center">
-                    <div className="text-lg font-bold" style={{ fontFamily: 'JetBrains Mono, monospace', color: '#3B82F6' }}>
+                    <div className="text-lg font-bold" style={{ fontFamily: 'DM Mono, monospace', color: '#3B82F6' }}>
                       {garminHealth.sleepScore}
                     </div>
                     <div className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Sleep</div>
@@ -270,7 +270,7 @@ export default function DashboardPage() {
                 )}
                 {garminHealth.bodyBattery && (
                   <div className="text-center">
-                    <div className="text-lg font-bold" style={{ fontFamily: 'JetBrains Mono, monospace', color: '#22C55E' }}>
+                    <div className="text-lg font-bold" style={{ fontFamily: 'DM Mono, monospace', color: '#22C55E' }}>
                       {garminHealth.bodyBattery}
                     </div>
                     <div className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Battery</div>
@@ -278,7 +278,7 @@ export default function DashboardPage() {
                 )}
                 {garminHealth.trainingReadiness && (
                   <div className="text-center">
-                    <div className="text-lg font-bold" style={{ fontFamily: 'JetBrains Mono, monospace', color: '#F59E0B' }}>
+                    <div className="text-lg font-bold" style={{ fontFamily: 'DM Mono, monospace', color: '#F59E0B' }}>
                       {garminHealth.trainingReadiness}
                     </div>
                     <div className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Readiness</div>

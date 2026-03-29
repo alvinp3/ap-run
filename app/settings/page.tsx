@@ -88,7 +88,7 @@ export default function SettingsPage() {
       <main className="flex-1 overflow-y-auto px-4 pb-32 pt-4 max-w-lg mx-auto w-full">
         <h1
           className="text-2xl font-black mb-1"
-          style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)' }}
+          style={{ fontFamily: 'Space Grotesk, sans-serif', color: 'var(--text-primary)' }}
         >
           Settings
         </h1>
@@ -127,7 +127,7 @@ export default function SettingsPage() {
                 background: 'var(--bg-primary)',
                 border: '1px solid var(--border-subtle)',
                 color: 'var(--text-primary)',
-                fontFamily: 'Plus Jakarta Sans, sans-serif',
+                fontFamily: 'DM Sans, sans-serif',
                 outline: 'none',
               }}
               maxLength={24}
@@ -174,18 +174,18 @@ export default function SettingsPage() {
                   onClick={() => updateSetting('trainingWindow', key)}
                   className="flex-1 py-2.5 rounded-xl text-center"
                   style={{
-                    background: active ? 'rgba(45,212,191,0.12)' : 'var(--bg-primary)',
-                    border: `1px solid ${active ? 'var(--accent-teal)' : 'var(--border-subtle)'}`,
+                    background: active ? 'rgba(139,92,246,0.12)' : 'var(--bg-primary)',
+                    border: `1px solid ${active ? '#8B5CF6' : 'var(--border-subtle)'}`,
                     minHeight: 56,
                   }}
                 >
                   <div
                     className="text-sm font-semibold"
-                    style={{ color: active ? 'var(--accent-teal)' : 'var(--text-primary)' }}
+                    style={{ color: active ? '#8B5CF6' : 'var(--text-primary)' }}
                   >
                     {label}
                   </div>
-                  <div className="text-xs mt-0.5" style={{ color: 'var(--text-tertiary)', fontFamily: 'JetBrains Mono, monospace' }}>
+                  <div className="text-xs mt-0.5" style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Mono, monospace' }}>
                     {sublabel}
                   </div>
                 </button>
@@ -232,7 +232,7 @@ export default function SettingsPage() {
           <div className="flex items-start gap-3 mb-3">
             <div
               className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-lg"
-              style={{ background: 'rgba(45,212,191,0.1)' }}
+              style={{ background: 'rgba(139,92,246,0.1)' }}
             >
               ⌚
             </div>
@@ -255,9 +255,9 @@ export default function SettingsPage() {
               href="/settings/garmin"
               className="text-xs px-3 py-1.5 rounded-xl font-semibold flex-shrink-0"
               style={{
-                background: 'rgba(45,212,191,0.1)',
-                color: 'var(--accent-teal)',
-                border: '1px solid rgba(45,212,191,0.2)',
+                background: 'rgba(139,92,246,0.1)',
+                color: '#8B5CF6',
+                border: '1px solid rgba(139,92,246,0.2)',
               }}
             >
               {settings.garminConnected ? 'Manage' : 'Connect'}
@@ -301,13 +301,13 @@ export default function SettingsPage() {
               </div>
               <div
                 className="text-xs px-3 py-2 rounded-xl font-mono flex items-center gap-2"
-                style={{ background: 'var(--bg-primary)', border: '1px solid var(--border-subtle)', color: 'var(--accent-teal)' }}
+                style={{ background: 'var(--bg-primary)', border: '1px solid var(--border-subtle)', color: '#8B5CF6' }}
               >
                 <span className="flex-1 truncate">/share/me</span>
                 <button
                   onClick={() => navigator.clipboard?.writeText(window.location.origin + '/share/me')}
                   className="text-xs px-2 py-0.5 rounded-lg"
-                  style={{ background: 'rgba(45,212,191,0.1)', color: 'var(--accent-teal)' }}
+                  style={{ background: 'rgba(139,92,246,0.1)', color: '#8B5CF6' }}
                 >
                   Copy
                 </button>
@@ -385,7 +385,7 @@ function SectionHeader({ label }: { label: string }) {
   return (
     <div
       className="text-xs font-semibold tracking-widest uppercase mb-2 px-1"
-      style={{ color: 'var(--text-tertiary)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+      style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Sans, sans-serif' }}
     >
       {label}
     </div>
@@ -421,8 +421,8 @@ function ToggleRow({ label, sublabel, value, onToggle, onSelect, onLabel, offLab
               onClick={() => onSelect(v)}
               className="px-3 py-1.5 text-xs font-semibold"
               style={{
-                background: value === v ? 'rgba(45,212,191,0.15)' : 'transparent',
-                color: value === v ? 'var(--accent-teal)' : 'var(--text-tertiary)',
+                background: value === v ? 'rgba(139,92,246,0.15)' : 'transparent',
+                color: value === v ? '#8B5CF6' : 'var(--text-tertiary)',
                 minHeight: 36,
               }}
             >
@@ -447,8 +447,8 @@ function ToggleRow({ label, sublabel, value, onToggle, onSelect, onLabel, offLab
           width: 48,
           height: 28,
           borderRadius: 14,
-          background: value ? 'rgba(45,212,191,0.3)' : 'var(--bg-primary)',
-          border: `1px solid ${value ? 'var(--accent-teal)' : 'var(--border-subtle)'}`,
+          background: value ? 'rgba(139,92,246,0.3)' : 'var(--bg-primary)',
+          border: `1px solid ${value ? '#8B5CF6' : 'var(--border-subtle)'}`,
           transition: 'background 0.2s, border-color 0.2s',
           minWidth: 48,
         }}
@@ -463,7 +463,7 @@ function ToggleRow({ label, sublabel, value, onToggle, onSelect, onLabel, offLab
             width: 20,
             height: 20,
             borderRadius: '50%',
-            background: value ? 'var(--accent-teal)' : 'var(--border-accent)',
+            background: value ? '#8B5CF6' : 'var(--border-accent)',
             transition: 'left 0.2s',
           }}
         />

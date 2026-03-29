@@ -21,7 +21,7 @@ export default function PhaseBadge({ phase, name, size = 'md', className = '' }:
       style={{
         background: `${color}22`,
         color,
-        fontFamily: 'Plus Jakarta Sans, sans-serif',
+        fontFamily: 'DM Sans, sans-serif',
       }}
     >
       <span

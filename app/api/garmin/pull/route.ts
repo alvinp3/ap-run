@@ -4,9 +4,9 @@ import { getGarminClient } from '@/lib/garmin';
 
 /**
  * POST /api/garmin/pull
- * Pulls health metrics (resting HR, sleep) and the last 14 activities from
- * Garmin Connect and writes them to Supabase. Also auto-completes any
- * workout_log rows where a matching Garmin activity was found.
+ * Pulls health metrics (resting HR, sleep) and ALL activities (paginated in
+ * batches of 100) from Garmin Connect and upserts them to Supabase. Also
+ * auto-completes any workout_log rows where a matching Garmin activity was found.
  */
 export async function POST() {
   const db = createClient(
@@ -57,10 +57,23 @@ export async function POST() {
 
     // ── Activities ────────────────────────────────────────────
     try {
+      // Paginate through all activities in batches of 100
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const activities: any[] = (await gc.getActivities(0, 14)) ?? [];
+      const allActivities: any[] = [];
+      let start = 0;
+      const batchSize = 100;
+      while (true) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const batch = await gc.getActivities(start, batchSize) as any[];
+        if (!batch || batch.length === 0) break;
+        allActivities.push(...batch);
+        if (batch.length < batchSize) break; // last page
+        start += batchSize;
+        // Rate limit: small delay between batches
+        await new Promise(r => setTimeout(r, 500));
+      }
 
-      for (const act of activities) {
+      for (const act of allActivities) {
         const distanceMiles =
           act.distance != null ? Math.round((act.distance / 1609.34) * 100) / 100 : 0;
 

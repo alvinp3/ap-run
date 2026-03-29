@@ -45,7 +45,7 @@ export default function WorkoutDetailPage() {
     return (
       <div className="min-h-dvh flex flex-col items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
         <div className="text-4xl mb-4">🤷</div>
-        <div className="text-lg font-bold" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)' }}>
+        <div className="text-lg font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif', color: 'var(--text-primary)' }}>
           No workout found for {date}
         </div>
         <Link href="/" className="btn-teal mt-4">Back to Dashboard</Link>
@@ -102,7 +102,7 @@ export default function WorkoutDetailPage() {
           <div className="flex items-center gap-2 mb-2 flex-wrap">
             <PhaseBadge phase={phase.phase} name={phase.name} />
             {workout.isDownWeek && (
-              <span className="text-xs px-2 py-0.5 rounded-full font-semibold" style={{ background: 'rgba(168,85,247,0.15)', color: '#A855F7' }}>
+              <span className="text-xs px-2 py-0.5 rounded-full font-semibold" style={{ background: 'rgba(139,92,246,0.15)', color: '#8B5CF6' }}>
                 DOWN WEEK
               </span>
             )}
@@ -113,12 +113,12 @@ export default function WorkoutDetailPage() {
           <div className="flex items-center gap-3 mb-3">
             <WorkoutBadge type={workout.type} size="lg" />
             {workout.miles > 0 && (
-              <span className="text-2xl font-bold" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+              <span className="text-2xl font-bold" style={{ fontFamily: 'DM Mono, monospace' }}>
                 {formatMiles(workout.miles)}<span className="text-sm font-normal ml-1" style={{ color: 'var(--text-secondary)' }}>mi</span>
               </span>
             )}
             {workout.estimatedMinutes > 0 && (
-              <span className="text-sm" style={{ color: 'var(--text-tertiary)', fontFamily: 'JetBrains Mono, monospace' }}>
+              <span className="text-sm" style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Mono, monospace' }}>
                 ~{formatDuration(workout.estimatedMinutes)}
               </span>
             )}
@@ -134,7 +134,7 @@ export default function WorkoutDetailPage() {
             <div className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: '#F59E0B' }}>
               ☀️ Heat-Adjusted Paces
             </div>
-            <div className="grid grid-cols-2 gap-2 text-sm" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+            <div className="grid grid-cols-2 gap-2 text-sm" style={{ fontFamily: 'DM Mono, monospace' }}>
               {[
                 ['Recovery', '9:00-9:45/mi'],
                 ['Easy', '8:15-9:00/mi'],
@@ -155,7 +155,7 @@ export default function WorkoutDetailPage() {
         {/* Recovery protocol */}
         {recovery && (
           <div className="card mb-4">
-            <div className="text-sm font-bold mb-3" style={{ color: 'var(--accent-teal)' }}>
+            <div className="text-sm font-bold mb-3" style={{ color: '#8B5CF6' }}>
               Recovery Protocol · {recovery.label}
             </div>
             <div className="space-y-3">
@@ -163,7 +163,7 @@ export default function WorkoutDetailPage() {
                 <div key={step.order} className="flex gap-3">
                   <div
                     className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5"
-                    style={{ background: 'rgba(45,212,191,0.15)', color: 'var(--accent-teal)' }}
+                    style={{ background: 'rgba(139,92,246,0.15)', color: '#8B5CF6' }}
                   >
                     {step.order}
                   </div>
@@ -258,9 +258,9 @@ export default function WorkoutDetailPage() {
           <div className="text-sm font-bold mb-3" style={{ color: 'var(--text-primary)' }}>
             Training Paces Reference
           </div>
-          <div className="space-y-1.5 text-sm" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+          <div className="space-y-1.5 text-sm" style={{ fontFamily: 'DM Mono, monospace' }}>
             {[
-              { zone: 'Recovery',  pace: '8:30-9:00/mi', color: '#A855F7' },
+              { zone: 'Recovery',  pace: '8:30-9:00/mi', color: '#8B5CF6' },
               { zone: 'Easy',      pace: '7:50-8:20/mi', color: '#22C55E' },
               { zone: 'Long Run',  pace: '7:20-7:50/mi', color: '#3B82F6' },
               { zone: 'Marathon',  pace: '6:25-6:35/mi', color: '#3B82F6' },

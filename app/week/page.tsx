@@ -64,21 +64,21 @@ export default function WeekPage() {
             {phase && (
               <div
                 className="text-xs font-semibold tracking-wide"
-                style={{ color: phase.color, fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+                style={{ color: phase.color, fontFamily: 'DM Sans, sans-serif' }}
               >
                 PHASE {phase.phase} · {phase.name.toUpperCase()}
               </div>
             )}
             <div
               className="text-lg font-black"
-              style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)' }}
+              style={{ fontFamily: 'Space Grotesk, sans-serif', color: 'var(--text-primary)' }}
             >
               Week {weekNum} of {totalWeeks}
             </div>
             {week && (
               <div
                 className="text-xs"
-                style={{ color: 'var(--text-tertiary)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+                style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Sans, sans-serif' }}
               >
                 {new Date(week.startDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 {' – '}
@@ -100,7 +100,7 @@ export default function WeekPage() {
         {week?.isDownWeek && (
           <div
             className="rounded-xl px-4 py-2 mb-4 text-sm font-medium text-center"
-            style={{ background: 'rgba(168,85,247,0.1)', color: '#A855F7', border: '1px solid rgba(168,85,247,0.2)' }}
+            style={{ background: 'rgba(139,92,246,0.1)', color: '#8B5CF6', border: '1px solid rgba(139,92,246,0.2)' }}
           >
             Recovery week — reduced volume and intensity
           </div>
@@ -136,7 +136,7 @@ export default function WeekPage() {
                     className="text-xs font-semibold"
                     style={{
                       color: isCurrentDay ? color : 'var(--text-tertiary)',
-                      fontFamily: 'Plus Jakarta Sans, sans-serif',
+                      fontFamily: 'DM Sans, sans-serif',
                     }}
                   >
                     {day.day.slice(0, 3).toUpperCase()}
@@ -144,7 +144,7 @@ export default function WeekPage() {
                   <div
                     className="text-lg font-black leading-none"
                     style={{
-                      fontFamily: 'Outfit, sans-serif',
+                      fontFamily: 'Space Grotesk, sans-serif',
                       color: isCurrentDay ? color : 'var(--text-primary)',
                     }}
                   >
@@ -165,7 +165,7 @@ export default function WeekPage() {
                     {day.hasStrength && (
                       <span
                         className="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
-                        style={{ background: 'rgba(168,85,247,0.12)', color: '#A855F7' }}
+                        style={{ background: 'rgba(139,92,246,0.12)', color: '#8B5CF6' }}
                       >
                         + Strength
                       </span>
@@ -183,7 +183,7 @@ export default function WeekPage() {
                     className="text-xs truncate"
                     style={{
                       color: 'var(--text-secondary)',
-                      fontFamily: 'Plus Jakarta Sans, sans-serif',
+                      fontFamily: 'DM Sans, sans-serif',
                     }}
                   >
                     {day.description.substring(0, 70)}{day.description.length > 70 ? '…' : ''}
@@ -195,7 +195,7 @@ export default function WeekPage() {
                   {day.miles > 0 && (
                     <span
                       className="text-sm font-bold"
-                      style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--text-primary)' }}
+                      style={{ fontFamily: 'DM Mono, monospace', color: 'var(--text-primary)' }}
                     >
                       {formatMiles(day.miles)}mi
                     </span>
@@ -203,7 +203,7 @@ export default function WeekPage() {
                   {day.estimatedMinutes > 0 && (
                     <span
                       className="text-xs"
-                      style={{ color: 'var(--text-tertiary)', fontFamily: 'JetBrains Mono, monospace' }}
+                      style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Mono, monospace' }}
                     >
                       {formatDuration(day.estimatedMinutes)}
                     </span>
@@ -226,7 +226,7 @@ export default function WeekPage() {
               <span className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>
                 Week Total
               </span>
-              <span className="text-sm font-bold" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+              <span className="text-sm font-bold" style={{ fontFamily: 'DM Mono, monospace' }}>
                 {formatMiles(completedMiles)} / {week.totalMiles} mi planned
               </span>
             </div>
@@ -235,7 +235,7 @@ export default function WeekPage() {
                 className="progress-fill"
                 style={{
                   width: `${Math.min(100, (completedMiles / week.totalMiles) * 100)}%`,
-                  background: 'var(--accent-teal)',
+                  background: 'linear-gradient(135deg, #8B5CF6, #6366F1, #06B6D4)',
                 }}
               />
             </div>
