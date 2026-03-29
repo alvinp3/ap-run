@@ -10,7 +10,6 @@ import WorkoutBadge from '@/components/ui/WorkoutBadge';
 import PhaseBadge from '@/components/ui/PhaseBadge';
 import CoachFAB from '@/components/coach/CoachFAB';
 import { getWorkoutByDate, getPhaseForWeek } from '@/data/training-plan';
-import { recoveryProtocols } from '@/data/reference-data';
 import { formatDate, formatDuration, formatMiles, isHeatSeason } from '@/utils/workout';
 import type { WorkoutDay, WorkoutOverride } from '@/types';
 import WorkoutSteps from '@/components/ui/WorkoutSteps';
@@ -74,11 +73,6 @@ export default function WorkoutDetailPage() {
   } : workout;
 
   const isHeat = isHeatSeason(date);
-  const recoveryKey = effectiveWorkout.type === 'long' ? 'longRun'
-    : effectiveWorkout.type === 'rest' ? 'rest'
-    : effectiveWorkout.type === 'intervals' || effectiveWorkout.type === 'tempo' ? 'quality'
-    : 'easy';
-  const recovery = recoveryProtocols[recoveryKey as keyof typeof recoveryProtocols];
 
   async function handleRevert() {
     setReverting(true);
@@ -219,32 +213,6 @@ export default function WorkoutDetailPage() {
                 <div key={zone} className="flex justify-between gap-2">
                   <span style={{ color: 'var(--text-secondary)' }}>{zone}</span>
                   <span style={{ color: '#F59E0B' }}>{pace}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Recovery protocol */}
-        {recovery && (
-          <div className="card mb-4">
-            <div className="text-sm font-bold mb-3" style={{ color: '#8B5CF6' }}>
-              Recovery Protocol · {recovery.label}
-            </div>
-            <div className="space-y-3">
-              {recovery.steps.map((step) => (
-                <div key={step.order} className="flex gap-3">
-                  <div
-                    className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5"
-                    style={{ background: 'rgba(139,92,246,0.15)', color: '#8B5CF6' }}
-                  >
-                    {step.order}
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{step.tool}</div>
-                    <div className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>{step.duration}</div>
-                    <div className="text-xs mt-0.5" style={{ color: 'var(--text-tertiary)' }}>{step.targets}</div>
-                  </div>
                 </div>
               ))}
             </div>
