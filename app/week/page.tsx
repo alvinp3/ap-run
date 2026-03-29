@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import AppHeader from '@/components/layout/AppHeader';
 import AppNav from '@/components/layout/AppNav';
 import CoachFAB from '@/components/coach/CoachFAB';
@@ -11,14 +12,33 @@ import { formatMiles, formatDuration, isToday, isPast, getWorkoutColor } from '@
 import type { WorkoutDay } from '@/types';
 
 export default function WeekPage() {
-  const [weekNum, setWeekNum] = useState<number>(1);
+  const router       = useRouter();
+  const searchParams = useSearchParams();
+  const [weekNum, setWeekNumState] = useState<number>(1);
   const [logs, setLogs] = useState<Record<string, { completed: boolean; skipped: boolean }>>({});
 
   const today = new Date();
 
+  // Sync weekNum → URL so browser back restores the right week
+  const setWeekNum = useCallback((n: number | ((prev: number) => number)) => {
+    setWeekNumState((prev) => {
+      const next = typeof n === 'function' ? n(prev) : n;
+      router.replace(`/week?w=${next}`, { scroll: false });
+      return next;
+    });
+  }, [router]);
+
   useEffect(() => {
-    const cw = getCurrentWeek(today);
-    setWeekNum(cw?.week ?? 1);
+    // Prefer ?w= param (restored by browser back), fall back to current training week
+    const param = searchParams.get('w');
+    const parsed = param ? parseInt(param, 10) : NaN;
+    if (!isNaN(parsed) && parsed >= 1 && parsed <= allWeeks.length) {
+      setWeekNumState(parsed);
+    } else {
+      const cw = getCurrentWeek(today);
+      setWeekNumState(cw?.week ?? 1);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
