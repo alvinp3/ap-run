@@ -9,6 +9,7 @@ interface GarminStatus {
   lastSync: string | null;
   activitiesImported: number;
   latestActivity: string | null;
+  message?: string;
 }
 
 type ActionState = 'idle' | 'loading' | 'success' | 'error';
@@ -134,14 +135,19 @@ export default function GarminSettingsPage() {
               <div className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>Garmin Forerunner 745</div>
               <div
                 className="text-xs mt-0.5 flex items-center gap-1.5"
-                style={{ color: status.connected ? '#22C55E' : 'rgba(255,255,255,0.35)' }}
+                style={{ color: status.connected ? '#22C55E' : '#EF4444' }}
               >
                 <span
-                  className="w-1.5 h-1.5 rounded-full inline-block"
-                  style={{ background: status.connected ? '#22C55E' : 'rgba(255,255,255,0.35)' }}
+                  className="w-1.5 h-1.5 rounded-full inline-block flex-shrink-0"
+                  style={{ background: status.connected ? '#22C55E' : '#EF4444' }}
                 />
                 {statusLoading ? 'Checking…' : status.connected ? 'Connected' : 'Not connected'}
               </div>
+              {!statusLoading && !status.connected && status.message && (
+                <div className="text-xs mt-1" style={{ color: '#A1A1AA' }}>
+                  {status.message}
+                </div>
+              )}
             </div>
           </div>
           <div className="grid grid-cols-3 gap-2">

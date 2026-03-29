@@ -2,81 +2,97 @@ import { NextResponse } from 'next/server';
 
 /**
  * GET /api/garmin/status
- * Returns the current Garmin sync connection status.
- * In production, queries Supabase for the latest garmin_activities record.
- * Returns a stub when Supabase or Garmin credentials are not configured.
+ *
+ * Three-tier check:
+ * 1. Credentials missing (GARMIN_EMAIL / GARMIN_PASSWORD not in env) → not configured
+ * 2. Credentials present but never authenticated (user_settings.garmin_connected != true) → not connected
+ * 3. Authenticated → connected, return activity stats
  */
 export async function GET() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const garminEmail = process.env.GARMIN_EMAIL;
+  const garminEmail    = process.env.GARMIN_EMAIL;
+  const garminPassword = process.env.GARMIN_PASSWORD;
+  const supabaseUrl    = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey    = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  // If no Garmin credentials configured, return disconnected status
-  if (!garminEmail) {
+  // Tier 1 — credentials not configured at all
+  if (!garminEmail || !garminPassword) {
     return NextResponse.json({
       connected: false,
       lastSync: null,
       activitiesImported: 0,
       latestActivity: null,
-      message: 'Garmin credentials not configured',
+      message: 'GARMIN_EMAIL / GARMIN_PASSWORD not set in environment variables',
     });
   }
 
-  // If Supabase is not configured, return connected stub (credentials exist)
+  // Tier 2 — credentials exist but no Supabase (dev/local without DB)
   if (!supabaseUrl || !supabaseKey) {
     return NextResponse.json({
-      connected: true,
+      connected: false,
       lastSync: null,
       activitiesImported: 0,
       latestActivity: null,
-      message: 'Supabase not configured — activity data unavailable',
+      message: 'Supabase not configured — run Step 1 to authenticate',
     });
   }
 
-  // Query Supabase for latest activity data
+  // Tier 3 — check actual connection state from Supabase
   try {
     const { createClient } = await import('@supabase/supabase-js');
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { data: activities, error } = await supabase
-      .from('garmin_activities')
-      .select('activity_date, activity_type, distance_miles')
-      .order('activity_date', { ascending: false })
-      .limit(1);
-
-    if (error) throw error;
-
+    // Primary connection indicator: garmin_connected flag set by saveTokens()
     const { data: settings } = await supabase
       .from('user_settings')
-      .select('garmin_last_sync')
+      .select('garmin_connected, garmin_last_sync')
       .eq('id', '00000000-0000-0000-0000-000000000001')
       .single();
 
-    const latestActivity = activities?.[0];
-    const latestSync = settings?.garmin_last_sync ?? null;
+    const isConnected = settings?.garmin_connected === true;
+
+    if (!isConnected) {
+      return NextResponse.json({
+        connected: false,
+        lastSync: null,
+        activitiesImported: 0,
+        latestActivity: null,
+        message: 'Not authenticated — click "Connect to Garmin" (Step 1) to log in',
+      });
+    }
+
+    // Connected — fetch activity stats
+    const [activitiesRes, countRes] = await Promise.all([
+      supabase
+        .from('garmin_activities')
+        .select('activity_date, activity_type, distance_miles')
+        .order('activity_date', { ascending: false })
+        .limit(1),
+      supabase
+        .from('garmin_activities')
+        .select('*', { count: 'exact', head: true }),
+    ]);
+
+    const latestActivity = activitiesRes.data?.[0];
     const distanceMi = latestActivity?.distance_miles
       ? Number(latestActivity.distance_miles).toFixed(1)
       : null;
 
-    // Count total imported activities
-    const { count } = await supabase
-      .from('garmin_activities')
-      .select('*', { count: 'exact', head: true });
-
     return NextResponse.json({
       connected: true,
-      lastSync: latestSync,
-      activitiesImported: count ?? 0,
-      latestActivity: distanceMi ? `${distanceMi}mi ${latestActivity?.activity_type ?? 'Run'}` : null,
+      lastSync: settings.garmin_last_sync ?? null,
+      activitiesImported: countRes.count ?? 0,
+      latestActivity: distanceMi
+        ? `${distanceMi}mi ${latestActivity?.activity_type ?? 'Run'}`
+        : null,
     });
   } catch (err) {
-    console.error('[garmin/status] Supabase error:', err);
+    console.error('[garmin/status]', err);
     return NextResponse.json({
-      connected: !!garminEmail,
+      connected: false,
       lastSync: null,
       activitiesImported: 0,
       latestActivity: null,
-      error: 'Failed to fetch activity data',
+      message: 'Error checking status — see server logs',
     });
   }
 }
