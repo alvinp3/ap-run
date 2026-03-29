@@ -123,3 +123,13 @@ export interface GearItem {
   category?: string;
   checked?: boolean;
 }
+
+export interface WorkoutOverride {
+  date: string;
+  description?: string;
+  miles?: number;
+  type?: WorkoutType;
+  estimatedMinutes?: number;
+  reason?: string;
+  createdAt?: string;
+}

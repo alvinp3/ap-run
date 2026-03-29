@@ -13,6 +13,7 @@ import type { WorkoutDay } from '@/types';
 export default function WeekPage() {
   const [weekNum, setWeekNumRaw] = useState<number>(1);
   const [logs, setLogs] = useState<Record<string, { completed: boolean; skipped: boolean }>>({});
+  const [overrideDates, setOverrideDates] = useState<Set<string>>(new Set());
 
   const today = new Date();
 
@@ -54,6 +55,18 @@ export default function WeekPage() {
   }, []);
 
   const week = getWeekByNumber(weekNum);
+
+  useEffect(() => {
+    if (!week) return;
+    fetch(`/api/workouts/override`)
+      .then(r => r.json())
+      .then((data: Array<{ date: string }>) => {
+        if (!Array.isArray(data)) return;
+        const dates = new Set(data.map(o => o.date));
+        setOverrideDates(dates);
+      })
+      .catch(() => {});
+  }, [week]);
   const phase = getPhaseForWeek(weekNum);
 
   const totalWeeks = allWeeks.length;
@@ -231,6 +244,9 @@ export default function WeekPage() {
                   {log?.skipped && <span className="text-base opacity-50">⏭️</span>}
                   {!log && isPastDay && day.type !== 'rest' && (
                     <span className="text-base opacity-30">○</span>
+                  )}
+                  {overrideDates.has(day.date) && (
+                    <span style={{ fontSize: 10, color: '#B388FF', fontFamily: 'JetBrains Mono, monospace' }}>✎</span>
                   )}
                 </div>
               </Link>
