@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { BrainCircuit } from 'lucide-react';
 import AiCoachPanel from './AiCoachPanel';
 
 interface CoachFABProps {
@@ -34,9 +35,7 @@ export default function CoachFAB({ context }: CoachFABProps) {
         title="Open AI Coach"
         aria-label="Open AI Coach"
       >
-        <span className="material-symbols-outlined" style={{ fontSize: 22, fontVariationSettings: "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20" }}>
-          psychology
-        </span>
+        <BrainCircuit size={20} strokeWidth={1.5} />
       </button>
 
       <AiCoachPanel

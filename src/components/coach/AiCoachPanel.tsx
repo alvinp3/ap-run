@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { BrainCircuit, ArrowUp } from 'lucide-react';
 import type { CoachMessage } from '@/types';
 
 interface AiCoachPanelProps {
@@ -126,16 +127,7 @@ export default function AiCoachPanel({ isOpen, onClose, context }: AiCoachPanelP
           style={{ borderBottom: '1px solid #2A2A2A' }}
         >
           <div className="flex items-center gap-3">
-            <span
-              className="material-symbols-outlined"
-              style={{
-                fontSize: 22,
-                color: '#B388FF',
-                fontVariationSettings: "'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 20",
-              }}
-            >
-              psychology
-            </span>
+            <BrainCircuit size={20} strokeWidth={1.5} style={{ color: '#B388FF' }} />
             <div>
               <div
                 style={{
@@ -290,9 +282,7 @@ export default function AiCoachPanel({ isOpen, onClose, context }: AiCoachPanelP
               transition: 'background 0.12s',
             }}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 18, fontVariationSettings: "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20" }}>
-              arrow_upward
-            </span>
+            <ArrowUp size={16} strokeWidth={2} />
           </button>
         </div>
       </div>

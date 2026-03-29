@@ -2,6 +2,16 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import {
+  Home,
+  CalendarDays,
+  TrendingUp,
+  Watch,
+  User,
+  Settings,
+  Share2,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface AppHeaderProps {
   title?: string;
@@ -9,12 +19,12 @@ interface AppHeaderProps {
 }
 
 const NAV = [
-  { href: '/',         icon: 'home',           label: 'Today'    },
-  { href: '/week',     icon: 'calendar_month', label: 'Week'     },
-  { href: '/progress', icon: 'trending_up',    label: 'Progress' },
-  { href: '/garmin',   icon: 'watch',          label: 'Garmin'   },
-  { href: '/profile',  icon: 'person',         label: 'Profile'  },
-  { href: '/settings', icon: 'settings',       label: 'Settings' },
+  { href: '/',         Icon: Home,         label: 'Today'    },
+  { href: '/week',     Icon: CalendarDays, label: 'Week'     },
+  { href: '/progress', Icon: TrendingUp,   label: 'Progress' },
+  { href: '/garmin',   Icon: Watch,        label: 'Garmin'   },
+  { href: '/profile',  Icon: User,         label: 'Profile'  },
+  { href: '/settings', Icon: Settings,     label: 'Settings' },
 ] as const;
 
 export default function AppHeader({ showShare = false }: AppHeaderProps) {
@@ -27,33 +37,27 @@ export default function AppHeader({ showShare = false }: AppHeaderProps) {
       try { await navigator.share({ title: 'BQ Training', text, url }); } catch {}
     } else {
       await navigator.clipboard.writeText(`${text} ${url}`);
-      alert('Share link copied!');
     }
   }
 
   return (
     <header
+      className="sticky top-0 z-30 flex flex-col"
       style={{
         background: '#050505',
         borderBottom: '1px solid #2A2A2A',
-        position: 'sticky',
-        top: 0,
-        zIndex: 30,
         paddingTop: 'env(safe-area-inset-top, 0)',
       }}
     >
-      {/* Top row: wordmark + share */}
-      <div
-        className="flex items-center justify-between px-4"
-        style={{ height: 48 }}
-      >
-        <Link href="/" style={{ textDecoration: 'none' }}>
+      {/* Row 1 — wordmark + share */}
+      <div className="flex items-center justify-between px-4 h-12">
+        <Link href="/" className="flex items-center gap-1.5 no-underline">
           <span
             style={{
               fontFamily: 'Space Grotesk, sans-serif',
               fontWeight: 300,
-              fontSize: 15,
-              letterSpacing: '0.18em',
+              fontSize: 14,
+              letterSpacing: '0.20em',
               textTransform: 'uppercase',
               color: '#0d0df2',
             }}
@@ -64,11 +68,10 @@ export default function AppHeader({ showShare = false }: AppHeaderProps) {
             style={{
               fontFamily: 'Space Grotesk, sans-serif',
               fontWeight: 300,
-              fontSize: 15,
-              letterSpacing: '0.18em',
+              fontSize: 14,
+              letterSpacing: '0.20em',
               textTransform: 'uppercase',
               color: '#FFFFFF',
-              marginLeft: 6,
             }}
           >
             Training
@@ -78,51 +81,55 @@ export default function AppHeader({ showShare = false }: AppHeaderProps) {
         {showShare && (
           <button
             onClick={handleShare}
+            className="flex items-center justify-center w-9 h-9 transition-colors"
             style={{
               background: 'none',
               border: 'none',
               cursor: 'pointer',
               color: '#52525B',
-              padding: '4px 8px',
             }}
             title="Share"
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>share</span>
+            <Share2 size={16} strokeWidth={1.5} />
           </button>
         )}
       </div>
 
-      {/* Nav row: icon-only links */}
+      {/* Row 2 — icon nav */}
       <div
         className="flex items-stretch"
-        style={{ borderTop: '1px solid #2A2A2A' }}
+        style={{ borderTop: '1px solid #1A1A1A' }}
       >
-        {NAV.map(({ href, icon, label }) => {
+        {NAV.map(({ href, Icon, label }) => {
           const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
           return (
             <Link
               key={href}
               href={href}
               title={label}
-              className="flex-1 flex flex-col items-center justify-center"
+              className={cn(
+                'flex-1 flex flex-col items-center justify-center gap-0.5 no-underline transition-colors',
+                'h-11'
+              )}
               style={{
-                height: 44,
                 color: isActive ? '#0d0df2' : '#52525B',
-                borderBottom: isActive ? '2px solid #0d0df2' : '2px solid transparent',
-                transition: 'color 0.12s, border-color 0.12s',
-                textDecoration: 'none',
+                borderBottom: isActive ? '1px solid #0d0df2' : '1px solid transparent',
               }}
             >
+              <Icon
+                size={18}
+                strokeWidth={isActive ? 2 : 1.5}
+              />
               <span
-                className="material-symbols-outlined"
                 style={{
-                  fontSize: 20,
-                  fontVariationSettings: isActive
-                    ? "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20"
-                    : "'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 20",
+                  fontFamily: 'Space Grotesk, sans-serif',
+                  fontSize: 9,
+                  fontWeight: isActive ? 500 : 400,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
                 }}
               >
-                {icon}
+                {label}
               </span>
             </Link>
           );
