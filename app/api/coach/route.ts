@@ -244,10 +244,10 @@ export async function POST(req: NextRequest) {
     });
 
     if (!response.ok) {
-      const error = await response.text();
-      console.error('Anthropic API error:', error);
+      const errorText = await response.text();
+      console.error('Anthropic API error:', response.status, errorText);
       return NextResponse.json(
-        { content: 'Coach is temporarily unavailable. Please try again in a moment.' },
+        { content: `API error ${response.status}: ${errorText}` },
         { status: 200 }
       );
     }
