@@ -49,15 +49,38 @@ export default function RecoveryPage() {
 
         {/* Today's recovery card */}
         <div className="card mb-4" style={{ borderColor: 'rgba(139,92,246,0.3)' }}>
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-lg">💪</span>
-            <div>
-              <div className="text-sm font-bold" style={{ color: '#8B5CF6' }}>
-                Today&apos;s Recovery Protocol
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">💪</span>
+              <div>
+                <div className="text-sm font-bold" style={{ color: '#8B5CF6' }}>
+                  Today&apos;s Recovery Protocol
+                </div>
+                <div className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
+                  {todayRecovery.label}
+                </div>
               </div>
-              <div className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
-                {todayRecovery.label}
-              </div>
+            </div>
+            {/* Time estimate badge */}
+            <div style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center',
+              background: 'rgba(139,92,246,0.1)',
+              border: '1px solid rgba(139,92,246,0.25)',
+              borderRadius: 10, padding: '6px 12px',
+              flexShrink: 0,
+            }}>
+              <span style={{
+                fontFamily: 'DM Mono, monospace', fontWeight: 700, fontSize: 18,
+                color: '#8B5CF6', lineHeight: 1,
+              }}>
+                {todayRecovery.estimatedMinutes.min}–{todayRecovery.estimatedMinutes.max}
+              </span>
+              <span style={{
+                fontSize: 9, color: 'var(--text-tertiary)', marginTop: 2,
+                textTransform: 'uppercase', letterSpacing: '0.06em',
+              }}>
+                min
+              </span>
             </div>
           </div>
           <div className="space-y-3">

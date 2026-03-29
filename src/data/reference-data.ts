@@ -86,6 +86,7 @@ export const samplePeakDay = [
 export const recoveryProtocols = {
   easy: {
     label: 'Easy Run Recovery',
+    estimatedMinutes: { min: 10, max: 15 },
     steps: [
       { order: 1, tool: 'Massage Gun', duration: '30-60s each', targets: 'Calves, glutes, hip flexors (primer)' },
       { order: 2, tool: 'Foam Roll',   duration: '2min calves, 2min quads, 2min glutes, 90s IT band', targets: 'Full lower body' },
@@ -94,6 +95,7 @@ export const recoveryProtocols = {
   },
   quality: {
     label: 'Quality Day Recovery (Intervals/Tempo)',
+    estimatedMinutes: { min: 15, max: 25 },
     steps: [
       { order: 1, tool: 'Massage Gun',  duration: '30-60s each', targets: 'Calves, glutes, hip flexors' },
       { order: 2, tool: 'Foam Roll',    duration: '2-3min each area', targets: 'Full lower body' },
@@ -103,6 +105,7 @@ export const recoveryProtocols = {
   },
   longRun: {
     label: 'Long Run Recovery',
+    estimatedMinutes: { min: 45, max: 60 },
     steps: [
       { order: 1, tool: 'Massage Gun',   duration: '3-5min full lower body', targets: 'Primer for all areas' },
       { order: 2, tool: 'Foam Roll',     duration: '2-3min each area',        targets: 'Calves, quads, glutes, IT band' },
@@ -113,7 +116,8 @@ export const recoveryProtocols = {
     ],
   },
   rest: {
-    label: 'Rest Day (Friday) Recovery',
+    label: 'Rest Day Recovery',
+    estimatedMinutes: { min: 20, max: 25 },
     steps: [
       { order: 1, tool: 'Massage Gun',    duration: '3-5min full body primer', targets: 'All lower body muscle groups' },
       { order: 2, tool: 'Lacrosse Ball',  duration: '2min/side + 60s/side + 2min/leg', targets: 'Piriformis glute smash & floss, psoas, soleus' },
@@ -123,6 +127,7 @@ export const recoveryProtocols = {
   },
   strength: {
     label: 'Strength Day Recovery',
+    estimatedMinutes: { min: 7, max: 10 },
     steps: [
       { order: 1, tool: 'Dynamic Warmup', duration: '5-8 min pre-lift', targets: 'Leg swings, hip circles, ankle circles, bodyweight squats' },
       { order: 2, tool: 'Static Stretch', duration: '30s+ holds post-lift', targets: 'Hip flexors, hamstrings, calves, quads' },
