@@ -45,7 +45,7 @@ export default function AppHeader(_props: { title?: string; showShare?: boolean 
                 fontSize: 11,
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
-                color: '#0d0df2',
+                color: '#5B5BFF',
                 whiteSpace: 'nowrap',
               }}
             >
@@ -88,7 +88,7 @@ export default function AppHeader(_props: { title?: string; showShare?: boolean 
               border: `1px solid ${profileOpen ? 'rgba(13,13,242,0.4)' : '#2A2A2A'}`,
               borderRadius: 10,
               cursor: 'pointer',
-              color: profileOpen ? '#0d0df2' : '#52525B',
+              color: profileOpen ? '#5B5BFF' : '#52525B',
               transition: 'all 0.15s',
               minHeight: 'unset',
             }}
@@ -115,8 +115,8 @@ export default function AppHeader(_props: { title?: string; showShare?: boolean 
                   'h-11'
                 )}
                 style={{
-                  color: isActive ? '#0d0df2' : '#52525B',
-                  borderBottom: isActive ? '1px solid #0d0df2' : '1px solid transparent',
+                  color: isActive ? '#5B5BFF' : '#52525B',
+                  borderBottom: isActive ? '1px solid #5B5BFF' : '1px solid transparent',
                 }}
               >
                 <Icon size={18} strokeWidth={isActive ? 2 : 1.5} />

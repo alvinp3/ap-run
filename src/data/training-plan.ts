@@ -7,11 +7,11 @@ export const phase1Weeks: TrainingWeek[] = [
   {
     week: 1, startDate: '2026-03-30', totalMiles: 32, isDownWeek: false,
     days: [
-      { day: 'Monday',    date: '2026-03-30', type: 'easy',     miles: 4,  description: 'Easy run 4 miles @ 8:00-8:20/mi + Strength A (Lower Body: Back Squat 4x6 RPE 7-8, RDL 3x8, Walking Lunges 3x12/leg, Calf Raises 3x15, Plank 3x45s)', hasStrength: true,  estimatedMinutes: 75 },
+      { day: 'Monday',    date: '2026-03-30', type: 'easy',     miles: 4,  description: 'Easy run 4 miles @ 8:00-8:20/mi + Strength A (Full Body: Back Squat 4x6 RPE 7-8, Bench Press 3x8, RDL 3x8, DB Row 3x10, Plank 3x45s)', hasStrength: true,  estimatedMinutes: 75 },
       { day: 'Tuesday',   date: '2026-03-31', type: 'easy',     miles: 5,  description: 'Easy run 5 miles @ 8:00-8:20/mi + 6x100m strides (fast but controlled, full recovery between)', hasStrength: false, estimatedMinutes: 50 },
-      { day: 'Wednesday', date: '2026-04-01', type: 'easy',     miles: 4,  description: 'Easy run 4 miles @ 8:00-8:20/mi + Strength B (Upper + Core: Bench 3x8, Row 3x10, OH Press 3x8, Pallof Press 3x12/side, Dead Bug 3x10/side)', hasStrength: true,  estimatedMinutes: 75 },
+      { day: 'Wednesday', date: '2026-04-01', type: 'easy',     miles: 4,  description: 'Easy run 4 miles @ 8:00-8:20/mi + Strength B (Full Body: Trap Bar DL 3x8, OH Press 3x8, Walking Lunges 3x12/leg, Chin-ups 3x8, Dead Bug 3x10/side)', hasStrength: true,  estimatedMinutes: 75 },
       { day: 'Thursday',  date: '2026-04-02', type: 'easy',     miles: 5,  description: 'Progression run 5 miles — first 3 mi easy, last 2 mi at 7:20-7:40/mi (comfortably quick, not tempo)', hasStrength: false, estimatedMinutes: 42 },
-      { day: 'Friday',    date: '2026-04-03', type: 'easy',     miles: 4,  description: 'Recovery run 4 miles @ 8:30-9:00/mi + Strength C (Posterior: Trap Bar DL 3x8, Step-Ups 3x10/leg, Side Plank 3x30s/side, Copenhagen 2x20s/side, Bird Dog 3x10/side)', hasStrength: true, estimatedMinutes: 65 },
+      { day: 'Friday',    date: '2026-04-03', type: 'easy',     miles: 4,  description: 'Recovery run 4 miles @ 8:30-9:00/mi + Strength C (Full Body: Step-Ups 3x10/leg, Push-up 3x12, SL RDL 3x8/side, Pallof Press 3x12/side, Side Plank 3x30s/side)', hasStrength: true, estimatedMinutes: 65 },
       { day: 'Saturday',  date: '2026-04-04', type: 'long',     miles: 10, description: 'Long run 10 miles @ 7:30-8:00/mi. Easy, conversational effort throughout. Practice carrying a handheld bottle.', hasStrength: false, estimatedMinutes: 78 },
       { day: 'Sunday',    date: '2026-04-05', type: 'rest',     miles: 0,  description: 'Full rest day. Foam rolling 10-15 min. Mobility work. Hydrate well.', hasStrength: false,  estimatedMinutes: 15 },
     ],
@@ -133,7 +133,7 @@ export const phase2Weeks: TrainingWeek[] = [
   {
     week: 11, startDate: '2026-06-08', totalMiles: 45, isDownWeek: false,
     days: [
-      { day: 'Monday',    date: '2026-06-08', type: 'easy',      miles: 6,   description: 'Easy 6mi + Strength A (Phase 2: Front Squat 3x6, SL RDL 3x8/side, Box Jumps 3x6, Banded Clamshells 3x15/side, Anti-Rotation Press 3x10/side). Welcome to heat season — run by effort, not pace.', hasStrength: true,  estimatedMinutes: 80 },
+      { day: 'Monday',    date: '2026-06-08', type: 'easy',      miles: 6,   description: 'Easy 6mi + Strength A (Phase 2 Full Body: Front Squat 3x6, Bench Press 3x8, SL RDL 3x8/side, DB Row 3x10, Box Jumps 3x5, Anti-Rotation Press 3x10/side). Welcome to heat season — run by effort, not pace.', hasStrength: true,  estimatedMinutes: 80 },
       { day: 'Tuesday',   date: '2026-06-09', type: 'intervals', miles: 8,   description: 'INTERVALS: 8mi total — 2mi warmup, 4x1000m @ 5:50-6:00/mi (3:37-3:43 per 1K) w/ 90s jog recovery, 2mi cooldown. In heat: run by effort (Zone 5), accept slower splits. Treadmill OK if heat index >105°F.', hasStrength: false, estimatedMinutes: 65 },
       { day: 'Wednesday', date: '2026-06-10', type: 'recovery',  miles: 4,   description: 'Recovery 4 miles @ 8:30-9:00/mi. Zone 1-2 ONLY. This should feel absurdly easy.', hasStrength: false, estimatedMinutes: 36 },
       { day: 'Thursday',  date: '2026-06-11', type: 'tempo',     miles: 8,   description: 'TEMPO: 8mi total — 2mi warmup, 4mi @ 6:10-6:20/mi (or HR Zone 4), 2mi cooldown. Comfortably hard — short phrases only.', hasStrength: false, estimatedMinutes: 62 },
@@ -260,7 +260,7 @@ export const phase3Weeks: TrainingWeek[] = [
   {
     week: 21, startDate: '2026-08-17', totalMiles: 55, isDownWeek: false,
     days: [
-      { day: 'Monday',    date: '2026-08-17', type: 'easy',      miles: 7,  description: 'Easy 7mi + Strength A (Phase 3: Back Squat 3x5 RPE 6-7, SL RDL 3x8/side, Weighted Step-Ups 3x8/side, Core circuit 2 rounds). Phase 3 starts — heat starting to break, paces will improve.', hasStrength: true,  estimatedMinutes: 85 },
+      { day: 'Monday',    date: '2026-08-17', type: 'easy',      miles: 7,  description: 'Easy 7mi + Strength A (Phase 3 Full Body: Back Squat 3x5 RPE 6-7, Push-up 3x12, Weighted Step-Ups 3x8/side, Pull-up 3x6, SL RDL 3x8/side, Core circuit 2 rounds). Phase 3 starts — heat starting to break, paces will improve.', hasStrength: true,  estimatedMinutes: 85 },
       { day: 'Tuesday',   date: '2026-08-18', type: 'tempo',     miles: 11, description: 'MP run 11mi: 2mi WU, 7mi @ 6:25-6:35/mi (marathon pace), 2mi CD. Cooldown temps make this feel good.', hasStrength: false, estimatedMinutes: 82 },
       { day: 'Wednesday', date: '2026-08-19', type: 'easy',      miles: 6,  description: 'Easy 6mi recovery. Zone 2.', hasStrength: false, estimatedMinutes: 50 },
       { day: 'Thursday',  date: '2026-08-20', type: 'intervals', miles: 9,  description: 'INTERVALS: 9mi — 2mi WU, 5x1000m @ 5:45/mi w/ 90s jog, 2mi CD', hasStrength: false, estimatedMinutes: 70 },
@@ -458,7 +458,7 @@ export const phase4Weeks: TrainingWeek[] = [
   {
     week: 37, startDate: '2026-12-07', totalMiles: 50, isDownWeek: false,
     days: [
-      { day: 'Monday',    date: '2026-12-07', type: 'easy',  miles: 7,  description: 'Easy 7mi + Strength (Phase 4: Goblet Squat 2x8 light, SL RDL 2x8, Plank+Side Plank 2x30s, Calf Raises 2x15). Volume drop begins — body starts to freshen.', hasStrength: true,  estimatedMinutes: 80 },
+      { day: 'Monday',    date: '2026-12-07', type: 'easy',  miles: 7,  description: 'Easy 7mi + Strength (Phase 4 Light Full Body: Goblet Squat 2x8, Push-up 2x10, SL RDL 2x8, DB Row 2x10, Plank+Side Plank 2x30s, Calf Raises 2x15). Volume drop begins — body starts to freshen.', hasStrength: true,  estimatedMinutes: 80 },
       { day: 'Tuesday',   date: '2026-12-08', type: 'tempo', miles: 9,  description: 'MP run 9mi: 2mi WU, 5mi @ 6:29/mi, 2mi CD. Keeping the legs sharp.', hasStrength: false, estimatedMinutes: 68 },
       { day: 'Wednesday', date: '2026-12-09', type: 'easy',  miles: 7,  description: 'Easy 7mi', hasStrength: false, estimatedMinutes: 58 },
       { day: 'Thursday',  date: '2026-12-10', type: 'easy',  miles: 7,  description: 'Easy 7mi + 6x100m strides', hasStrength: false, estimatedMinutes: 60 },

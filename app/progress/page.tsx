@@ -181,7 +181,7 @@ export default function ProgressPage() {
               style={{
                 background: 'rgba(13,13,242,0.08)', border: '1px solid rgba(13,13,242,0.25)',
                 borderRadius: 8, padding: '5px 12px',
-                color: '#0d0df2', fontSize: 11,
+                color: '#5B5BFF', fontSize: 11,
                 fontFamily: 'DM Sans, sans-serif', fontWeight: 600,
                 cursor: generating ? 'not-allowed' : 'pointer',
                 opacity: generating ? 0.6 : 1, minHeight: 'unset',
@@ -204,7 +204,7 @@ export default function ProgressPage() {
                       flexShrink: 0, padding: '3px 10px', borderRadius: 99,
                       background: isActive ? 'rgba(13,13,242,0.1)' : 'transparent',
                       border: `1px solid ${isActive ? 'rgba(13,13,242,0.4)' : '#2A2A2A'}`,
-                      color: isActive ? '#0d0df2' : 'var(--text-tertiary)',
+                      color: isActive ? '#5B5BFF' : 'var(--text-tertiary)',
                       fontSize: 10, fontFamily: 'DM Mono, monospace',
                       cursor: 'pointer', minHeight: 'unset',
                       display: 'flex', alignItems: 'center', gap: 4,
@@ -248,7 +248,7 @@ export default function ProgressPage() {
               ) : (
                 <button
                   onClick={() => loadFullSummary(activeSummary)}
-                  style={{ fontSize: 11, color: '#0d0df2', background: 'none', border: 'none', cursor: 'pointer', padding: 0, minHeight: 'unset' }}
+                  style={{ fontSize: 11, color: '#5B5BFF', background: 'none', border: 'none', cursor: 'pointer', padding: 0, minHeight: 'unset' }}
                 >
                   Load summary text →
                 </button>

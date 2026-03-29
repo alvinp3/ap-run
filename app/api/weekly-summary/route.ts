@@ -68,7 +68,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing environment variables' }, { status: 500 });
     }
 
-    return NextResponse.json(summary);
+    // Map camelCase to snake_case to match WeeklySummaryRow interface in the UI
+    return NextResponse.json({
+      week_start: summary.weekStart,
+      week_number: summary.weekNumber,
+      phase_name: summary.phaseName,
+      grade: summary.grade,
+      planned_miles: summary.plannedMiles,
+      actual_miles: summary.actualMiles,
+      completion_rate: summary.completionRate,
+      workouts_completed: summary.workoutsCompleted,
+      workouts_planned: summary.workoutsPlanned,
+      summary_text: summary.summaryText,
+      created_at: summary.createdAt,
+    });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     return NextResponse.json({ error: msg }, { status: 500 });

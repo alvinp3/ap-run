@@ -249,7 +249,7 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 4, textAlign: 'center', marginBottom: 12 }}>
               {[
-                { label: 'Marathon PR', value: athleteProfile.marathonPR.replace(':00', ''), color: '#0d0df2' },
+                { label: 'Marathon PR', value: athleteProfile.marathonPR.replace(':00', ''), color: '#5B5BFF' },
                 { label: 'Week',        value: currentWeek ? String(currentWeek.week) : '—',  color: '#F59E0B' },
                 { label: 'Phase',       value: phase ? `P${phase.phase}` : '—',                color: '#8B5CF6' },
                 { label: 'Done %',      value: `${completionRate}%`,                            color: '#22C55E' },
@@ -273,7 +273,7 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
                 <div style={{
                   height: '100%', borderRadius: 99,
                   width: `${Math.min(100, (completedWeeks / 51) * 100)}%`,
-                  background: 'linear-gradient(90deg, #0d0df2, #8B5CF6)',
+                  background: 'linear-gradient(90deg, #5B5BFF, #8B5CF6)',
                 }} />
               </div>
             </div>
@@ -307,7 +307,7 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
                   <div style={{ fontSize: 9, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>planned mi</div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontFamily: 'DM Mono, monospace', fontWeight: 700, fontSize: 20, color: '#0d0df2' }}>
+                  <div style={{ fontFamily: 'DM Mono, monospace', fontWeight: 700, fontSize: 20, color: '#5B5BFF' }}>
                     {weekPlanned > 0 ? `${Math.min(100, Math.round((weekLoggedMiles / weekPlanned) * 100))}%` : '—'}
                   </div>
                   <div style={{ fontSize: 9, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>complete</div>
@@ -481,7 +481,7 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
                       <div style={{
                         width: 6, height: 6, borderRadius: '50%', flexShrink: 0,
                         background: isMain
-                          ? (race.name.includes('Houston') ? '#0d0df2' : '#F59E0B')
+                          ? (race.name.includes('Houston') ? '#5B5BFF' : '#F59E0B')
                           : '#52525B',
                       }} />
                       <div>

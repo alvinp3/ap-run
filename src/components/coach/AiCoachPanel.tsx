@@ -245,8 +245,8 @@ export default function AiCoachPanel({ isOpen, onClose, context }: AiCoachPanelP
                 style={{
                   maxWidth: '88%',
                   padding: '10px 14px',
-                  background: msg.role === 'user' ? '#0d0df2' : '#111111',
-                  border: `1px solid ${msg.role === 'user' ? '#0d0df2' : '#2A2A2A'}`,
+                  background: msg.role === 'user' ? '#5B5BFF' : '#111111',
+                  border: `1px solid ${msg.role === 'user' ? '#5B5BFF' : '#2A2A2A'}`,
                   borderRadius: 0,
                   color: '#FFFFFF',
                   fontFamily: 'Manrope, sans-serif',

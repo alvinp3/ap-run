@@ -533,8 +533,8 @@ export default function CoachPage() {
             return (
               <div key={i} className="flex justify-end">
                 <div style={{
-                  maxWidth: '85%', padding: '10px 14px', background: '#0d0df2',
-                  border: '1px solid #0d0df2', borderRadius: 0, color: '#FFFFFF',
+                  maxWidth: '85%', padding: '10px 14px', background: '#5B5BFF',
+                  border: '1px solid #5B5BFF', borderRadius: 0, color: '#FFFFFF',
                   fontFamily: 'Manrope, sans-serif', fontSize: 14, lineHeight: 1.6,
                 }}>
                   <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{msg.content}</div>

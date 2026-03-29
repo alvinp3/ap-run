@@ -132,7 +132,7 @@ export default function DashboardPage() {
               name="Houston Marathon"
               date={HOUSTON_DATE}
               emoji="🏆"
-              color="#0d0df2"
+              color="#5B5BFF"
               bgVariant="marathon"
               totalWeeks={TOTAL_WEEKS}
               currentWeek={completedWeeks}

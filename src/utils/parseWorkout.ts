@@ -328,7 +328,45 @@ function parseRestDay(description: string): WorkoutBlock[] {
 }
 
 // ---------------------------------------------------------------------------
-// Rule 7 – Fallback
+// Rule 7 – "Label: ex1, ex2, ex3" note/exercise block
+// Handles coach-generated overrides like "Note Lift Day A at lunch: Squat 3x8, ..."
+// ---------------------------------------------------------------------------
+
+/** True if a string looks like an exercise (contains sets×reps notation). */
+function looksLikeExerciseList(text: string): boolean {
+  return /\d+x\d|\d+\/\w|RPE|sets?|reps?|\bx\s*\d/i.test(text);
+}
+
+function parseNoteWithExercises(description: string): WorkoutBlock[] | null {
+  // Match "Some Label Text: exercise1, exercise2, ..."
+  const colonIdx = description.indexOf(': ');
+  if (colonIdx === -1) return null;
+
+  const labelPart = description.slice(0, colonIdx).trim();
+  const exercisePart = description.slice(colonIdx + 2).trim();
+
+  // Only fire this rule if:
+  //  1. The label has no em-dash (not an em-dash workout)
+  //  2. The exercise part looks like an exercise list
+  if (description.includes(' — ')) return null;
+  if (!looksLikeExerciseList(exercisePart)) return null;
+  // Skip if it looks like a run distance description (e.g. "10 miles total: ...")
+  if (/^\d+\s*(?:mi(?:les?)?|km)/.test(labelPart)) return null;
+
+  const exercises = splitByCommaRespectParens(exercisePart).map((e) => e.trim()).filter(Boolean);
+  if (exercises.length < 2) return null; // Need at least 2 items to be a list
+
+  // Determine kind: if label mentions strength/lift/gym → strength, else note
+  const isStrength = /strength|lift|gym|squat|deadlift/i.test(labelPart);
+  return [{
+    kind: isStrength ? 'strength' : 'note',
+    label: labelPart.toUpperCase().slice(0, 50),
+    exercises,
+  }];
+}
+
+// ---------------------------------------------------------------------------
+// Rule 8 – Fallback
 // ---------------------------------------------------------------------------
 
 function parseFallback(description: string): WorkoutBlock[] {
@@ -378,6 +416,10 @@ export function parseWorkoutDescription(description: string, type: WorkoutType):
     return parseLongRun(description);
   }
 
-  // Rule 7 – Fallback
+  // Rule 7 – "Label: ex1, ex2" note/exercise block (coach overrides)
+  const noteWithEx = parseNoteWithExercises(description);
+  if (noteWithEx) return noteWithEx;
+
+  // Rule 8 – Fallback
   return parseFallback(description);
 }
