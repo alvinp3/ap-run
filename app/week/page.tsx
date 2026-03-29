@@ -27,17 +27,72 @@ function blockColor(label: string): string {
 function WorkoutSegments({ description, type }: { description: string; type: WorkoutType }) {
   const blocks = parseWorkoutDescription(description, type);
   if (!blocks.length) return null;
+
+  // Notes and rest-label blocks add noise — skip them in the compact view
+  const visible = blocks.filter(b => b.kind !== 'note' && b.label !== 'REST');
+  if (!visible.length) return null;
+
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '2px 8px', marginTop: 4 }}>
-      {blocks.map((block, i) => {
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginTop: 5 }}>
+      {visible.map((block, i) => {
         const color = blockColor(block.label);
+        const isStrength = block.kind === 'strength';
+        const exercises = block.exercises ?? [];
+        const shown = exercises.slice(0, 4);
+        const extra = exercises.length - shown.length;
+
         return (
-          <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
-            <span style={{ display: 'inline-block', width: 5, height: 5, borderRadius: '50%', background: color, flexShrink: 0 }} />
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color, letterSpacing: '0.06em', textTransform: 'uppercase', lineHeight: 1 }}>
-              {block.label}{block.count ? ` ${block.count}` : ''}
-            </span>
-          </span>
+          <div key={i}>
+            {/* Label + key metrics row */}
+            <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '2px 8px' }}>
+              <span style={{
+                fontFamily: 'JetBrains Mono, monospace', fontSize: 10,
+                letterSpacing: '0.08em', textTransform: 'uppercase',
+                color, fontWeight: 700, lineHeight: 1.2,
+              }}>
+                {block.label}
+              </span>
+              {block.count && !isStrength && (
+                <span style={{ fontFamily: 'DM Mono, monospace', fontSize: 10, color: '#00E5FF' }}>
+                  {block.count}
+                </span>
+              )}
+              {block.pace && (
+                <span style={{ fontFamily: 'DM Mono, monospace', fontSize: 10, color: '#F59E0B' }}>
+                  @{block.pace}
+                </span>
+              )}
+              {block.recovery && (
+                <span style={{ fontSize: 9, color: '#52525B', fontFamily: 'Manrope, sans-serif' }}>
+                  {block.recovery} rest
+                </span>
+              )}
+              {isStrength && block.detail && (
+                <span style={{ fontSize: 10, color: 'var(--text-tertiary)', fontFamily: 'Manrope, sans-serif' }}>
+                  {block.detail}
+                </span>
+              )}
+            </div>
+
+            {/* Exercises */}
+            {shown.length > 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 1, marginTop: 2, paddingLeft: 8, borderLeft: `2px solid ${color}22` }}>
+                {shown.map((ex, j) => (
+                  <span key={j} style={{
+                    fontSize: 10, color: 'var(--text-secondary)',
+                    fontFamily: 'DM Sans, sans-serif', lineHeight: 1.4,
+                  }}>
+                    {ex}
+                  </span>
+                ))}
+                {extra > 0 && (
+                  <span style={{ fontSize: 9, color: '#52525B', fontFamily: 'Manrope, sans-serif' }}>
+                    +{extra} more
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
         );
       })}
     </div>
@@ -184,9 +239,10 @@ export default function WeekPage() {
               <Link
                 key={day.date}
                 href={`/workout/${day.date}`}
-                className="card flex items-center gap-3 min-h-0"
+                className="card flex gap-3 min-h-0"
                 style={{
                   padding: '12px 14px',
+                  alignItems: 'flex-start',
                   borderColor: isCurrentDay ? `${color}55` : 'var(--border-subtle)',
                   boxShadow: isCurrentDay ? `0 0 16px ${color}15` : undefined,
                   textDecoration: 'none',
@@ -249,7 +305,7 @@ export default function WeekPage() {
                 </div>
 
                 {/* Right: miles + status */}
-                <div className="flex-shrink-0 flex flex-col items-end gap-1">
+                <div className="flex-shrink-0 flex flex-col items-end gap-1" style={{ paddingTop: 2 }}>
                   {day.miles > 0 && (
                     <span
                       className="text-sm font-bold"
