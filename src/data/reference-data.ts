@@ -258,7 +258,7 @@ export const athleteProfile = {
   prRace: '2025 BMW Dallas Marathon',
   currentMileage: '20-30 mpw',
   trainingDays: 6,
-  restDay: 'Friday',
+  restDay: 'Sunday',
   trainingTime: '5:00-7:00 AM',
 };
 

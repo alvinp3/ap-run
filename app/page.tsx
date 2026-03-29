@@ -132,7 +132,8 @@ export default function DashboardPage() {
               name="Houston Marathon"
               date={HOUSTON_DATE}
               emoji="🏆"
-              color="#8B5CF6"
+              color="#0d0df2"
+              bgVariant="marathon"
               totalWeeks={TOTAL_WEEKS}
               currentWeek={completedWeeks}
               isActive={getDaysUntil(HOUSTON_DATE) > 0}
@@ -141,7 +142,8 @@ export default function DashboardPage() {
               name="Grasslands 100"
               date={GRASSLANDS_DATE}
               emoji="🌟"
-              color="#8B5CF6"
+              color="#F59E0B"
+              bgVariant="ultra"
               totalWeeks={TOTAL_WEEKS}
               currentWeek={completedWeeks}
               isActive={getDaysUntil(HOUSTON_DATE) <= 0}
