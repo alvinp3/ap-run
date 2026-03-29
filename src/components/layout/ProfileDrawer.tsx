@@ -8,11 +8,12 @@ import { getCurrentWeek, getPhaseForWeek, allWeeks, getDaysUntil } from '@/data/
 import { formatMiles } from '@/utils/workout';
 
 interface GarminHealth {
-  vo2max?: number;
-  restingHR?: number;
-  bodyBattery?: number;
-  hrv?: number;
-  lastUpdated?: string;
+  vo2max?: number | null;
+  restingHR?: number | null;
+  bodyBattery?: number | null;
+  trainingReadiness?: number | null;
+  sleepHours?: number | null;
+  lastUpdated?: string | null;
 }
 
 interface GarminStatus {
@@ -45,9 +46,9 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
 
   useEffect(() => {
     if (!isOpen) return;
-    fetch('/api/garmin/today')
+    fetch('/api/garmin/health')
       .then(r => r.json())
-      .then(d => { if (d.health) setHealth(d.health); })
+      .then(d => { if (d.lastUpdated || d.restingHR || d.vo2max) setHealth(d); })
       .catch(() => {});
     fetch('/api/garmin/status')
       .then(r => r.ok ? r.json() : null)
@@ -95,11 +96,12 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
   }
 
   const metricTiles = [
-    { label: 'VO2max',       value: health?.vo2max ? String(health.vo2max) : null,                color: '#22C55E' },
-    { label: 'Resting HR',   value: health?.restingHR ? `${health.restingHR} bpm` : null,        color: '#EF4444' },
-    { label: 'Body Battery', value: health?.bodyBattery !== undefined ? `${health.bodyBattery}%` : null, color: '#F59E0B' },
-    { label: 'HRV',          value: health?.hrv ? `${health.hrv} ms` : null,                      color: '#8B5CF6' },
-  ].filter(m => m.value);
+    { label: 'VO2max',          value: health?.vo2max ? String(health.vo2max) : null,                          color: '#22C55E' },
+    { label: 'Resting HR',      value: health?.restingHR ? `${health.restingHR} bpm` : null,                   color: '#EF4444' },
+    { label: 'Body Battery',    value: health?.bodyBattery != null ? `${health.bodyBattery}%` : null,          color: '#F59E0B' },
+    { label: 'Training Ready',  value: health?.trainingReadiness != null ? `${health.trainingReadiness}%` : null, color: '#8B5CF6' },
+    { label: 'Sleep',           value: health?.sleepHours != null ? `${health.sleepHours}h` : null,            color: '#00E5FF' },
+  ].filter(m => m.value != null);
 
   return (
     <>

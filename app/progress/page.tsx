@@ -16,15 +16,82 @@ interface LogData {
   actualMiles?: number;
 }
 
+interface WeeklySummaryRow {
+  week_start: string;
+  week_number: number;
+  phase_name: string | null;
+  grade: string | null;
+  planned_miles: number;
+  actual_miles: number;
+  completion_rate: number;
+  workouts_completed: number;
+  workouts_planned: number;
+  summary_text?: string;
+  created_at: string;
+}
+
+const GRADE_COLOR: Record<string, string> = {
+  'A': '#22C55E', 'A-': '#22C55E',
+  'B+': '#84CC16', 'B': '#84CC16', 'B-': '#84CC16',
+  'C+': '#F59E0B', 'C': '#F59E0B',
+  'D': '#EF4444', 'F': '#EF4444',
+};
+
 export default function ProgressPage() {
   const [logs, setLogs] = useState<LogData[]>([]);
+  const [summaries, setSummaries] = useState<WeeklySummaryRow[]>([]);
+  const [activeSummary, setActiveSummary] = useState<WeeklySummaryRow | null>(null);
+  const [generating, setGenerating] = useState(false);
+  const [genMsg, setGenMsg] = useState('');
 
   useEffect(() => {
     fetch('/api/logs')
       .then((r) => r.json())
       .then((d) => { if (Array.isArray(d)) setLogs(d); })
       .catch(() => {});
+
+    fetch('/api/weekly-summary?limit=12')
+      .then(r => r.json())
+      .then((d: WeeklySummaryRow[]) => {
+        if (Array.isArray(d) && d.length > 0) {
+          setSummaries(d);
+          setActiveSummary(d[0]);
+        }
+      })
+      .catch(() => {});
   }, []);
+
+  async function handleGenerate() {
+    setGenerating(true);
+    setGenMsg('');
+    try {
+      const r = await fetch('/api/weekly-summary', { method: 'POST' });
+      const d: WeeklySummaryRow = await r.json();
+      if (d.week_start) {
+        setSummaries(prev => {
+          const filtered = prev.filter(s => s.week_start !== d.week_start);
+          return [d, ...filtered];
+        });
+        setActiveSummary(d);
+        setGenMsg('Summary generated!');
+        setTimeout(() => setGenMsg(''), 3000);
+      }
+    } catch {
+      setGenMsg('Failed to generate');
+    } finally {
+      setGenerating(false);
+    }
+  }
+
+  async function loadFullSummary(row: WeeklySummaryRow) {
+    if (row.summary_text) { setActiveSummary(row); return; }
+    const r = await fetch(`/api/weekly-summary?week=${row.week_start}`);
+    const d: WeeklySummaryRow = await r.json();
+    if (d?.summary_text) {
+      setSummaries(prev => prev.map(s => s.week_start === d.week_start ? d : s));
+      setActiveSummary(d);
+    }
+  }
 
   const logsMap = logs.reduce((acc, l) => { acc[l.date] = l; return acc; }, {} as Record<string, LogData>);
   const today = new Date();
@@ -88,6 +155,123 @@ export default function ProgressPage() {
         >
           Training Progress
         </h1>
+
+        {/* Weekly AI Summary */}
+        <div className="card mb-5">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <span style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 700, fontSize: 14, color: 'var(--text-primary)' }}>
+                Weekly Review
+              </span>
+              {activeSummary?.grade && (
+                <span style={{
+                  fontFamily: 'DM Mono, monospace', fontWeight: 700, fontSize: 13,
+                  color: GRADE_COLOR[activeSummary.grade] ?? '#8B5CF6',
+                  background: `${GRADE_COLOR[activeSummary.grade] ?? '#8B5CF6'}15`,
+                  border: `1px solid ${GRADE_COLOR[activeSummary.grade] ?? '#8B5CF6'}40`,
+                  borderRadius: 6, padding: '1px 8px',
+                }}>
+                  {activeSummary.grade}
+                </span>
+              )}
+            </div>
+            <button
+              onClick={handleGenerate}
+              disabled={generating}
+              style={{
+                background: 'rgba(13,13,242,0.08)', border: '1px solid rgba(13,13,242,0.25)',
+                borderRadius: 8, padding: '5px 12px',
+                color: '#0d0df2', fontSize: 11,
+                fontFamily: 'DM Sans, sans-serif', fontWeight: 600,
+                cursor: generating ? 'not-allowed' : 'pointer',
+                opacity: generating ? 0.6 : 1, minHeight: 'unset',
+              }}
+            >
+              {generating ? 'Generating…' : summaries.length === 0 ? 'Generate Summary' : 'Regenerate'}
+            </button>
+          </div>
+
+          {/* Week selector pills */}
+          {summaries.length > 1 && (
+            <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 8, marginBottom: 8 }}>
+              {summaries.map(s => {
+                const isActive = s.week_start === activeSummary?.week_start;
+                return (
+                  <button
+                    key={s.week_start}
+                    onClick={() => loadFullSummary(s)}
+                    style={{
+                      flexShrink: 0, padding: '3px 10px', borderRadius: 99,
+                      background: isActive ? 'rgba(13,13,242,0.1)' : 'transparent',
+                      border: `1px solid ${isActive ? 'rgba(13,13,242,0.4)' : '#2A2A2A'}`,
+                      color: isActive ? '#0d0df2' : 'var(--text-tertiary)',
+                      fontSize: 10, fontFamily: 'DM Mono, monospace',
+                      cursor: 'pointer', minHeight: 'unset',
+                      display: 'flex', alignItems: 'center', gap: 4,
+                    }}
+                  >
+                    {s.grade && (
+                      <span style={{ color: GRADE_COLOR[s.grade] ?? '#8B5CF6', fontWeight: 700 }}>
+                        {s.grade}
+                      </span>
+                    )}
+                    Wk{s.week_number}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Summary content */}
+          {activeSummary ? (
+            <>
+              {/* Stats row */}
+              <div style={{ display: 'flex', gap: 12, marginBottom: 10, flexWrap: 'wrap' }}>
+                <StatChip label="Planned" value={`${activeSummary.planned_miles}mi`} />
+                <StatChip label="Actual" value={`${activeSummary.actual_miles}mi`} color={activeSummary.actual_miles >= activeSummary.planned_miles ? '#22C55E' : '#F59E0B'} />
+                <StatChip label="Done" value={`${activeSummary.workouts_completed}/${activeSummary.workouts_planned}`} />
+                <StatChip label="Rate" value={`${activeSummary.completion_rate}%`} />
+              </div>
+
+              {/* Summary text */}
+              {activeSummary.summary_text ? (
+                <div style={{
+                  fontSize: 12, lineHeight: 1.6,
+                  color: 'var(--text-secondary)',
+                  fontFamily: 'DM Sans, sans-serif',
+                  whiteSpace: 'pre-line',
+                  borderTop: '1px solid #1A1A1A',
+                  paddingTop: 10,
+                }}>
+                  {activeSummary.summary_text}
+                </div>
+              ) : (
+                <button
+                  onClick={() => loadFullSummary(activeSummary)}
+                  style={{ fontSize: 11, color: '#0d0df2', background: 'none', border: 'none', cursor: 'pointer', padding: 0, minHeight: 'unset' }}
+                >
+                  Load summary text →
+                </button>
+              )}
+
+              <div style={{ fontSize: 10, color: 'var(--text-tertiary)', marginTop: 8 }}>
+                Week {activeSummary.week_number}
+                {activeSummary.phase_name ? ` · ${activeSummary.phase_name}` : ''}
+                {' · '}
+                {new Date(activeSummary.week_start + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                –
+                {new Date(new Date(activeSummary.week_start + 'T00:00:00').setDate(new Date(activeSummary.week_start + 'T00:00:00').getDate() + 6)).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+              </div>
+            </>
+          ) : (
+            <div style={{ fontSize: 12, color: 'var(--text-tertiary)', textAlign: 'center', padding: '16px 0' }}>
+              {genMsg || 'Summaries are auto-generated every Monday. Tap Generate to create one now.'}
+            </div>
+          )}
+          {genMsg && summaries.length > 0 && (
+            <div style={{ fontSize: 11, color: '#22C55E', marginTop: 6 }}>{genMsg}</div>
+          )}
+        </div>
 
         {/* Key stats grid */}
         <div className="grid grid-cols-2 gap-3 mb-6">
@@ -280,6 +464,19 @@ export default function ProgressPage() {
 
       <AppNav />
       <CoachFAB />
+    </div>
+  );
+}
+
+function StatChip({ label, value, color = 'var(--text-primary)' }: { label: string; value: string; color?: string }) {
+  return (
+    <div style={{
+      background: 'rgba(255,255,255,0.03)',
+      border: '1px solid #1A1A1A',
+      borderRadius: 8, padding: '4px 10px',
+    }}>
+      <div style={{ fontFamily: 'DM Mono, monospace', fontWeight: 700, fontSize: 13, color }}>{value}</div>
+      <div style={{ fontSize: 9, color: 'var(--text-tertiary)', marginTop: 1, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
     </div>
   );
 }
