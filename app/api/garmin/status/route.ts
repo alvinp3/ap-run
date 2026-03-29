@@ -40,22 +40,22 @@ export async function GET() {
 
     const { data: activities, error } = await supabase
       .from('garmin_activities')
-      .select('start_time, activity_type, distance_meters')
-      .order('start_time', { ascending: false })
+      .select('activity_date, activity_type, distance_miles')
+      .order('activity_date', { ascending: false })
       .limit(1);
 
     if (error) throw error;
 
-    const { data: metrics } = await supabase
-      .from('garmin_daily_metrics')
-      .select('recorded_at')
-      .order('recorded_at', { ascending: false })
-      .limit(1);
+    const { data: settings } = await supabase
+      .from('user_settings')
+      .select('garmin_last_sync')
+      .eq('id', '00000000-0000-0000-0000-000000000001')
+      .single();
 
     const latestActivity = activities?.[0];
-    const latestSync = metrics?.[0]?.recorded_at ?? latestActivity?.start_time ?? null;
-    const distanceMi = latestActivity
-      ? ((latestActivity.distance_meters ?? 0) / 1609.34).toFixed(1)
+    const latestSync = settings?.garmin_last_sync ?? null;
+    const distanceMi = latestActivity?.distance_miles
+      ? Number(latestActivity.distance_miles).toFixed(1)
       : null;
 
     // Count total imported activities

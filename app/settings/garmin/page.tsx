@@ -4,59 +4,105 @@ import { useState, useEffect } from 'react';
 import AppHeader from '@/components/layout/AppHeader';
 import AppNav from '@/components/layout/AppNav';
 
-interface GarminSyncStatus {
+interface GarminStatus {
   connected: boolean;
   lastSync: string | null;
   activitiesImported: number;
   latestActivity: string | null;
 }
 
+type ActionState = 'idle' | 'loading' | 'success' | 'error';
+
 export default function GarminSettingsPage() {
-  const [status, setStatus] = useState<GarminSyncStatus>({
+  const [status, setStatus] = useState<GarminStatus>({
     connected: false,
     lastSync: null,
     activitiesImported: 0,
     latestActivity: null,
   });
-  const [loading, setLoading] = useState(true);
-  const [syncing, setSyncing] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
+  const [statusLoading, setStatusLoading] = useState(true);
 
-  useEffect(() => {
-    fetchStatus();
-  }, []);
+  const [connectState, setConnectState] = useState<ActionState>('idle');
+  const [pullState, setPullState]       = useState<ActionState>('idle');
+  const [syncState, setSyncState]       = useState<ActionState>('idle');
+
+  const [connectMsg, setConnectMsg] = useState('');
+  const [pullMsg, setPullMsg]       = useState('');
+  const [syncMsg, setSyncMsg]       = useState('');
+
+  useEffect(() => { fetchStatus(); }, []);
 
   async function fetchStatus() {
-    setLoading(true);
+    setStatusLoading(true);
     try {
-      const res = await fetch('/api/garmin/status');
-      if (res.ok) {
-        const data = await res.json();
-        setStatus(data);
-      }
-    } catch {
-      // Garmin sync worker not configured — expected in dev
+      const r = await fetch('/api/garmin/status');
+      if (r.ok) setStatus(await r.json());
     } finally {
-      setLoading(false);
+      setStatusLoading(false);
     }
   }
 
-  async function triggerSync() {
-    setSyncing(true);
-    setMessage(null);
+  async function handleConnect() {
+    setConnectState('loading');
+    setConnectMsg('');
     try {
-      const res = await fetch('/api/garmin/sync', { method: 'POST' });
-      const data = await res.json();
-      if (res.ok) {
-        setMessage({ type: 'success', text: data.message || 'Sync triggered. Check back in a few minutes.' });
+      const r = await fetch('/api/garmin/connect', { method: 'POST' });
+      const d = await r.json();
+      if (d.success) {
+        setConnectState('success');
+        setConnectMsg(`Connected as ${d.displayName}`);
         await fetchStatus();
       } else {
-        setMessage({ type: 'error', text: data.error || 'Sync failed. Check Railway worker logs.' });
+        setConnectState('error');
+        setConnectMsg(d.error ?? 'Connection failed');
       }
-    } catch {
-      setMessage({ type: 'info', text: 'Garmin sync worker is not configured. See setup instructions below.' });
-    } finally {
-      setSyncing(false);
+    } catch (e) {
+      setConnectState('error');
+      setConnectMsg(String(e));
+    }
+  }
+
+  async function handlePull() {
+    setPullState('loading');
+    setPullMsg('');
+    try {
+      const r = await fetch('/api/garmin/pull', { method: 'POST' });
+      const d = await r.json();
+      if (d.success) {
+        setPullState('success');
+        const parts = [
+          d.healthSaved && 'health data',
+          d.activitiesImported && `${d.activitiesImported} activities`,
+          d.workoutsAutoCompleted && `${d.workoutsAutoCompleted} workouts auto-completed`,
+        ].filter(Boolean);
+        setPullMsg(`Pulled: ${parts.join(', ') || 'no new data'}${d.errors?.length ? ` (${d.errors.length} errors)` : ''}`);
+        await fetchStatus();
+      } else {
+        setPullState('error');
+        setPullMsg(d.error ?? 'Pull failed');
+      }
+    } catch (e) {
+      setPullState('error');
+      setPullMsg(String(e));
+    }
+  }
+
+  async function handleSync() {
+    setSyncState('loading');
+    setSyncMsg('');
+    try {
+      const r = await fetch('/api/garmin/sync', { method: 'POST' });
+      const d = await r.json();
+      if (d.success) {
+        setSyncState('success');
+        setSyncMsg(`Pushed ${d.pushed} workouts to watch (${d.skipped} rest days skipped${d.errors ? `, ${d.errors} errors` : ''})`);
+      } else {
+        setSyncState('error');
+        setSyncMsg(d.error ?? 'Push failed');
+      }
+    } catch (e) {
+      setSyncState('error');
+      setSyncMsg(String(e));
     }
   }
 
@@ -72,29 +118,10 @@ export default function GarminSettingsPage() {
           Garmin Connect
         </h1>
         <p className="text-sm mb-5" style={{ color: 'var(--text-secondary)' }}>
-          Forerunner 745 activity sync
+          Forerunner 745 — sync health data and push workouts to your watch
         </p>
 
-        {/* Message banner */}
-        {message && (
-          <div
-            className="mb-4 px-4 py-3 rounded-xl text-sm"
-            style={{
-              background:
-                message.type === 'success' ? 'rgba(34,197,94,0.1)' :
-                message.type === 'error' ? 'rgba(239,68,68,0.1)' :
-                'rgba(59,130,246,0.1)',
-              color:
-                message.type === 'success' ? '#22C55E' :
-                message.type === 'error' ? '#EF4444' :
-                '#3B82F6',
-            }}
-          >
-            {message.text}
-          </div>
-        )}
-
-        {/* Connection status */}
+        {/* Status tiles */}
         <div className="card mb-4">
           <div className="flex items-center gap-3 mb-4">
             <div
@@ -104,72 +131,81 @@ export default function GarminSettingsPage() {
               ⌚
             </div>
             <div>
-              <div className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>
-                Garmin Forerunner 745
-              </div>
-              <div className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>
-                Running computer + heart rate monitor
+              <div className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>Garmin Forerunner 745</div>
+              <div
+                className="text-xs mt-0.5 flex items-center gap-1.5"
+                style={{ color: status.connected ? '#22C55E' : '#64748B' }}
+              >
+                <span
+                  className="w-1.5 h-1.5 rounded-full inline-block"
+                  style={{ background: status.connected ? '#22C55E' : '#64748B' }}
+                />
+                {statusLoading ? 'Checking…' : status.connected ? 'Connected' : 'Not connected'}
               </div>
             </div>
           </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <StatusTile
-              label="Status"
-              value={loading ? '...' : (status.connected ? 'Connected' : 'Disconnected')}
-              color={status.connected ? '#22C55E' : '#F59E0B'}
-            />
-            <StatusTile
-              label="Activities"
-              value={loading ? '...' : String(status.activitiesImported)}
-              color="var(--accent-teal)"
-            />
+          <div className="grid grid-cols-3 gap-2">
+            <StatusTile label="Activities" value={statusLoading ? '…' : String(status.activitiesImported)} color="var(--accent-teal)" />
             <StatusTile
               label="Last Sync"
-              value={loading ? '...' : (status.lastSync ? new Date(status.lastSync).toLocaleDateString() : 'Never')}
+              value={statusLoading ? '…' : (status.lastSync ? new Date(status.lastSync).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Never')}
               color="var(--text-secondary)"
             />
-            <StatusTile
-              label="Latest Run"
-              value={loading ? '...' : (status.latestActivity ?? 'None yet')}
-              color="var(--text-secondary)"
-            />
+            <StatusTile label="Latest Run" value={statusLoading ? '…' : (status.latestActivity ?? '—')} color="var(--text-secondary)" />
           </div>
         </div>
 
-        {/* Manual sync button */}
-        <div className="card mb-4">
-          <div className="text-sm font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
-            Manual Sync
-          </div>
-          <div className="text-xs mb-4" style={{ color: 'var(--text-secondary)' }}>
-            Triggers the Railway worker to pull the latest activities from Garmin Connect. Auto-sync runs every 6 hours.
-          </div>
-          <button
-            onClick={triggerSync}
-            disabled={syncing}
-            className="btn-teal w-full"
-            style={{ opacity: syncing ? 0.7 : 1 }}
-          >
-            {syncing ? '⟳ Syncing…' : '↻ Sync Now'}
-          </button>
-        </div>
+        {/* Step 1: Connect */}
+        <ActionCard
+          step="1"
+          title="Authenticate"
+          description="Log in to Garmin Connect and save your session. Run this once — the app stores your tokens so it won't need to log in again."
+          buttonLabel="Connect to Garmin"
+          buttonLoadingLabel="Connecting…"
+          state={connectState}
+          message={connectMsg}
+          onAction={handleConnect}
+        />
 
-        {/* What gets synced */}
+        {/* Step 2: Pull */}
+        <ActionCard
+          step="2"
+          title="Pull Data from Watch"
+          description="Fetch today's health metrics (resting HR, sleep) and your last 14 activities. Matching runs are auto-completed in your training log."
+          buttonLabel="Pull Health & Activities"
+          buttonLoadingLabel="Pulling…"
+          state={pullState}
+          message={pullMsg}
+          onAction={handlePull}
+        />
+
+        {/* Step 3: Push workouts */}
+        <ActionCard
+          step="3"
+          title="Push Workouts to Watch"
+          description="Upload the next 7 days of planned workouts to your Garmin Connect library. Sync your watch and they'll appear in your workout list."
+          buttonLabel="Push Next 7 Days"
+          buttonLoadingLabel="Pushing…"
+          state={syncState}
+          message={syncMsg}
+          onAction={handleSync}
+        />
+
+        {/* What syncs */}
         <div className="card mb-4">
           <div className="text-sm font-bold mb-3" style={{ color: 'var(--text-primary)' }}>
             What Gets Synced
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {[
-              { icon: '🏃', label: 'Run activities', detail: 'Distance, pace, duration, HR' },
-              { icon: '❤️', label: 'Heart rate zones', detail: 'Time in Zone 1-5 per workout' },
-              { icon: '📊', label: 'VO2max estimate', detail: 'Garmin Performance Condition' },
-              { icon: '😴', label: 'Recovery data', detail: 'Sleep, HRV, Body Battery' },
-              { icon: '🌡️', label: 'Stress score', detail: 'Daily stress tracking' },
+              { icon: '🏃', label: 'Run activities', detail: 'Distance, pace, duration, avg HR' },
+              { icon: '❤️', label: 'Resting heart rate', detail: 'Daily RHR — rising trend = warning' },
+              { icon: '😴', label: 'Sleep duration', detail: 'Last night\'s sleep hours' },
+              { icon: '📋', label: 'Workout auto-complete', detail: 'Activities matched to your training plan' },
+              { icon: '📲', label: 'Workouts to watch', detail: 'Next 7 days pushed to Garmin Connect' },
             ].map(({ icon, label, detail }) => (
               <div key={label} className="flex items-center gap-3">
-                <span className="text-lg w-8 text-center">{icon}</span>
+                <span className="text-lg w-8 text-center flex-shrink-0">{icon}</span>
                 <div>
                   <div className="text-sm" style={{ color: 'var(--text-primary)' }}>{label}</div>
                   <div className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{detail}</div>
@@ -179,51 +215,13 @@ export default function GarminSettingsPage() {
           </div>
         </div>
 
-        {/* Architecture note */}
-        <div className="card mb-4" style={{ borderColor: 'rgba(59,130,246,0.2)', background: 'rgba(59,130,246,0.04)' }}>
-          <div className="text-sm font-bold mb-2" style={{ color: '#3B82F6' }}>
-            Setup Required: Railway Worker
-          </div>
-          <div className="text-xs space-y-2" style={{ color: 'var(--text-secondary)' }}>
-            <p>
-              Garmin does not provide a public webhook API. This app uses a separate Railway worker service that logs into Garmin Connect on a schedule and pulls activity data.
-            </p>
-            <p>
-              The sync worker is in <code style={{ color: 'var(--accent-teal)' }}>/services/garmin-sync/</code> and runs as a Railway cron job.
-            </p>
-          </div>
-          <div className="mt-3 space-y-1">
-            {[
-              '1. Deploy the Railway service from /services/garmin-sync/',
-              '2. Set GARMIN_EMAIL and GARMIN_PASSWORD env vars',
-              '3. Set the Railway worker URL in your .env.local',
-              '4. Enable auto-sync in Settings',
-            ].map((step) => (
-              <div key={step} className="text-xs flex items-start gap-2">
-                <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: '#3B82F6' }} />
-                <span style={{ color: 'var(--text-tertiary)' }}>{step}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Connect IQ Widget */}
-        <div className="card mb-4">
-          <div className="text-sm font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
+        {/* Watch widget */}
+        <div className="card mb-4" style={{ borderColor: 'rgba(45,212,191,0.2)' }}>
+          <div className="text-sm font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
             Connect IQ Watch Widget
           </div>
-          <div className="text-xs mb-3" style={{ color: 'var(--text-secondary)' }}>
-            Install the BQ Training widget on your Forerunner 745 to see today&apos;s planned workout directly on your wrist.
-          </div>
-          <div
-            className="text-xs p-3 rounded-xl"
-            style={{ background: 'rgba(45,212,191,0.05)', border: '1px solid rgba(45,212,191,0.15)', color: 'var(--text-tertiary)' }}
-          >
-            Widget source: <code style={{ color: 'var(--accent-teal)' }}>/garmin-widget/</code>
-            <br />
-            Fetches data from: <code style={{ color: 'var(--accent-teal)' }}>/api/garmin/today</code>
-            <br />
-            Install via Garmin Express or Connect IQ SDK
+          <div className="text-xs mb-2" style={{ color: 'var(--text-secondary)' }}>
+            See today&apos;s workout on your wrist. Source is in <code style={{ color: 'var(--accent-teal)' }}>/garmin-widget/</code> — load via Connect IQ SDK and sideload to your FR745.
           </div>
         </div>
       </main>
@@ -233,18 +231,73 @@ export default function GarminSettingsPage() {
   );
 }
 
+// ── Sub-components ──────────────────────────────────────────
+
 function StatusTile({ label, value, color }: { label: string; value: string; color: string }) {
   return (
-    <div
-      className="rounded-xl p-3 text-center"
-      style={{ background: 'var(--bg-primary)' }}
-    >
-      <div className="text-sm font-bold" style={{ color, fontFamily: 'JetBrains Mono, monospace' }}>
+    <div className="rounded-xl p-3 text-center" style={{ background: 'var(--bg-primary)' }}>
+      <div className="text-sm font-bold truncate" style={{ color, fontFamily: 'JetBrains Mono, monospace' }}>
         {value}
       </div>
-      <div className="text-xs mt-0.5" style={{ color: 'var(--text-tertiary)' }}>
-        {label}
+      <div className="text-xs mt-0.5" style={{ color: 'var(--text-tertiary)' }}>{label}</div>
+    </div>
+  );
+}
+
+function ActionCard({
+  step, title, description, buttonLabel, buttonLoadingLabel, state, message, onAction,
+}: {
+  step: string;
+  title: string;
+  description: string;
+  buttonLabel: string;
+  buttonLoadingLabel: string;
+  state: ActionState;
+  message: string;
+  onAction: () => void;
+}) {
+  const isLoading = state === 'loading';
+  return (
+    <div className="card mb-4">
+      <div className="flex items-start gap-3 mb-3">
+        <div
+          className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5"
+          style={{ background: 'rgba(45,212,191,0.15)', color: 'var(--accent-teal)' }}
+        >
+          {step}
+        </div>
+        <div>
+          <div className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{title}</div>
+          <div className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>{description}</div>
+        </div>
       </div>
+
+      {message && (
+        <div
+          className="text-xs px-3 py-2 rounded-xl mb-3"
+          style={{
+            background: state === 'success' ? 'rgba(34,197,94,0.08)' : 'rgba(239,68,68,0.08)',
+            color: state === 'success' ? '#22C55E' : '#EF4444',
+          }}
+        >
+          {state === 'success' ? '✓ ' : '✗ '}{message}
+        </div>
+      )}
+
+      <button
+        onClick={onAction}
+        disabled={isLoading}
+        className="w-full py-2.5 rounded-xl text-sm font-semibold"
+        style={{
+          background: isLoading ? 'rgba(45,212,191,0.08)' : 'rgba(45,212,191,0.12)',
+          border: '1px solid rgba(45,212,191,0.3)',
+          color: 'var(--accent-teal)',
+          minHeight: 44,
+          opacity: isLoading ? 0.7 : 1,
+        }}
+      >
+        {isLoading ? buttonLoadingLabel : buttonLabel}
+      </button>
     </div>
   );
 }
