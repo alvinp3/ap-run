@@ -345,14 +345,7 @@ export default function DashboardPage() {
       </main>
 
       <AppNav />
-      <CoachFAB
-        context={{
-          weekNumber: currentWeek?.week,
-          phase: phase?.phase,
-          phaseName: phase?.name,
-          todayWorkout: todayWorkout?.description,
-        }}
-      />
+      <CoachFAB />
     </div>
   );
 }
