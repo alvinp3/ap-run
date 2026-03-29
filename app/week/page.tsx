@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
 import AppHeader from '@/components/layout/AppHeader';
 import AppNav from '@/components/layout/AppNav';
 import CoachFAB from '@/components/coach/CoachFAB';
@@ -12,34 +11,34 @@ import { formatMiles, formatDuration, isToday, isPast, getWorkoutColor } from '@
 import type { WorkoutDay } from '@/types';
 
 export default function WeekPage() {
-  const router       = useRouter();
-  const searchParams = useSearchParams();
-  const [weekNum, setWeekNumState] = useState<number>(1);
+  const [weekNum, setWeekNumRaw] = useState<number>(1);
   const [logs, setLogs] = useState<Record<string, { completed: boolean; skipped: boolean }>>({});
 
   const today = new Date();
 
-  // Sync weekNum → URL so browser back restores the right week
-  const setWeekNum = useCallback((n: number | ((prev: number) => number)) => {
-    setWeekNumState((prev) => {
-      const next = typeof n === 'function' ? n(prev) : n;
-      router.replace(`/week?w=${next}`, { scroll: false });
-      return next;
-    });
-  }, [router]);
-
+  // On mount: read ?w= directly from window.location (avoids Suspense requirement
+  // of useSearchParams). Falls back to the current training week.
   useEffect(() => {
-    // Prefer ?w= param (restored by browser back), fall back to current training week
-    const param = searchParams.get('w');
+    const params = new URLSearchParams(window.location.search);
+    const param  = params.get('w');
     const parsed = param ? parseInt(param, 10) : NaN;
     if (!isNaN(parsed) && parsed >= 1 && parsed <= allWeeks.length) {
-      setWeekNumState(parsed);
+      setWeekNumRaw(parsed);
     } else {
       const cw = getCurrentWeek(today);
-      setWeekNumState(cw?.week ?? 1);
+      setWeekNumRaw(cw?.week ?? 1);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Update state AND URL together — use replaceState so browser back works
+  function setWeekNum(n: number | ((prev: number) => number)) {
+    setWeekNumRaw((prev) => {
+      const next = typeof n === 'function' ? n(prev) : n;
+      window.history.replaceState(null, '', `/week?w=${next}`);
+      return next;
+    });
+  }
 
   useEffect(() => {
     fetch('/api/logs')
