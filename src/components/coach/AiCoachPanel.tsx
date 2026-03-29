@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { BrainCircuit, ArrowUp } from 'lucide-react';
+import { useTextLines } from '@/hooks/useTextLines';
 import type { CoachMessage } from '@/types';
 
 interface AiCoachPanelProps {
@@ -32,6 +33,67 @@ function StreamingCursor() {
   );
 }
 
+const COLLAPSE_LINES = 6;
+const MSG_FONT = '14px/1.6 Manrope, sans-serif';
+const MSG_LINE_HEIGHT = 14 * 1.6; // 22.4px
+
+/** Long assistant messages collapse after COLLAPSE_LINES lines */
+function CollapsibleMessage({ content }: { content: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const { lineCount, containerRef } = useTextLines(content, MSG_FONT, MSG_LINE_HEIGHT);
+
+  const isTall = lineCount !== null && lineCount > COLLAPSE_LINES;
+  const collapsedHeight = COLLAPSE_LINES * MSG_LINE_HEIGHT;
+
+  return (
+    <div>
+      <div
+        ref={containerRef}
+        style={{
+          whiteSpace: 'pre-wrap',
+          wordBreak: 'break-word',
+          overflow: 'hidden',
+          maxHeight: isTall && !expanded ? collapsedHeight : undefined,
+          position: 'relative',
+        }}
+      >
+        {content}
+        {isTall && !expanded && (
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: 32,
+              background: 'linear-gradient(to bottom, transparent, #111111)',
+            }}
+          />
+        )}
+      </div>
+      {isTall && (
+        <button
+          onClick={() => setExpanded((v) => !v)}
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            color: '#B388FF',
+            fontFamily: 'Manrope, sans-serif',
+            fontSize: 12,
+            fontWeight: 600,
+            letterSpacing: '0.05em',
+            padding: '4px 0 0',
+            minHeight: 'unset',
+          }}
+        >
+          {expanded ? 'SHOW LESS ↑' : 'SHOW MORE ↓'}
+        </button>
+      )}
+    </div>
+  );
+}
+
 export default function AiCoachPanel({ isOpen, onClose, context }: AiCoachPanelProps) {
   const [messages, setMessages] = useState<CoachMessage[]>([
     {
@@ -52,6 +114,14 @@ export default function AiCoachPanel({ isOpen, onClose, context }: AiCoachPanelP
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
+  // Auto-resize textarea as content grows
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 160) + 'px';
+  }, [input]);
+
   async function sendMessage() {
     const text = input.trim();
     if (!text || loading) return;
@@ -60,6 +130,11 @@ export default function AiCoachPanel({ isOpen, onClose, context }: AiCoachPanelP
     setMessages((prev) => [...prev, userMsg]);
     setInput('');
     setLoading(true);
+
+    // Reset textarea height after clearing
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto';
+    }
 
     try {
       const res = await fetch('/api/coach', {
@@ -177,11 +252,15 @@ export default function AiCoachPanel({ isOpen, onClose, context }: AiCoachPanelP
                   fontFamily: 'Manrope, sans-serif',
                   fontSize: 14,
                   lineHeight: 1.6,
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'break-word',
                 }}
               >
-                {msg.content}
+                {msg.role === 'assistant' ? (
+                  <CollapsibleMessage content={msg.content} />
+                ) : (
+                  <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                    {msg.content}
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -248,7 +327,7 @@ export default function AiCoachPanel({ isOpen, onClose, context }: AiCoachPanelP
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask Coach..."
-            rows={1}
+            rows={3}
             className="flex-1 resize-none"
             style={{
               background: '#0A0A0A',
@@ -257,8 +336,10 @@ export default function AiCoachPanel({ isOpen, onClose, context }: AiCoachPanelP
               color: '#FFFFFF',
               fontFamily: 'Manrope, sans-serif',
               fontSize: 14,
-              padding: '8px 12px',
-              maxHeight: 100,
+              lineHeight: 1.6,
+              padding: '10px 12px',
+              minHeight: 72,
+              maxHeight: 160,
               overflowY: 'auto',
               outline: 'none',
             }}
@@ -280,6 +361,7 @@ export default function AiCoachPanel({ isOpen, onClose, context }: AiCoachPanelP
               flexShrink: 0,
               minHeight: 'unset',
               transition: 'background 0.12s',
+              alignSelf: 'flex-end',
             }}
           >
             <ArrowUp size={16} strokeWidth={2} />
