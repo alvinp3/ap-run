@@ -318,8 +318,8 @@ export default function AiCoachPanel({ isOpen, onClose, context }: AiCoachPanelP
 
         {/* Input */}
         <div
-          className="px-4 pt-3 pb-3 flex-shrink-0 flex items-end gap-2"
-          style={{ borderTop: '1px solid #2A2A2A' }}
+          className="px-4 pt-3 pb-3 flex-shrink-0"
+          style={{ borderTop: '1px solid #2A2A2A', position: 'relative' }}
         >
           <textarea
             ref={inputRef}
@@ -328,7 +328,7 @@ export default function AiCoachPanel({ isOpen, onClose, context }: AiCoachPanelP
             onKeyDown={handleKeyDown}
             placeholder="Ask Coach..."
             rows={3}
-            className="flex-1 resize-none"
+            className="w-full resize-none"
             style={{
               background: '#0A0A0A',
               border: '1px solid #2A2A2A',
@@ -337,34 +337,36 @@ export default function AiCoachPanel({ isOpen, onClose, context }: AiCoachPanelP
               fontFamily: 'Manrope, sans-serif',
               fontSize: 14,
               lineHeight: 1.6,
-              padding: '10px 12px',
+              padding: '10px 48px 10px 12px',
               minHeight: 72,
               maxHeight: 160,
               overflowY: 'auto',
               outline: 'none',
+              display: 'block',
             }}
           />
           <button
             onClick={sendMessage}
             disabled={!input.trim() || loading}
             style={{
+              position: 'absolute',
+              right: 20,
+              bottom: 19,
               background: input.trim() && !loading ? '#B388FF' : '#1A1A1A',
               border: 'none',
               borderRadius: 0,
               color: input.trim() && !loading ? '#000000' : '#52525B',
-              width: 40,
-              height: 40,
+              width: 32,
+              height: 32,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: input.trim() && !loading ? 'pointer' : 'not-allowed',
-              flexShrink: 0,
               minHeight: 'unset',
               transition: 'background 0.12s',
-              alignSelf: 'flex-end',
             }}
           >
-            <ArrowUp size={16} strokeWidth={2} />
+            <ArrowUp size={15} strokeWidth={2} />
           </button>
         </div>
       </div>
