@@ -6,6 +6,7 @@ import {
   Home,
   CalendarDays,
   TrendingUp,
+  BrainCircuit,
   Watch,
   User,
   Settings,
@@ -22,6 +23,7 @@ const NAV = [
   { href: '/',         Icon: Home,         label: 'Today'    },
   { href: '/week',     Icon: CalendarDays, label: 'Week'     },
   { href: '/progress', Icon: TrendingUp,   label: 'Progress' },
+  { href: '/coach',    Icon: BrainCircuit, label: 'Coach'    },
   { href: '/garmin',   Icon: Watch,        label: 'Garmin'   },
   { href: '/profile',  Icon: User,         label: 'Profile'  },
   { href: '/settings', Icon: Settings,     label: 'Settings' },
@@ -51,30 +53,45 @@ export default function AppHeader({ showShare = false }: AppHeaderProps) {
     >
       {/* Row 1 — wordmark + share */}
       <div className="flex items-center justify-between px-4 h-12">
-        <Link href="/" className="flex items-center gap-1.5 no-underline">
+        <Link href="/" className="flex items-center gap-0 no-underline leading-none">
           <span
             style={{
               fontFamily: 'Space Grotesk, sans-serif',
-              fontWeight: 300,
-              fontSize: 14,
-              letterSpacing: '0.20em',
+              fontWeight: 400,
+              fontSize: 11,
+              letterSpacing: '0.14em',
               textTransform: 'uppercase',
               color: '#0d0df2',
+              whiteSpace: 'nowrap',
             }}
           >
-            BQ
+            Boston Qualifier
           </span>
           <span
             style={{
               fontFamily: 'Space Grotesk, sans-serif',
               fontWeight: 300,
-              fontSize: 14,
-              letterSpacing: '0.20em',
+              fontSize: 11,
+              letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              color: '#FFFFFF',
+              color: '#3A3A3A',
+              margin: '0 4px',
             }}
           >
-            Training
+            ·
+          </span>
+          <span
+            style={{
+              fontFamily: 'Space Grotesk, sans-serif',
+              fontWeight: 400,
+              fontSize: 11,
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: '#FFFFFF',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Grasslands 100
           </span>
         </Link>
 
