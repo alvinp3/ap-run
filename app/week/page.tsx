@@ -8,7 +8,41 @@ import CoachFAB from '@/components/coach/CoachFAB';
 import WorkoutBadge from '@/components/ui/WorkoutBadge';
 import { getCurrentWeek, getPhaseForWeek, getWeekByNumber, allWeeks } from '@/data/training-plan';
 import { formatMiles, formatDuration, isToday, isPast, getWorkoutColor } from '@/utils/workout';
-import type { WorkoutDay } from '@/types';
+import { parseWorkoutDescription } from '@/utils/parseWorkout';
+import type { WorkoutDay, WorkoutType } from '@/types';
+
+function blockColor(label: string): string {
+  const u = label.toUpperCase();
+  if (u === 'WARMUP' || u === 'COOLDOWN') return '#52525B';
+  if (u === 'INTERVALS')                  return '#EF4444';
+  if (u === 'TEMPO' || u === 'FARTLEK' || u === 'STRIDES' || u === 'PICKUP') return '#F59E0B';
+  if (u === 'EASY' || u === 'RUN' || u === 'LONG RUN') return '#22C55E';
+  if (u.startsWith('STRENGTH'))           return '#B388FF';
+  if (u === 'FINISH')                     return '#00E5FF';
+  if (u === 'FUEL')                       return '#F59E0B';
+  if (u === 'REST')                       return '#3A3A3A';
+  return '#52525B';
+}
+
+function WorkoutSegments({ description, type }: { description: string; type: WorkoutType }) {
+  const blocks = parseWorkoutDescription(description, type);
+  if (!blocks.length) return null;
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '2px 8px', marginTop: 4 }}>
+      {blocks.map((block, i) => {
+        const color = blockColor(block.label);
+        return (
+          <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+            <span style={{ display: 'inline-block', width: 5, height: 5, borderRadius: '50%', background: color, flexShrink: 0 }} />
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color, letterSpacing: '0.06em', textTransform: 'uppercase', lineHeight: 1 }}>
+              {block.label}{block.count ? ` ${block.count}` : ''}
+            </span>
+          </span>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function WeekPage() {
   const [weekNum, setWeekNumRaw] = useState<number>(1);
@@ -211,15 +245,7 @@ export default function WeekPage() {
                       </span>
                     )}
                   </div>
-                  <div
-                    className="text-xs truncate"
-                    style={{
-                      color: 'var(--text-secondary)',
-                      fontFamily: 'DM Sans, sans-serif',
-                    }}
-                  >
-                    {day.description.substring(0, 70)}{day.description.length > 70 ? '…' : ''}
-                  </div>
+                  <WorkoutSegments description={day.description} type={day.type} />
                 </div>
 
                 {/* Right: miles + status */}

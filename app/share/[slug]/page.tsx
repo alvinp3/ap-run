@@ -1,9 +1,43 @@
 import { getTodayWorkout, getCurrentWeek, getPhaseForWeek, allWeeks, getDaysUntil } from '@/data/training-plan';
 import WorkoutBadge from '@/components/ui/WorkoutBadge';
 import PhaseBadge from '@/components/ui/PhaseBadge';
+import WorkoutSteps from '@/components/ui/WorkoutSteps';
 import { formatDate, formatMiles, getWorkoutColor } from '@/utils/workout';
+import { parseWorkoutDescription } from '@/utils/parseWorkout';
+import type { WorkoutType } from '@/types';
 
 export const dynamic = 'force-dynamic';
+
+function segmentColor(label: string): string {
+  const u = label.toUpperCase();
+  if (u === 'WARMUP' || u === 'COOLDOWN') return '#52525B';
+  if (u === 'INTERVALS') return '#EF4444';
+  if (u === 'TEMPO' || u === 'FARTLEK' || u === 'STRIDES' || u === 'PICKUP') return '#F59E0B';
+  if (u === 'EASY' || u === 'RUN' || u === 'LONG RUN') return '#22C55E';
+  if (u.startsWith('STRENGTH')) return '#B388FF';
+  if (u === 'FINISH') return '#00E5FF';
+  return '#52525B';
+}
+
+function WeekDayPills({ description, type }: { description: string; type: WorkoutType }) {
+  const blocks = parseWorkoutDescription(description, type);
+  if (!blocks.length) return null;
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px 6px' }}>
+      {blocks.map((block, i) => {
+        const color = segmentColor(block.label);
+        return (
+          <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+            <span style={{ display: 'inline-block', width: 4, height: 4, borderRadius: '50%', background: color }} />
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+              {block.label}{block.count ? ` ${block.count}` : ''}
+            </span>
+          </span>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function SharePage() {
   const today = new Date();
@@ -110,9 +144,7 @@ export default function SharePage() {
                   </span>
                 )}
               </div>
-              <div className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                {todayWorkout.description}
-              </div>
+              <WorkoutSteps description={todayWorkout.description} type={todayWorkout.type} />
             </div>
           </div>
         )}
@@ -169,9 +201,9 @@ export default function SharePage() {
                     {day.day.slice(0, 2)}
                   </span>
                   <WorkoutBadge type={day.type} size="sm" />
-                  <span className="text-xs flex-1 truncate" style={{ color: 'var(--text-secondary)' }}>
-                    {day.description.substring(0, 55)}…
-                  </span>
+                  <div className="flex-1 min-w-0">
+                    <WeekDayPills description={day.description} type={day.type} />
+                  </div>
                   {day.miles > 0 && (
                     <span
                       className="text-xs flex-shrink-0"

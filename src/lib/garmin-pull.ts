@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { getGarminClient } from './garmin';
+import { getWorkoutByDate } from '@/data/training-plan';
 
 export interface PullResult {
   healthSaved: boolean;
@@ -106,15 +107,13 @@ export async function runGarminPull(): Promise<PullResult> {
 
       result.activitiesImported++;
 
-      // Auto-complete matching workout log
+      // ── Auto-complete workout log from training plan ────────────────
       if (actDate) {
-        const { data: planned } = await db
-          .from('workouts')
-          .select('date')
-          .eq('date', actDate)
-          .single();
+        // Use the static training plan — no DB workouts table needed
+        const plannedWorkout = getWorkoutByDate(actDate);
 
-        if (planned) {
+        if (plannedWorkout && plannedWorkout.type !== 'rest') {
+          // Upsert log; notes field is not included so manual notes are preserved
           await db.from('workout_logs').upsert(
             {
               workout_date: actDate,

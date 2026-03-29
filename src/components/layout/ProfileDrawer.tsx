@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { X, Watch, Settings, ChevronRight, RefreshCw } from 'lucide-react';
+import { X, Watch, Settings, ChevronRight, RefreshCw, Activity, TrendingUp } from 'lucide-react';
 import { athleteProfile, raceCalendar, trainingPaces } from '@/data/reference-data';
-import { getCurrentWeek, getPhaseForWeek, allWeeks, getDaysUntil } from '@/data/training-plan';
+import { getCurrentWeek, getPhaseForWeek, allWeeks, getDaysUntil, getWeekByNumber } from '@/data/training-plan';
 import { formatMiles } from '@/utils/workout';
 
 interface GarminHealth {
@@ -22,22 +22,51 @@ interface GarminStatus {
   activitiesImported: number;
 }
 
+interface RecentActivity {
+  id: string;
+  activity_date: string;
+  activity_type: string;
+  distance_miles: number | null;
+  duration_seconds: number | null;
+  avg_heart_rate: number | null;
+  activity_name: string | null;
+}
+
 interface ProfileDrawerProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+function formatDurationShort(seconds: number): string {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  if (h > 0) return `${h}h ${m}m`;
+  return `${m}m`;
+}
+
+function activityTypeLabel(type: string): string {
+  const map: Record<string, string> = {
+    running: 'Run', cycling: 'Ride', swimming: 'Swim',
+    strength_training: 'Strength', walking: 'Walk', hiking: 'Hike',
+    yoga: 'Yoga', treadmill_running: 'Treadmill',
+  };
+  return map[type.toLowerCase()] ?? type;
+}
+
 export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
   const [health, setHealth] = useState<GarminHealth | null>(null);
   const [status, setStatus] = useState<GarminStatus | null>(null);
+  const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
   const [syncing, setSyncing] = useState(false);
   const [syncMsg, setSyncMsg] = useState('');
   const [loggedMiles, setLoggedMiles] = useState(0);
   const [completionRate, setCompletionRate] = useState(0);
+  const [weekLoggedMiles, setWeekLoggedMiles] = useState(0);
 
   const today = new Date();
   const currentWeek = getCurrentWeek(today);
   const phase = currentWeek ? getPhaseForWeek(currentWeek.week) : null;
+  const weekData = currentWeek ? getWeekByNumber(currentWeek.week) : null;
   const completedWeeks = allWeeks.filter((w) => {
     const end = new Date(w.startDate);
     end.setDate(end.getDate() + 6);
@@ -46,29 +75,49 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
 
   useEffect(() => {
     if (!isOpen) return;
+
     fetch('/api/garmin/health')
       .then(r => r.json())
-      .then(d => { if (d.lastUpdated || d.restingHR || d.vo2max) setHealth(d); })
+      .then(d => { if (d && (d.lastUpdated || d.restingHR || d.vo2max)) setHealth(d); })
       .catch(() => {});
+
     fetch('/api/garmin/status')
       .then(r => r.ok ? r.json() : null)
       .then(d => { if (d) setStatus(d); })
       .catch(() => {});
+
+    fetch('/api/garmin/recent?limit=5')
+      .then(r => r.json())
+      .then(d => { if (Array.isArray(d)) setRecentActivities(d); })
+      .catch(() => {});
+
     fetch('/api/logs')
       .then(r => r.json())
-      .then(d => {
-        if (d.logs) {
-          const logs = d.logs as Record<string, { completed: boolean; miles?: number }>;
-          const miles = Object.values(logs).reduce((s, l) => s + (l.miles ?? 0), 0);
-          setLoggedMiles(miles);
-          const done = Object.values(logs).filter(l => l.completed).length;
-          setCompletionRate(completedWeeks > 0
-            ? Math.round((done / Math.max(completedWeeks * 6, 1)) * 100)
-            : 0);
+      .then((d: Array<{ date: string; completed: boolean; actualMiles?: number }>) => {
+        if (!Array.isArray(d)) return;
+
+        // Total logged miles
+        const miles = d.reduce((s, l) => s + (l.actualMiles ?? 0), 0);
+        setLoggedMiles(miles);
+
+        // Overall completion rate
+        const done = d.filter(l => l.completed).length;
+        setCompletionRate(completedWeeks > 0
+          ? Math.round((done / Math.max(completedWeeks * 6, 1)) * 100)
+          : 0);
+
+        // This-week logged miles
+        if (weekData) {
+          const weekDates = new Set(weekData.days.map(day => day.date));
+          const wMiles = d
+            .filter(l => weekDates.has(l.date) && l.completed)
+            .reduce((s, l) => s + (l.actualMiles ?? 0), 0);
+          setWeekLoggedMiles(wMiles);
         }
       })
       .catch(() => {});
-  }, [isOpen, completedWeeks]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   async function handleSync() {
     setSyncing(true);
@@ -80,11 +129,24 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
         const parts = [
           d.activitiesImported && `${d.activitiesImported} activities`,
           d.healthSaved && 'health data',
+          d.workoutsAutoCompleted && `${d.workoutsAutoCompleted} workouts logged`,
         ].filter(Boolean);
         setSyncMsg(`Synced: ${parts.join(', ') || 'up to date'}`);
-        const [hRes, sRes] = await Promise.all([fetch('/api/garmin/today'), fetch('/api/garmin/status')]);
-        if (hRes.ok) { const hd = await hRes.json(); if (hd.health) setHealth(hd.health); }
+        // Refresh health + status + activities
+        const [hRes, sRes, aRes] = await Promise.all([
+          fetch('/api/garmin/health'),
+          fetch('/api/garmin/status'),
+          fetch('/api/garmin/recent?limit=5'),
+        ]);
+        if (hRes.ok) {
+          const hd = await hRes.json();
+          if (hd && (hd.lastUpdated || hd.restingHR || hd.vo2max)) setHealth(hd);
+        }
         if (sRes.ok) setStatus(await sRes.json());
+        if (aRes.ok) {
+          const ad = await aRes.json();
+          if (Array.isArray(ad)) setRecentActivities(ad);
+        }
       } else {
         setSyncMsg(d.error ?? 'Sync failed');
       }
@@ -96,12 +158,14 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
   }
 
   const metricTiles = [
-    { label: 'VO2max',          value: health?.vo2max ? String(health.vo2max) : null,                          color: '#22C55E' },
-    { label: 'Resting HR',      value: health?.restingHR ? `${health.restingHR} bpm` : null,                   color: '#EF4444' },
-    { label: 'Body Battery',    value: health?.bodyBattery != null ? `${health.bodyBattery}%` : null,          color: '#F59E0B' },
-    { label: 'Training Ready',  value: health?.trainingReadiness != null ? `${health.trainingReadiness}%` : null, color: '#8B5CF6' },
-    { label: 'Sleep',           value: health?.sleepHours != null ? `${health.sleepHours}h` : null,            color: '#00E5FF' },
+    { label: 'VO2max',         value: health?.vo2max ? String(health.vo2max) : null,                              color: '#22C55E' },
+    { label: 'Resting HR',     value: health?.restingHR ? `${health.restingHR} bpm` : null,                       color: '#EF4444' },
+    { label: 'Body Battery',   value: health?.bodyBattery != null ? `${health.bodyBattery}%` : null,              color: '#F59E0B' },
+    { label: 'Training Ready', value: health?.trainingReadiness != null ? `${health.trainingReadiness}%` : null,  color: '#8B5CF6' },
+    { label: 'Sleep',          value: health?.sleepHours != null ? `${health.sleepHours}h` : null,                color: '#00E5FF' },
   ].filter(m => m.value != null);
+
+  const weekPlanned = weekData?.totalMiles ?? 0;
 
   return (
     <>
@@ -144,7 +208,7 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
             fontFamily: 'Space Grotesk, sans-serif', fontWeight: 700, fontSize: 16,
             color: 'var(--text-primary)',
           }}>
-            Profile &amp; Settings
+            Athlete Profile
           </span>
           <button
             onClick={onClose}
@@ -160,7 +224,7 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
 
         <div style={{ padding: '16px 16px 0' }}>
 
-          {/* Athlete hero card */}
+          {/* ── Athlete hero card ─────────────────────────────────── */}
           <div className="card mb-4" style={{ borderColor: 'rgba(13,13,242,0.3)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
               <div style={{
@@ -183,12 +247,12 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 4, textAlign: 'center' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 4, textAlign: 'center', marginBottom: 12 }}>
               {[
                 { label: 'Marathon PR', value: athleteProfile.marathonPR.replace(':00', ''), color: '#0d0df2' },
-                { label: 'Week',        value: currentWeek ? String(currentWeek.week) : '—', color: '#F59E0B' },
-                { label: 'Phase',       value: phase ? `P${phase.phase}` : '—',              color: '#8B5CF6' },
-                { label: 'Done %',      value: `${completionRate}%`,                          color: '#22C55E' },
+                { label: 'Week',        value: currentWeek ? String(currentWeek.week) : '—',  color: '#F59E0B' },
+                { label: 'Phase',       value: phase ? `P${phase.phase}` : '—',                color: '#8B5CF6' },
+                { label: 'Done %',      value: `${completionRate}%`,                            color: '#22C55E' },
               ].map(({ label, value, color }) => (
                 <div key={label}>
                   <div style={{ fontFamily: 'DM Mono, monospace', fontWeight: 700, fontSize: 13, color }}>{value}</div>
@@ -197,8 +261,8 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
               ))}
             </div>
 
-            {/* Progress bar */}
-            <div style={{ marginTop: 12 }}>
+            {/* Plan progress */}
+            <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                 <span style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>Plan progress</span>
                 <span style={{ fontSize: 10, color: '#8B5CF6', fontFamily: 'DM Mono, monospace' }}>
@@ -215,38 +279,84 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
             </div>
           </div>
 
-          {/* Garmin section */}
+          {/* ── This week ─────────────────────────────────────────── */}
+          {weekData && (
+            <div className="card mb-4" style={{ borderColor: 'rgba(245,158,11,0.2)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <TrendingUp size={13} strokeWidth={1.5} color="#F59E0B" />
+                  <span style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 600, fontSize: 13, color: 'var(--text-primary)' }}>
+                    This Week
+                  </span>
+                </div>
+                <span style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
+                  {phase ? `${phase.name} · Wk ${currentWeek?.week}` : `Week ${currentWeek?.week}`}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontFamily: 'DM Mono, monospace', fontWeight: 700, fontSize: 20, color: '#22C55E' }}>
+                    {formatMiles(weekLoggedMiles)}
+                  </div>
+                  <div style={{ fontSize: 9, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>logged mi</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontFamily: 'DM Mono, monospace', fontWeight: 700, fontSize: 20, color: '#F59E0B' }}>
+                    {weekPlanned}
+                  </div>
+                  <div style={{ fontSize: 9, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>planned mi</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontFamily: 'DM Mono, monospace', fontWeight: 700, fontSize: 20, color: '#0d0df2' }}>
+                    {weekPlanned > 0 ? `${Math.min(100, Math.round((weekLoggedMiles / weekPlanned) * 100))}%` : '—'}
+                  </div>
+                  <div style={{ fontSize: 9, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>complete</div>
+                </div>
+              </div>
+              <div style={{ height: 3, background: '#1A1A1A', borderRadius: 99 }}>
+                <div style={{
+                  height: '100%', borderRadius: 99,
+                  width: `${weekPlanned > 0 ? Math.min(100, (weekLoggedMiles / weekPlanned) * 100) : 0}%`,
+                  background: 'linear-gradient(90deg, #F59E0B, #22C55E)',
+                }} />
+              </div>
+            </div>
+          )}
+
+          {/* ── Garmin health ─────────────────────────────────────── */}
           <div className="card mb-4">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <Watch size={14} strokeWidth={1.5} color="#00E5FF" />
                 <span style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 600, fontSize: 13, color: 'var(--text-primary)' }}>
-                  Garmin
+                  Garmin Health
                 </span>
               </div>
               <span style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
                 {status?.lastSync
                   ? `Synced ${new Date(status.lastSync).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
-                  : 'Never synced'}
+                  : health?.lastUpdated
+                    ? `Data ${new Date(health.lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
+                    : 'Never synced'}
               </span>
             </div>
 
             {metricTiles.length > 0 ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6, marginBottom: 12 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, marginBottom: 12 }}>
                 {metricTiles.map(({ label, value, color }) => (
                   <div key={label} style={{
                     background: 'rgba(255,255,255,0.03)',
                     border: '1px solid #1A1A1A',
                     borderRadius: 8, padding: '8px 10px',
                   }}>
-                    <div style={{ fontFamily: 'DM Mono, monospace', fontWeight: 700, fontSize: 16, color }}>{value}</div>
-                    <div style={{ fontSize: 10, color: 'var(--text-tertiary)', marginTop: 2 }}>{label}</div>
+                    <div style={{ fontFamily: 'DM Mono, monospace', fontWeight: 700, fontSize: 15, color }}>{value}</div>
+                    <div style={{ fontSize: 9, color: 'var(--text-tertiary)', marginTop: 2 }}>{label}</div>
                   </div>
                 ))}
               </div>
             ) : (
               <div style={{ fontSize: 12, color: 'var(--text-tertiary)', marginBottom: 12 }}>
-                No Garmin data — sync to see VO2max, HRV &amp; more
+                No Garmin data — sync to see VO2max, body battery &amp; more
               </div>
             )}
 
@@ -254,43 +364,103 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
               <div style={{ fontSize: 11, color: '#22C55E', marginBottom: 8, fontFamily: 'DM Sans, sans-serif' }}>{syncMsg}</div>
             )}
 
+            {/* Charts = primary, Sync = secondary */}
             <div style={{ display: 'flex', gap: 8 }}>
-              <button
-                onClick={handleSync}
-                disabled={syncing}
-                style={{
-                  flex: 1, background: 'rgba(0,229,255,0.07)',
-                  border: '1px solid rgba(0,229,255,0.2)',
-                  borderRadius: 8, padding: '8px 12px',
-                  color: '#00E5FF', fontSize: 12,
-                  fontFamily: 'DM Sans, sans-serif', fontWeight: 600,
-                  cursor: syncing ? 'not-allowed' : 'pointer',
-                  opacity: syncing ? 0.6 : 1, minHeight: 'unset',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                }}
-              >
-                <RefreshCw size={12} strokeWidth={2} style={{ animation: syncing ? 'spin 1s linear infinite' : 'none' }} />
-                {syncing ? 'Syncing…' : 'Sync Now'}
-              </button>
               <Link
                 href="/garmin"
                 onClick={onClose}
                 style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid #1A1A1A',
-                  borderRadius: 8, padding: '8px 14px',
-                  color: 'var(--text-secondary)', fontSize: 12,
-                  fontFamily: 'DM Sans, sans-serif',
-                  display: 'flex', alignItems: 'center', gap: 4,
-                  textDecoration: 'none', whiteSpace: 'nowrap',
+                  flex: 1, background: 'rgba(0,229,255,0.08)',
+                  border: '1px solid rgba(0,229,255,0.25)',
+                  borderRadius: 8, padding: '9px 12px',
+                  color: '#00E5FF', fontSize: 12,
+                  fontFamily: 'DM Sans, sans-serif', fontWeight: 700,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                  textDecoration: 'none',
                 }}
               >
-                Charts <ChevronRight size={12} />
+                <Activity size={13} strokeWidth={2} />
+                View Charts
               </Link>
+              <button
+                onClick={handleSync}
+                disabled={syncing}
+                title="Sync Garmin now"
+                style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid #1A1A1A',
+                  borderRadius: 8, padding: '9px 14px',
+                  color: syncing ? '#52525B' : 'var(--text-secondary)',
+                  cursor: syncing ? 'not-allowed' : 'pointer',
+                  opacity: syncing ? 0.6 : 1, minHeight: 'unset',
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  fontFamily: 'DM Sans, sans-serif', fontSize: 12,
+                }}
+              >
+                <RefreshCw size={12} strokeWidth={2} style={{ animation: syncing ? 'spin 1s linear infinite' : 'none' }} />
+                {syncing ? '…' : 'Sync'}
+              </button>
             </div>
           </div>
 
-          {/* Race calendar */}
+          {/* ── Recent activities ─────────────────────────────────── */}
+          {recentActivities.length > 0 && (
+            <div className="card mb-4">
+              <div style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 600, fontSize: 13, color: 'var(--text-primary)', marginBottom: 10 }}>
+                Recent Activities
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                {recentActivities.map((act, i) => {
+                  const dist = act.distance_miles != null ? `${Number(act.distance_miles).toFixed(1)} mi` : null;
+                  const dur = act.duration_seconds ? formatDurationShort(act.duration_seconds) : null;
+                  const hr = act.avg_heart_rate ? `${act.avg_heart_rate} bpm` : null;
+                  const dateStr = new Date(act.activity_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                  return (
+                    <div key={act.id} style={{
+                      display: 'flex', alignItems: 'center', gap: 10,
+                      padding: '8px 0',
+                      borderBottom: i < recentActivities.length - 1 ? '1px solid #1A1A1A' : 'none',
+                    }}>
+                      <div style={{
+                        width: 32, height: 32, borderRadius: 8, flexShrink: 0,
+                        background: 'rgba(0,229,255,0.07)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: 14,
+                      }}>
+                        {activityTypeLabel(act.activity_type) === 'Run' ? '🏃' :
+                          activityTypeLabel(act.activity_type) === 'Strength' ? '🏋️' : '⚡'}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span>{activityTypeLabel(act.activity_type)}</span>
+                          {dist && <span style={{ fontFamily: 'DM Mono, monospace', color: '#00E5FF', fontSize: 11 }}>{dist}</span>}
+                        </div>
+                        <div style={{ fontSize: 10, color: 'var(--text-tertiary)', marginTop: 1 }}>
+                          {dateStr}{dur ? ` · ${dur}` : ''}{hr ? ` · ${hr}` : ''}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <Link
+                href="/garmin"
+                onClick={onClose}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
+                  marginTop: 10, padding: '6px 0',
+                  borderTop: '1px solid #1A1A1A',
+                  color: 'var(--text-tertiary)', fontSize: 11,
+                  fontFamily: 'Manrope, sans-serif',
+                  textDecoration: 'none',
+                }}
+              >
+                View all · {status?.activitiesImported ?? 0} activities <ChevronRight size={10} />
+              </Link>
+            </div>
+          )}
+
+          {/* ── Race calendar ─────────────────────────────────────── */}
           <div className="card mb-4">
             <div style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 600, fontSize: 13, color: 'var(--text-primary)', marginBottom: 10 }}>
               Race Calendar
@@ -332,7 +502,7 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
             </div>
           </div>
 
-          {/* Training paces */}
+          {/* ── Target paces ─────────────────────────────────────── */}
           <div className="card mb-4">
             <div style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 600, fontSize: 13, color: 'var(--text-primary)', marginBottom: 10 }}>
               Target Paces
@@ -347,7 +517,7 @@ export default function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
             </div>
           </div>
 
-          {/* Settings link */}
+          {/* ── Settings link ─────────────────────────────────────── */}
           <Link
             href="/settings"
             onClick={onClose}
