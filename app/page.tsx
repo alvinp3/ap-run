@@ -127,7 +127,7 @@ export default function DashboardPage() {
       <main className="flex-1 overflow-y-auto px-4 pb-32 pt-4 max-w-lg mx-auto w-full">
         {/* Race Countdowns */}
         <section className="mb-4">
-          <div className="flex gap-3 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
+          <div className="flex flex-col gap-3">
             <RaceCountdown
               name="Houston Marathon"
               date={HOUSTON_DATE}

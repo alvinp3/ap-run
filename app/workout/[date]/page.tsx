@@ -12,6 +12,7 @@ import { getWorkoutByDate, getPhaseForWeek } from '@/data/training-plan';
 import { recoveryProtocols } from '@/data/reference-data';
 import { formatDate, formatDuration, formatMiles, isHeatSeason } from '@/utils/workout';
 import type { WorkoutDay } from '@/types';
+import WorkoutSteps from '@/components/ui/WorkoutSteps';
 
 export default function WorkoutDetailPage() {
   const params = useParams();
@@ -123,9 +124,7 @@ export default function WorkoutDetailPage() {
               </span>
             )}
           </div>
-          <div className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-            {workout.description}
-          </div>
+          <WorkoutSteps description={workout.description} type={workout.type} />
         </div>
 
         {/* Heat-adjusted paces */}

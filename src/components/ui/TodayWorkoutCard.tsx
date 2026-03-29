@@ -5,12 +5,8 @@ import Link from 'next/link';
 import type { WorkoutDay, WorkoutLog } from '@/types';
 import WorkoutBadge from './WorkoutBadge';
 import PhaseBadge from './PhaseBadge';
+import WorkoutSteps from './WorkoutSteps';
 import { formatDate, formatDuration, formatMiles, isHeatSeason, getWorkoutColor } from '@/utils/workout';
-import { useTextLines } from '@/hooks/useTextLines';
-
-const DESCRIPTION_FONT      = '14px DM Sans, sans-serif';
-const DESCRIPTION_LINE_H    = 22; // px, matches leading-relaxed at 14px
-const DESCRIPTION_MAX_LINES = 3;
 
 interface TodayWorkoutCardProps {
   workout: WorkoutDay & { weekNumber: number; isDownWeek: boolean };
@@ -38,14 +34,6 @@ export default function TodayWorkoutCard({
   const [completing, setCompleting] = useState(false);
   const [completed, setCompleted] = useState(log?.completed ?? false);
   const [showSuccessAnim, setShowSuccessAnim] = useState(false);
-  const [descExpanded, setDescExpanded] = useState(false);
-
-  const { lineCount, containerRef } = useTextLines(
-    workout.description,
-    DESCRIPTION_FONT,
-    DESCRIPTION_LINE_H
-  );
-  const descTruncated = lineCount !== null && lineCount > DESCRIPTION_MAX_LINES;
 
   const isRest = workout.type === 'rest';
   const workoutColor = getWorkoutColor(workout.type);
@@ -153,31 +141,9 @@ export default function TodayWorkoutCard({
           </div>
         )}
 
-        {/* Description */}
+        {/* Workout steps */}
         <div className="mb-4">
-          <div
-            ref={containerRef}
-            className="text-sm leading-relaxed"
-            style={{
-              color: 'var(--text-secondary)',
-              fontFamily: 'DM Sans, sans-serif',
-              overflow: 'hidden',
-              display: '-webkit-box',
-              WebkitBoxOrient: 'vertical',
-              WebkitLineClamp: descExpanded ? 'unset' : DESCRIPTION_MAX_LINES,
-            } as React.CSSProperties}
-          >
-            {workout.description}
-          </div>
-          {descTruncated && (
-            <button
-              onClick={() => setDescExpanded(!descExpanded)}
-              className="text-xs mt-1"
-              style={{ color: 'var(--accent-teal)', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
-            >
-              {descExpanded ? 'Show less' : 'Show more'}
-            </button>
-          )}
+          <WorkoutSteps description={workout.description} type={workout.type} />
         </div>
 
         {/* Heat-adjusted paces (shown if heat season + phase 2/3) */}

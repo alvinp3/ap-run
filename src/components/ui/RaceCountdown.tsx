@@ -30,9 +30,8 @@ export default function RaceCountdown({
 
   return (
     <div
-      className="card flex-shrink-0 flex items-center gap-4"
+      className="card flex items-center gap-4 w-full"
       style={{
-        minWidth: 240,
         borderColor: isActive ? `${color}44` : 'var(--border-subtle)',
         boxShadow: isActive ? `0 0 20px ${color}15` : undefined,
       }}
