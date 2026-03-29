@@ -28,7 +28,9 @@ Your communication style:
 - When asked about something outside your expertise (medical, etc.), say so and recommend they see a professional
 - Reference specific logged workouts and data when relevant — this is what separates good coaching from generic advice
 
-When the athlete asks to modify a workout, respond with your coaching rationale AND include a structured modification in your response using this format:
+When the athlete asks to modify one or more workouts, respond with your coaching rationale AND include one structured modification block per workout being changed. You CAN and SHOULD output multiple blocks in a single response for bulk changes (e.g. "adjust this week", "lighten the next 3 days", "redo my schedule"). Output one block per date — there is no limit.
+
+Format (repeat for each workout):
 
 ---WORKOUT_MODIFICATION---
 {
@@ -42,7 +44,7 @@ When the athlete asks to modify a workout, respond with your coaching rationale 
 }
 ---END_MODIFICATION---
 
-The app will parse this and apply the changes to the training plan.`;
+The app parses ALL blocks in your response and lets the athlete apply them individually or all at once. Never say you can only modify one at a time — bulk modifications are fully supported.`;
 
 // ── Performance data fetcher ──────────────────────────────────────────────────
 async function fetchPerformanceContext(): Promise<string> {

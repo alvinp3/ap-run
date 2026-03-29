@@ -24,18 +24,21 @@ interface ParsedMod {
   reason: string;
 }
 
-function parseModification(content: string): { clean: string; mod: ParsedMod | null } {
-  const re = /\n?---WORKOUT_MODIFICATION---\s*([\s\S]*?)---END_MODIFICATION---\n?/;
-  const match = content.match(re);
-  if (!match) return { clean: content, mod: null };
-  const clean = content.replace(re, '').trim();
-  try {
-    const mod = JSON.parse(match[1].trim()) as ParsedMod;
-    if (!mod.date) return { clean: content, mod: null };
-    return { clean, mod };
-  } catch {
-    return { clean: content, mod: null };
+function parseAllModifications(content: string): { clean: string; mods: ParsedMod[] } {
+  const re = /\n?---WORKOUT_MODIFICATION---\s*([\s\S]*?)---END_MODIFICATION---\n?/g;
+  const mods: ParsedMod[] = [];
+  let match;
+  while ((match = re.exec(content)) !== null) {
+    try {
+      const mod = JSON.parse(match[1].trim()) as ParsedMod;
+      if (mod.date) mods.push(mod);
+    } catch {}
   }
+  if (mods.length === 0) return { clean: content, mods: [] };
+  const clean = content
+    .replace(/\n?---WORKOUT_MODIFICATION---\s*[\s\S]*?---END_MODIFICATION---\n?/g, '')
+    .trim();
+  return { clean, mods };
 }
 
 // ── Streaming cursor ──────────────────────────────────────────────────────────
@@ -303,8 +306,8 @@ export default function CoachPage() {
   }
 
   const quickPrompts = [
-    "What's today's workout?",
-    'Adjust tomorrow for soreness',
+    'Apply all changes we discussed',
+    'Adjust this whole week',
     'Am I on track for sub-2:50?',
     'Pre-long-run nutrition tips',
   ];
@@ -355,8 +358,9 @@ export default function CoachPage() {
             );
           }
 
-          // Assistant message — strip modification block, show card
-          const { clean, mod } = parseModification(msg.content);
+          // Assistant message — strip all modification blocks, show cards
+          const { clean, mods } = parseAllModifications(msg.content);
+          const pendingMods = mods.filter(m => !appliedDates.has(m.date) && !dismissedDates.has(m.date));
           return (
             <div key={i} className="flex flex-col items-start">
               <div style={{
@@ -366,15 +370,34 @@ export default function CoachPage() {
               }}>
                 <CollapsibleMessage content={clean} />
               </div>
-              {mod && (
+              {mods.length > 0 && (
                 <div style={{ maxWidth: '85%', width: '85%' }}>
-                  <ModificationCard
-                    mod={mod}
-                    applied={appliedDates.has(mod.date)}
-                    dismissed={dismissedDates.has(mod.date)}
-                    onApply={applyModification}
-                    onDismiss={dismissModification}
-                  />
+                  {mods.map(mod => (
+                    <ModificationCard
+                      key={mod.date}
+                      mod={mod}
+                      applied={appliedDates.has(mod.date)}
+                      dismissed={dismissedDates.has(mod.date)}
+                      onApply={applyModification}
+                      onDismiss={dismissModification}
+                    />
+                  ))}
+                  {pendingMods.length > 1 && (
+                    <button
+                      onClick={async () => { for (const m of pendingMods) await applyModification(m); }}
+                      style={{
+                        width: '100%', marginTop: 8,
+                        background: '#22C55E', border: 'none', borderRadius: 0,
+                        color: '#000000', fontFamily: 'Manrope, sans-serif',
+                        fontSize: 12, fontWeight: 700, letterSpacing: '0.06em',
+                        padding: '10px 0', cursor: 'pointer', minHeight: 'unset',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                      }}
+                    >
+                      <Check size={13} strokeWidth={2.5} />
+                      Apply All {pendingMods.length} Changes
+                    </button>
+                  )}
                 </div>
               )}
             </div>
