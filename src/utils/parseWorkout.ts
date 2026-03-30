@@ -1,4 +1,5 @@
 import type { WorkoutType } from '@/types';
+import { getStrengthExercises } from '@/data/strength-exercises';
 
 export interface WorkoutBlock {
   kind: 'segment' | 'strength' | 'note';
@@ -61,13 +62,20 @@ function extractCount(text: string): string | undefined {
 }
 
 /** Parse a strength block text like "Strength A (Phase 2: Ex1, Ex2, ...)" */
-function parseStrengthBlock(raw: string): WorkoutBlock {
+function parseStrengthBlock(raw: string, phase?: number): WorkoutBlock {
   const labelMatch = raw.match(/Strength\s+([ABC])/i);
   const letter = labelMatch ? labelMatch[1].toUpperCase() : 'A';
   const label = `STRENGTH ${letter}`;
 
   const parenMatch = raw.match(/\(([^)]*)\)/);
   if (!parenMatch) {
+    // No parenthetical exercises — look up from canonical data
+    if (phase != null) {
+      const lookup = getStrengthExercises(phase, letter);
+      if (lookup) {
+        return { kind: 'strength', label, detail: lookup.detail, exercises: lookup.exercises };
+      }
+    }
     return { kind: 'strength', label };
   }
 
@@ -212,7 +220,7 @@ function parseEmDashWorkout(description: string): WorkoutBlock[] {
 // Rule 2 & 3 – Run + Strength / Strides only
 // ---------------------------------------------------------------------------
 
-function parseStrengthOrStrides(description: string): WorkoutBlock[] | null {
+function parseStrengthOrStrides(description: string, phase?: number): WorkoutBlock[] | null {
   const strengthIdx = description.indexOf(' + Strength ');
   const hasStrength = strengthIdx !== -1;
   const hasStrides = /\+\s*\d+x100m strides/i.test(description);
@@ -241,7 +249,7 @@ function parseStrengthOrStrides(description: string): WorkoutBlock[] | null {
       blocks.push({ kind: 'segment', label: 'STRIDES', count: `${stridesMatch[1]} × 100m` });
     }
 
-    blocks.push(parseStrengthBlock(strengthPart));
+    blocks.push(parseStrengthBlock(strengthPart, phase));
     return blocks;
   }
 
@@ -264,7 +272,7 @@ function parseStrengthOrStrides(description: string): WorkoutBlock[] | null {
 // Rule 4 – Rest + Strength
 // ---------------------------------------------------------------------------
 
-function parseRestStrength(description: string): WorkoutBlock[] | null {
+function parseRestStrength(description: string, phase?: number): WorkoutBlock[] | null {
   if (!/^rest\s*\+\s*strength/i.test(description)) return null;
 
   const blocks: WorkoutBlock[] = [];
@@ -272,7 +280,7 @@ function parseRestStrength(description: string): WorkoutBlock[] | null {
 
   const strengthMatch = description.match(/Strength\s+[ABC].*/i);
   if (strengthMatch) {
-    blocks.push(parseStrengthBlock(strengthMatch[0]));
+    blocks.push(parseStrengthBlock(strengthMatch[0], phase));
   }
 
   return blocks;
@@ -388,9 +396,9 @@ function parseFallback(description: string): WorkoutBlock[] {
 // Main export
 // ---------------------------------------------------------------------------
 
-export function parseWorkoutDescription(description: string, type: WorkoutType): WorkoutBlock[] {
+export function parseWorkoutDescription(description: string, type: WorkoutType, phase?: number): WorkoutBlock[] {
   // Rule 4 – Rest + Strength (check before rest-day rule)
-  const restStrength = parseRestStrength(description);
+  const restStrength = parseRestStrength(description, phase);
   if (restStrength) return restStrength;
 
   // Rule 6 – Rest day (no "+")
@@ -399,7 +407,7 @@ export function parseWorkoutDescription(description: string, type: WorkoutType):
   }
 
   // Rule 2 & 3 – Run + Strength or Strides
-  const strengthOrStrides = parseStrengthOrStrides(description);
+  const strengthOrStrides = parseStrengthOrStrides(description, phase);
   if (strengthOrStrides) return strengthOrStrides;
 
   // Rule 1 – Structured with em-dash (or colon "total" variant)

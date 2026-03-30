@@ -1,4 +1,5 @@
 import type { TrainingWeek, TrainingPhase } from '@/types';
+import { toLocalDateStr } from '@/utils/workout';
 
 // ============================================================
 // PHASE 1: Base Building (Weeks 1-10, March 30 - June 7, 2026)
@@ -7,12 +8,12 @@ export const phase1Weeks: TrainingWeek[] = [
   {
     week: 1, startDate: '2026-03-30', totalMiles: 32, isDownWeek: false,
     days: [
-      { day: 'Monday',    date: '2026-03-30', type: 'easy',     miles: 4,  description: 'Easy run 4 miles @ 8:00-8:20/mi + Strength A (Full Body: Back Squat 4x6 RPE 7-8, Bench Press 3x8, RDL 3x8, DB Row 3x10, Plank 3x45s)', hasStrength: true,  estimatedMinutes: 75 },
+      { day: 'Monday',    date: '2026-03-30', type: 'easy',     miles: 4,  description: 'Easy run 4 miles @ 8:00-8:20/mi on Rockwall rolling roads + Strength A (Full Body: Back Squat 4x6 RPE 7-8, Bench Press 3x8, RDL 3x8, DB Row 3x10, Plank 3x45s)', hasStrength: true,  estimatedMinutes: 75 },
       { day: 'Tuesday',   date: '2026-03-31', type: 'easy',     miles: 5,  description: 'Easy run 5 miles @ 8:00-8:20/mi + 6x100m strides (fast but controlled, full recovery between)', hasStrength: false, estimatedMinutes: 50 },
       { day: 'Wednesday', date: '2026-04-01', type: 'easy',     miles: 4,  description: 'Easy run 4 miles @ 8:00-8:20/mi + Strength B (Full Body: Trap Bar DL 3x8, OH Press 3x8, Walking Lunges 3x12/leg, Chin-ups 3x8, Dead Bug 3x10/side)', hasStrength: true,  estimatedMinutes: 75 },
       { day: 'Thursday',  date: '2026-04-02', type: 'easy',     miles: 5,  description: 'Progression run 5 miles — first 3 mi easy, last 2 mi at 7:20-7:40/mi (comfortably quick, not tempo)', hasStrength: false, estimatedMinutes: 42 },
       { day: 'Friday',    date: '2026-04-03', type: 'easy',     miles: 4,  description: 'Recovery run 4 miles @ 8:30-9:00/mi + Strength C (Full Body: Step-Ups 3x10/leg, Push-up 3x12, SL RDL 3x8/side, Pallof Press 3x12/side, Side Plank 3x30s/side)', hasStrength: true, estimatedMinutes: 65 },
-      { day: 'Saturday',  date: '2026-04-04', type: 'long',     miles: 10, description: 'Long run 10 miles @ 7:30-8:00/mi. Easy, conversational effort throughout. Practice carrying a handheld bottle.', hasStrength: false, estimatedMinutes: 78 },
+      { day: 'Saturday',  date: '2026-04-04', type: 'long',     miles: 10, description: 'Long run 10 miles @ 7:30-8:00/mi on Rockwall rolling terrain. Easy, conversational effort. Practice carrying a handheld bottle. Embrace the hills — they build marathon strength.', hasStrength: false, estimatedMinutes: 78 },
       { day: 'Sunday',    date: '2026-04-05', type: 'rest',     miles: 0,  description: 'Full rest day. Foam rolling 10-15 min. Mobility work. Hydrate well.', hasStrength: false,  estimatedMinutes: 15 },
     ],
   },
@@ -135,10 +136,10 @@ export const phase2Weeks: TrainingWeek[] = [
     days: [
       { day: 'Monday',    date: '2026-06-08', type: 'easy',      miles: 6,   description: 'Easy 6mi + Strength A (Phase 2 Full Body: Front Squat 3x6, Bench Press 3x8, SL RDL 3x8/side, DB Row 3x10, Box Jumps 3x5, Anti-Rotation Press 3x10/side). Welcome to heat season — run by effort, not pace.', hasStrength: true,  estimatedMinutes: 80 },
       { day: 'Tuesday',   date: '2026-06-09', type: 'intervals', miles: 8,   description: 'INTERVALS: 8mi total — 2mi warmup, 4x1000m @ 5:50-6:00/mi (3:37-3:43 per 1K) w/ 90s jog recovery, 2mi cooldown. In heat: run by effort (Zone 5), accept slower splits. Treadmill OK if heat index >105°F.', hasStrength: false, estimatedMinutes: 65 },
-      { day: 'Wednesday', date: '2026-06-10', type: 'recovery',  miles: 4,   description: 'Recovery 4 miles @ 8:30-9:00/mi. Zone 1-2 ONLY. This should feel absurdly easy.', hasStrength: false, estimatedMinutes: 36 },
+      { day: 'Wednesday', date: '2026-06-10', type: 'recovery',  miles: 4,   description: 'Recovery 4mi @ 8:30-9:00/mi + 4x20sec hill strides on a Rockwall incline. Zone 1-2 between strides. Hills build the strength that makes Houston easy.', hasStrength: false, estimatedMinutes: 36 },
       { day: 'Thursday',  date: '2026-06-11', type: 'tempo',     miles: 8,   description: 'TEMPO: 8mi total — 2mi warmup, 4mi @ 6:10-6:20/mi (or HR Zone 4), 2mi cooldown. Comfortably hard — short phrases only.', hasStrength: false, estimatedMinutes: 62 },
       { day: 'Friday',    date: '2026-06-12', type: 'easy',      miles: 5,   description: 'Recovery 5mi @ 8:30-9:00/mi. Zone 2.', hasStrength: false,  estimatedMinutes: 45 },
-      { day: 'Saturday',  date: '2026-06-13', type: 'long',      miles: 14,  description: 'Long run 14mi @ easy effort (HR Zone 2). Start by 5:30 AM. Carry fluids + electrolytes. Fuel every 45min.', hasStrength: false, estimatedMinutes: 115 },
+      { day: 'Saturday',  date: '2026-06-13', type: 'long',      miles: 14,  description: 'Long run 14mi. Start by 5:30 AM. Easy first 11mi, last 3mi @ MP effort (6:25-6:35 by HR Zone 3). Carry fluids + electrolytes. Fuel every 45min. Use the Rockwall hills — they make Houston flats feel easy.', hasStrength: false, estimatedMinutes: 115 },
       { day: 'Sunday',    date: '2026-06-14', type: 'rest',      miles: 0,   description: 'Full rest day. Foam rolling 10-15 min. Mobility work. Hydrate well.', hasStrength: false, estimatedMinutes: 15 },
     ],
   },
@@ -159,10 +160,10 @@ export const phase2Weeks: TrainingWeek[] = [
     days: [
       { day: 'Monday',    date: '2026-06-22', type: 'easy',      miles: 6,  description: 'Easy 6mi + Strength A', hasStrength: true,  estimatedMinutes: 80 },
       { day: 'Tuesday',   date: '2026-06-23', type: 'intervals', miles: 9,  description: 'INTERVALS: 9mi — 2mi WU, 5x1000m @ 5:45-5:55/mi w/ 90s jog, 2mi CD. Heat is building — if heat index >100°F, do this on the treadmill.', hasStrength: false, estimatedMinutes: 72 },
-      { day: 'Wednesday', date: '2026-06-24', type: 'recovery',  miles: 5,  description: 'Recovery 5mi. Truly easy.', hasStrength: false, estimatedMinutes: 45 },
+      { day: 'Wednesday', date: '2026-06-24', type: 'recovery',  miles: 5,  description: 'Recovery 5mi on a rolling Rockwall route. Truly easy effort but use the terrain — hill strength translates directly to flat speed.', hasStrength: false, estimatedMinutes: 45 },
       { day: 'Thursday',  date: '2026-06-25', type: 'tempo',     miles: 9,  description: 'Cruise intervals: 9mi — 2mi WU, 3x2mi @ 6:10/mi w/ 90s jog between, 1mi CD', hasStrength: false, estimatedMinutes: 68 },
       { day: 'Friday',    date: '2026-06-26', type: 'easy',      miles: 4,  description: 'Recovery 4mi', hasStrength: false,  estimatedMinutes: 36 },
-      { day: 'Saturday',  date: '2026-06-27', type: 'long',      miles: 16, description: 'Long run 16mi easy effort. Start by 5:00 AM. Cap at 2:15 if extreme heat. Carry fluids.', hasStrength: false, estimatedMinutes: 128 },
+      { day: 'Saturday',  date: '2026-06-27', type: 'long',      miles: 16, description: 'Long run 16mi. Start by 5:00 AM. Easy first 13mi, last 3mi @ MP effort by HR (Zone 3). Cap at 2:15 if extreme heat. Carry fluids.', hasStrength: false, estimatedMinutes: 128 },
       { day: 'Sunday',    date: '2026-06-28', type: 'rest',      miles: 0,  description: 'Full rest day. Foam rolling 10-15 min. Mobility work. Hydrate well.', hasStrength: false, estimatedMinutes: 15 },
     ],
   },
@@ -183,10 +184,10 @@ export const phase2Weeks: TrainingWeek[] = [
     days: [
       { day: 'Monday',    date: '2026-07-06', type: 'easy',      miles: 6,  description: 'Easy 6mi + Strength A. Deep into heat season now. All easy running by HR Zone 2.', hasStrength: true,  estimatedMinutes: 80 },
       { day: 'Tuesday',   date: '2026-07-07', type: 'intervals', miles: 10, description: 'INTERVALS: 10mi — 2mi WU, 6x1000m @ 5:45-5:55/mi w/ 90s jog, 2mi CD. Treadmill strongly recommended if heat index >100°F.', hasStrength: false, estimatedMinutes: 78 },
-      { day: 'Wednesday', date: '2026-07-08', type: 'recovery',  miles: 5,  description: 'Recovery 5mi. Zone 1-2.', hasStrength: false, estimatedMinutes: 45 },
+      { day: 'Wednesday', date: '2026-07-08', type: 'recovery',  miles: 5,  description: 'Recovery 5mi on Rockwall hills. Zone 1-2 effort — use the rolling terrain for free strength work.', hasStrength: false, estimatedMinutes: 45 },
       { day: 'Thursday',  date: '2026-07-09', type: 'tempo',     miles: 9,  description: 'TEMPO: 9mi — 2mi WU, 5mi @ LT (6:10-6:20/mi or HR Zone 4), 2mi CD', hasStrength: false, estimatedMinutes: 68 },
       { day: 'Friday',    date: '2026-07-10', type: 'easy',      miles: 4,  description: 'Recovery 4mi', hasStrength: false,  estimatedMinutes: 36 },
-      { day: 'Saturday',  date: '2026-07-11', type: 'long',      miles: 16, description: 'Long run 16mi. All easy. Start 5:00 AM. Carry 24oz+ fluids. Electrolytes mandatory.', hasStrength: false, estimatedMinutes: 130 },
+      { day: 'Saturday',  date: '2026-07-11', type: 'long',      miles: 16, description: 'Long run 16mi. Start 5:00 AM. Easy first 12mi, last 4mi @ MP effort by HR (Zone 3). Your body needs to practice race pace even in heat. Carry 24oz+ fluids. Electrolytes mandatory.', hasStrength: false, estimatedMinutes: 130 },
       { day: 'Sunday',    date: '2026-07-12', type: 'rest',      miles: 0,  description: 'Full rest day. Foam rolling 10-15 min. Mobility work. Hydrate well.', hasStrength: false, estimatedMinutes: 15 },
     ],
   },
@@ -207,10 +208,10 @@ export const phase2Weeks: TrainingWeek[] = [
     days: [
       { day: 'Monday',    date: '2026-07-20', type: 'easy',      miles: 7,  description: 'Easy 7mi + Strength A', hasStrength: true,  estimatedMinutes: 85 },
       { day: 'Tuesday',   date: '2026-07-21', type: 'intervals', miles: 10, description: 'INTERVALS: 10mi — 2mi WU, 3x1600m @ 5:50/mi (5:50 per mile = 5:47 per 1600) w/ 2min jog, 2mi CD. Longer reps this week.', hasStrength: false, estimatedMinutes: 78 },
-      { day: 'Wednesday', date: '2026-07-22', type: 'recovery',  miles: 5,  description: 'Recovery 5mi', hasStrength: false, estimatedMinutes: 45 },
+      { day: 'Wednesday', date: '2026-07-22', type: 'recovery',  miles: 5,  description: 'Recovery 5mi + 4x20sec hill strides on a Rockwall incline. Easy between. Building hill strength for Houston.', hasStrength: false, estimatedMinutes: 48 },
       { day: 'Thursday',  date: '2026-07-23', type: 'tempo',     miles: 10, description: 'TEMPO: 10mi — 2mi WU, 6mi @ 6:10-6:15/mi, 2mi CD. Longest tempo yet.', hasStrength: false, estimatedMinutes: 75 },
       { day: 'Friday',    date: '2026-07-24', type: 'easy',      miles: 3,  description: 'Recovery 3mi', hasStrength: false,  estimatedMinutes: 27 },
-      { day: 'Saturday',  date: '2026-07-25', type: 'long',      miles: 17, description: 'Long run 17mi easy effort. Full heat protocol — early start, fluids, electrolytes.', hasStrength: false, estimatedMinutes: 135 },
+      { day: 'Saturday',  date: '2026-07-25', type: 'long',      miles: 17, description: 'Long run 17mi. Full heat protocol — early start, fluids, electrolytes. Easy first 14mi, last 3mi @ MP effort by HR. Getting comfortable at race pace in hard conditions is the whole point.', hasStrength: false, estimatedMinutes: 135 },
       { day: 'Sunday',    date: '2026-07-26', type: 'rest',      miles: 0,  description: 'Full rest day. Foam rolling 10-15 min. Mobility work. Hydrate well.', hasStrength: false, estimatedMinutes: 15 },
     ],
   },
@@ -277,7 +278,7 @@ export const phase3Weeks: TrainingWeek[] = [
       { day: 'Wednesday', date: '2026-08-26', type: 'easy',      miles: 7,  description: 'Easy 7mi recovery', hasStrength: false, estimatedMinutes: 58 },
       { day: 'Thursday',  date: '2026-08-27', type: 'tempo',     miles: 9,  description: 'Tempo 9mi: 2mi WU, 5mi @ 6:10-6:15/mi, 2mi CD', hasStrength: false, estimatedMinutes: 68 },
       { day: 'Friday',    date: '2026-08-28', type: 'easy',      miles: 6,  description: 'Easy 6mi recovery', hasStrength: false,  estimatedMinutes: 50 },
-      { day: 'Saturday',  date: '2026-08-29', type: 'long',      miles: 17, description: 'Long run 17mi easy throughout. Focus on aerobic volume.', hasStrength: false, estimatedMinutes: 132 },
+      { day: 'Saturday',  date: '2026-08-29', type: 'long',      miles: 17, description: 'Long run 17mi: Easy first 13mi, last 4mi @ MP (6:29/mi). You need to practice race pace every week — your body learns what it repeats.', hasStrength: false, estimatedMinutes: 132 },
       { day: 'Sunday',    date: '2026-08-30', type: 'rest',      miles: 0,  description: 'Full rest day. Foam rolling 10-15 min. Mobility work. Hydrate well.', hasStrength: false, estimatedMinutes: 15 },
     ],
   },
@@ -287,7 +288,7 @@ export const phase3Weeks: TrainingWeek[] = [
       { day: 'Monday',    date: '2026-08-31', type: 'easy',      miles: 7,  description: 'Easy 7mi + Strength A', hasStrength: true,  estimatedMinutes: 85 },
       { day: 'Tuesday',   date: '2026-09-01', type: 'tempo',     miles: 10, description: 'MP run 10mi: 2mi WU, 6mi @ 6:29/mi, 2mi CD', hasStrength: false, estimatedMinutes: 76 },
       { day: 'Wednesday', date: '2026-09-02', type: 'easy',      miles: 6,  description: 'Easy 6mi', hasStrength: false, estimatedMinutes: 50 },
-      { day: 'Thursday',  date: '2026-09-03', type: 'intervals', miles: 9,  description: 'INTERVALS: 9mi — 2mi WU, 5x1000m @ 5:45/mi w/ 90s jog, 2mi CD', hasStrength: false, estimatedMinutes: 70 },
+      { day: 'Thursday',  date: '2026-09-03', type: 'intervals', miles: 9,  description: 'HILL REPEATS: 9mi — 2mi WU, 6x90sec hard uphill (Rockwall incline) w/ jog-down recovery, 2mi CD @ MP effort. Hills build the power that makes 6:29 on Houston flats feel easy.', hasStrength: false, estimatedMinutes: 70 },
       { day: 'Friday',    date: '2026-09-04', type: 'easy',      miles: 8,  description: 'Easy 8mi recovery', hasStrength: false,  estimatedMinutes: 66 },
       { day: 'Saturday',  date: '2026-09-05', type: 'long',      miles: 18, description: 'Long run 18mi: First 12mi easy, miles 13-18 @ MP (6:29/mi). First major MP long run — huge training stimulus.', hasStrength: false, estimatedMinutes: 140 },
       { day: 'Sunday',    date: '2026-09-06', type: 'rest',      miles: 0,  description: 'Full rest day. Foam rolling 10-15 min. Mobility work. Hydrate well.', hasStrength: false, estimatedMinutes: 15 },
@@ -310,7 +311,7 @@ export const phase3Weeks: TrainingWeek[] = [
     days: [
       { day: 'Monday',    date: '2026-09-14', type: 'easy',      miles: 7,  description: 'Easy 7mi + Strength A. Refreshed after down week — ready to attack.', hasStrength: true,  estimatedMinutes: 85 },
       { day: 'Tuesday',   date: '2026-09-15', type: 'tempo',     miles: 12, description: 'MP run 12mi: 2mi WU, 8mi @ 6:29/mi, 2mi CD', hasStrength: false, estimatedMinutes: 89 },
-      { day: 'Wednesday', date: '2026-09-16', type: 'easy',      miles: 6,  description: 'Easy 6mi', hasStrength: false, estimatedMinutes: 50 },
+      { day: 'Wednesday', date: '2026-09-16', type: 'easy',      miles: 6,  description: 'Progression 6mi: 4mi easy, last 2mi @ MP (6:29/mi). Touch race pace daily — your BQ friends are right, the body learns what it repeats.', hasStrength: false, estimatedMinutes: 48 },
       { day: 'Thursday',  date: '2026-09-17', type: 'tempo',     miles: 9,  description: 'Cruise intervals: 9mi — 2mi WU, 3x2mi @ 6:10/mi w/ 90s jog, 1mi CD', hasStrength: false, estimatedMinutes: 68 },
       { day: 'Friday',    date: '2026-09-18', type: 'easy',      miles: 6,  description: 'Easy 6mi recovery', hasStrength: false,  estimatedMinutes: 50 },
       { day: 'Saturday',  date: '2026-09-19', type: 'long',      miles: 18, description: 'Long run 18mi: Easy first 12mi, last 6mi @ MP (6:29/mi). Fall temps — run the target pace for real.', hasStrength: false, estimatedMinutes: 140 },
@@ -322,7 +323,7 @@ export const phase3Weeks: TrainingWeek[] = [
     days: [
       { day: 'Monday',    date: '2026-09-21', type: 'easy',      miles: 7,  description: 'Easy 7mi + Strength A. Cool mornings arriving — feel the heat acclimatization payoff in your paces.', hasStrength: true,  estimatedMinutes: 85 },
       { day: 'Tuesday',   date: '2026-09-22', type: 'tempo',     miles: 12, description: 'MP run 12mi: 2mi WU, 8mi @ 6:27-6:32/mi (targeting slightly under goal MP), 2mi CD', hasStrength: false, estimatedMinutes: 89 },
-      { day: 'Wednesday', date: '2026-09-23', type: 'easy',      miles: 7,  description: 'Easy 7mi', hasStrength: false, estimatedMinutes: 58 },
+      { day: 'Wednesday', date: '2026-09-23', type: 'easy',      miles: 7,  description: 'Progression 7mi on Rockwall hills: 5mi easy, last 2mi @ MP (6:29/mi). Hill strength + pace work = fast on Houston flats.', hasStrength: false, estimatedMinutes: 56 },
       { day: 'Thursday',  date: '2026-09-24', type: 'intervals', miles: 10, description: 'INTERVALS: 10mi — 2mi WU, 3x2000m @ 5:45/mi w/ 2min jog, 2mi CD', hasStrength: false, estimatedMinutes: 76 },
       { day: 'Friday',    date: '2026-09-25', type: 'easy',      miles: 5,  description: 'Easy 5mi recovery', hasStrength: false,  estimatedMinutes: 42 },
       { day: 'Saturday',  date: '2026-09-26', type: 'long',      miles: 19, description: 'Long run 19mi: Easy mi 1-10, miles 11-17 @ MP (7mi of MP work), easy mi 18-19. This is a big session.', hasStrength: false, estimatedMinutes: 147 },
@@ -334,7 +335,7 @@ export const phase3Weeks: TrainingWeek[] = [
     days: [
       { day: 'Monday',    date: '2026-09-28', type: 'easy',      miles: 8,  description: 'Easy 8mi + Strength A', hasStrength: true,  estimatedMinutes: 90 },
       { day: 'Tuesday',   date: '2026-09-29', type: 'tempo',     miles: 12, description: 'MP run 12mi: 2mi WU, 8mi @ 6:29/mi, 2mi CD', hasStrength: false, estimatedMinutes: 89 },
-      { day: 'Wednesday', date: '2026-09-30', type: 'easy',      miles: 7,  description: 'Easy 7mi', hasStrength: false, estimatedMinutes: 58 },
+      { day: 'Wednesday', date: '2026-09-30', type: 'easy',      miles: 7,  description: 'Progression 7mi: 5mi easy, last 2mi @ MP (6:29/mi). 40% of your runs should touch race pace or faster now.', hasStrength: false, estimatedMinutes: 56 },
       { day: 'Thursday',  date: '2026-10-01', type: 'tempo',     miles: 9,  description: 'Tempo 9mi: 2mi WU, 5mi @ 6:05-6:15/mi, 2mi CD', hasStrength: false, estimatedMinutes: 68 },
       { day: 'Friday',    date: '2026-10-02', type: 'easy',      miles: 6,  description: 'Easy 6mi recovery — you are officially a marathon training machine.', hasStrength: false,  estimatedMinutes: 50 },
       { day: 'Saturday',  date: '2026-10-03', type: 'long',      miles: 20, description: '⭐ FIRST 20-MILER! 20mi easy effort throughout @ 7:30-8:00/mi. This is a MILESTONE. Fuel every 45min. Celebrate after.', hasStrength: false, estimatedMinutes: 155 },
@@ -370,8 +371,8 @@ export const phase3Weeks: TrainingWeek[] = [
     days: [
       { day: 'Monday',    date: '2026-10-19', type: 'easy',      miles: 7,  description: 'Easy 7mi + Strength A. Post-half recovery — let the race effort settle.', hasStrength: true,  estimatedMinutes: 85 },
       { day: 'Tuesday',   date: '2026-10-20', type: 'tempo',     miles: 12, description: 'MP run 12mi: 2mi WU, 8mi @ 6:29/mi, 2mi CD. Fitness from the half should make this feel easier than before.', hasStrength: false, estimatedMinutes: 89 },
-      { day: 'Wednesday', date: '2026-10-21', type: 'easy',      miles: 7,  description: 'Easy 7mi', hasStrength: false, estimatedMinutes: 58 },
-      { day: 'Thursday',  date: '2026-10-22', type: 'intervals', miles: 10, description: 'INTERVALS: 10mi — 2mi WU, 6x1000m @ 5:40/mi w/ 90s jog, 2mi CD. Half-race fitness on display.', hasStrength: false, estimatedMinutes: 76 },
+      { day: 'Wednesday', date: '2026-10-21', type: 'easy',      miles: 7,  description: 'Progression 7mi: 5mi easy, last 2mi @ MP (6:29/mi). Post-half fitness makes this feel smooth.', hasStrength: false, estimatedMinutes: 56 },
+      { day: 'Thursday',  date: '2026-10-22', type: 'intervals', miles: 10, description: 'HILL REPEATS: 10mi — 2mi WU, 8x90sec hard uphill (Rockwall incline) w/ jog-down recovery, 3mi CD with last 1mi @ MP. Post-half fitness + hill power = dangerous combo.', hasStrength: false, estimatedMinutes: 76 },
       { day: 'Friday',    date: '2026-10-23', type: 'easy',      miles: 8,  description: 'Easy 8mi recovery', hasStrength: false,  estimatedMinutes: 66 },
       { day: 'Saturday',  date: '2026-10-24', type: 'long',      miles: 18, description: 'Long run 18mi: Easy mi 1-8, miles 9-16 @ MP (8mi), easy mi 17-18. Excellent fitness test.', hasStrength: false, estimatedMinutes: 140 },
       { day: 'Sunday',    date: '2026-10-25', type: 'rest',      miles: 0,  description: 'Full rest day. Foam rolling 10-15 min. Mobility work. Hydrate well.', hasStrength: false, estimatedMinutes: 15 },
@@ -382,7 +383,7 @@ export const phase3Weeks: TrainingWeek[] = [
     days: [
       { day: 'Monday',    date: '2026-10-26', type: 'easy',      miles: 8,  description: 'Easy 8mi + Strength A', hasStrength: true,  estimatedMinutes: 90 },
       { day: 'Tuesday',   date: '2026-10-27', type: 'tempo',     miles: 12, description: 'MP run 12mi: 2mi WU, 8mi @ 6:27-6:32/mi, 2mi CD', hasStrength: false, estimatedMinutes: 89 },
-      { day: 'Wednesday', date: '2026-10-28', type: 'easy',      miles: 7,  description: 'Easy 7mi', hasStrength: false, estimatedMinutes: 58 },
+      { day: 'Wednesday', date: '2026-10-28', type: 'easy',      miles: 7,  description: 'Progression 7mi: 5mi easy, last 2mi @ MP (6:27-6:32/mi). Race pace should feel like second nature by now.', hasStrength: false, estimatedMinutes: 56 },
       { day: 'Thursday',  date: '2026-10-29', type: 'tempo',     miles: 10, description: 'Tempo 10mi: 2mi WU, 6mi @ 6:05-6:10/mi, 2mi CD. Best tempo effort yet.', hasStrength: false, estimatedMinutes: 75 },
       { day: 'Friday',    date: '2026-10-30', type: 'easy',      miles: 8,  description: 'Easy 8mi recovery', hasStrength: false,  estimatedMinutes: 66 },
       { day: 'Saturday',  date: '2026-10-31', type: 'long',      miles: 20, description: 'Long run 20mi: Easy first 12mi, last 8mi @ MP (6:29/mi). Halloween long run! Biggest MP long run yet.', hasStrength: false, estimatedMinutes: 155 },
@@ -406,7 +407,7 @@ export const phase3Weeks: TrainingWeek[] = [
     days: [
       { day: 'Monday',    date: '2026-11-09', type: 'easy',      miles: 8,  description: 'Easy 8mi + Strength A. Final high-volume block begins.', hasStrength: true,  estimatedMinutes: 90 },
       { day: 'Tuesday',   date: '2026-11-10', type: 'tempo',     miles: 12, description: 'MP run 12mi: 2mi WU, 8mi @ 6:27-6:30/mi (sharper MP), 2mi CD', hasStrength: false, estimatedMinutes: 89 },
-      { day: 'Wednesday', date: '2026-11-11', type: 'easy',      miles: 7,  description: 'Easy 7mi', hasStrength: false, estimatedMinutes: 58 },
+      { day: 'Wednesday', date: '2026-11-11', type: 'easy',      miles: 7,  description: 'Progression 7mi: 4mi easy, last 3mi @ MP (6:27-6:30/mi). Veterans Day miles. Final block — every rep at pace counts.', hasStrength: false, estimatedMinutes: 55 },
       { day: 'Thursday',  date: '2026-11-12', type: 'intervals', miles: 10, description: 'INTERVALS: 10mi — 2mi WU, 4x1600m @ 5:45/mi w/ 2min jog, 2mi CD. Focus on form at speed.', hasStrength: false, estimatedMinutes: 76 },
       { day: 'Friday',    date: '2026-11-13', type: 'easy',      miles: 8,  description: 'Easy 8mi recovery. You are ready for Houston.', hasStrength: false,  estimatedMinutes: 66 },
       { day: 'Saturday',  date: '2026-11-14', type: 'long',      miles: 20, description: 'Long run 20mi: Easy mi 1-6, miles 7-18 @ MP (12mi MP work!), easy mi 19-20. Biggest MP session of the entire plan. Execute this well.', hasStrength: false, estimatedMinutes: 155 },
@@ -418,7 +419,7 @@ export const phase3Weeks: TrainingWeek[] = [
     days: [
       { day: 'Monday',    date: '2026-11-16', type: 'easy',      miles: 9,  description: '⭐ PEAK WEEK begins. Easy 9mi + Strength A. This is the summit of training.', hasStrength: true,  estimatedMinutes: 95 },
       { day: 'Tuesday',   date: '2026-11-17', type: 'tempo',     miles: 12, description: 'MP run 12mi: 2mi WU, 8mi @ 6:25-6:30/mi (race pace!), 2mi CD. Targeting 70 miles this week.', hasStrength: false, estimatedMinutes: 89 },
-      { day: 'Wednesday', date: '2026-11-18', type: 'easy',      miles: 8,  description: 'Easy 8mi', hasStrength: false, estimatedMinutes: 66 },
+      { day: 'Wednesday', date: '2026-11-18', type: 'easy',      miles: 8,  description: 'Progression 8mi: 5mi easy, last 3mi @ MP (6:25-6:30/mi). Peak week — 4 of 6 runs this week touch race pace or faster.', hasStrength: false, estimatedMinutes: 63 },
       { day: 'Thursday',  date: '2026-11-19', type: 'tempo',     miles: 11, description: 'Tempo 11mi: 2mi WU, 7mi @ 6:05-6:10/mi, 2mi CD. Peak tempo session.', hasStrength: false, estimatedMinutes: 82 },
       { day: 'Friday',    date: '2026-11-20', type: 'easy',      miles: 8,  description: 'Easy 8mi. You\'ve done the work. Now the taper begins.', hasStrength: false,  estimatedMinutes: 66 },
       { day: 'Saturday',  date: '2026-11-21', type: 'long',      miles: 22, description: '⭐ CAPSTONE WORKOUT: 22mi — Easy mi 1-8, miles 9-18 @ MP (10mi at race pace!), easy mi 19-22. This is the hardest workout of the entire 51-week plan. Completing this means sub-2:50 is within reach.', hasStrength: false, estimatedMinutes: 170 },
@@ -430,7 +431,7 @@ export const phase3Weeks: TrainingWeek[] = [
     days: [
       { day: 'Monday',    date: '2026-11-23', type: 'easy',      miles: 8,  description: 'Easy 8mi + Strength A. Volume taper begins — quality stays high.', hasStrength: true,  estimatedMinutes: 90 },
       { day: 'Tuesday',   date: '2026-11-24', type: 'tempo',     miles: 11, description: 'MP run 11mi: 2mi WU, 7mi @ 6:29/mi, 2mi CD', hasStrength: false, estimatedMinutes: 82 },
-      { day: 'Wednesday', date: '2026-11-25', type: 'easy',      miles: 7,  description: 'Easy 7mi', hasStrength: false, estimatedMinutes: 58 },
+      { day: 'Wednesday', date: '2026-11-25', type: 'easy',      miles: 7,  description: 'Progression 7mi: 5mi easy, last 2mi @ MP (6:29/mi). Pre-Thanksgiving pace work.', hasStrength: false, estimatedMinutes: 56 },
       { day: 'Thursday',  date: '2026-11-26', type: 'intervals', miles: 9,  description: 'Thanksgiving intervals: 9mi — 2mi WU, 5x1000m @ 5:45/mi w/ 90s jog, 2mi CD. Earn the Turkey.', hasStrength: false, estimatedMinutes: 70 },
       { day: 'Friday',    date: '2026-11-27', type: 'easy',      miles: 10,  description: 'Easy 10mi recovery. Phase 3 nearly complete.', hasStrength: false,  estimatedMinutes: 82 },
       { day: 'Saturday',  date: '2026-11-28', type: 'long',      miles: 20, description: 'Long run 20mi: Easy 14mi, last 6mi @ MP. Begin mental taper — tell yourself the work is done.', hasStrength: false, estimatedMinutes: 155 },
@@ -456,62 +457,62 @@ export const phase3Weeks: TrainingWeek[] = [
 // ============================================================
 export const phase4Weeks: TrainingWeek[] = [
   {
-    week: 37, startDate: '2026-12-07', totalMiles: 50, isDownWeek: false,
+    week: 37, startDate: '2026-12-07', totalMiles: 60, isDownWeek: false,
     days: [
-      { day: 'Monday',    date: '2026-12-07', type: 'easy',  miles: 7,  description: 'Easy 7mi + Strength (Phase 4 Light Full Body: Goblet Squat 2x8, Push-up 2x10, SL RDL 2x8, DB Row 2x10, Plank+Side Plank 2x30s, Calf Raises 2x15). Volume drop begins — body starts to freshen.', hasStrength: true,  estimatedMinutes: 80 },
-      { day: 'Tuesday',   date: '2026-12-08', type: 'tempo', miles: 9,  description: 'MP run 9mi: 2mi WU, 5mi @ 6:29/mi, 2mi CD. Keeping the legs sharp.', hasStrength: false, estimatedMinutes: 68 },
-      { day: 'Wednesday', date: '2026-12-09', type: 'easy',  miles: 7,  description: 'Easy 7mi', hasStrength: false, estimatedMinutes: 58 },
-      { day: 'Thursday',  date: '2026-12-10', type: 'easy',  miles: 7,  description: 'Easy 7mi + 6x100m strides', hasStrength: false, estimatedMinutes: 60 },
-      { day: 'Friday',    date: '2026-12-11', type: 'easy',  miles: 4,  description: 'Easy 4mi recovery', hasStrength: false, estimatedMinutes: 34 },
-      { day: 'Saturday',  date: '2026-12-12', type: 'long',  miles: 16, description: 'Long run 16mi easy throughout. Last truly long run — enjoy it.', hasStrength: false, estimatedMinutes: 125 },
+      { day: 'Monday',    date: '2026-12-07', type: 'easy',  miles: 8,  description: 'Easy 8mi + Strength A. NOT tapering yet — aerobic engine lasts, speed doesn\'t. Keep training hard 6 weeks out.', hasStrength: true,  estimatedMinutes: 90 },
+      { day: 'Tuesday',   date: '2026-12-08', type: 'tempo', miles: 12, description: 'MP run 12mi: 2mi WU, 8mi @ 6:27-6:30/mi, 2mi CD. Last big MP session — lock the pace in.', hasStrength: false, estimatedMinutes: 89 },
+      { day: 'Wednesday', date: '2026-12-09', type: 'easy',  miles: 7,  description: 'Progression 7mi: 5mi easy, last 2mi @ MP (6:29/mi). Keep touching race pace.', hasStrength: false, estimatedMinutes: 56 },
+      { day: 'Thursday',  date: '2026-12-10', type: 'intervals', miles: 9,  description: 'INTERVALS: 9mi — 2mi WU, 5x1000m @ 5:45/mi w/ 90s jog, 2mi CD. Speed work stays in the plan longer — you lose it faster than aerobic fitness.', hasStrength: false, estimatedMinutes: 70 },
+      { day: 'Friday',    date: '2026-12-11', type: 'easy',  miles: 6,  description: 'Easy 6mi recovery', hasStrength: false, estimatedMinutes: 50 },
+      { day: 'Saturday',  date: '2026-12-12', type: 'long',  miles: 18, description: 'Long run 18mi: Easy first 12mi, last 6mi @ MP (6:29/mi). Last 18-miler — prove the pace is locked in.', hasStrength: false, estimatedMinutes: 140 },
       { day: 'Sunday',    date: '2026-12-13', type: 'rest',  miles: 0,  description: 'Full rest day. Foam rolling 10-15 min. Mobility work. Hydrate well.', hasStrength: false, estimatedMinutes: 15 },
     ],
   },
   {
-    week: 38, startDate: '2026-12-14', totalMiles: 45, isDownWeek: false,
+    week: 38, startDate: '2026-12-14', totalMiles: 55, isDownWeek: false,
     days: [
-      { day: 'Monday',    date: '2026-12-14', type: 'easy',  miles: 6,  description: 'Easy 6mi + Strength (light). Legs should be starting to feel fresher.', hasStrength: true,  estimatedMinutes: 75 },
-      { day: 'Tuesday',   date: '2026-12-15', type: 'tempo', miles: 8,  description: 'MP run 8mi: 2mi WU, 4mi @ 6:27-6:32/mi, 2mi CD. Last proper MP workout before the race.', hasStrength: false, estimatedMinutes: 62 },
-      { day: 'Wednesday', date: '2026-12-16', type: 'easy',  miles: 6,  description: 'Easy 6mi', hasStrength: false, estimatedMinutes: 50 },
-      { day: 'Thursday',  date: '2026-12-17', type: 'easy',  miles: 6,  description: 'Easy 6mi + 4x100m strides', hasStrength: false, estimatedMinutes: 52 },
+      { day: 'Monday',    date: '2026-12-14', type: 'easy',  miles: 7,  description: 'Easy 7mi + Strength A. Last full training week — taper starts next week.', hasStrength: true,  estimatedMinutes: 85 },
+      { day: 'Tuesday',   date: '2026-12-15', type: 'tempo', miles: 10, description: 'MP run 10mi: 2mi WU, 6mi @ 6:25-6:30/mi, 2mi CD. Sharpest MP session — race pace should feel like home.', hasStrength: false, estimatedMinutes: 76 },
+      { day: 'Wednesday', date: '2026-12-16', type: 'easy',  miles: 7,  description: 'Progression 7mi: 5mi easy, last 2mi @ MP (6:29/mi).', hasStrength: false, estimatedMinutes: 56 },
+      { day: 'Thursday',  date: '2026-12-17', type: 'intervals', miles: 8,  description: 'SHARP speed: 8mi — 2mi WU, 4x800m @ 5:30-5:40/mi w/ 90s jog, 2mi CD. Short and fast — hold onto the speed.', hasStrength: false, estimatedMinutes: 62 },
       { day: 'Friday',    date: '2026-12-18', type: 'easy',  miles: 5,  description: 'Easy 5mi recovery', hasStrength: false, estimatedMinutes: 42 },
-      { day: 'Saturday',  date: '2026-12-19', type: 'long',  miles: 14, description: 'Long run 14mi: Easy first 11mi, last 3mi @ MP. This will feel easy — you\'re fresh.', hasStrength: false, estimatedMinutes: 110 },
+      { day: 'Saturday',  date: '2026-12-19', type: 'long',  miles: 16, description: 'Long run 16mi: Easy first 12mi, last 4mi @ MP (6:29/mi). Last long run over 14mi. Nailed it.', hasStrength: false, estimatedMinutes: 125 },
       { day: 'Sunday',    date: '2026-12-20', type: 'rest',  miles: 0,  description: 'Full rest day. Foam rolling 10-15 min. Mobility work. Hydrate well.', hasStrength: false, estimatedMinutes: 15 },
     ],
   },
   {
     week: 39, startDate: '2026-12-21', totalMiles: 40, isDownWeek: false,
     days: [
-      { day: 'Monday',    date: '2026-12-21', type: 'easy',  miles: 6,  description: 'Easy 6mi + Strength. Holiday week — stick to the plan, you\'re close now.', hasStrength: true,  estimatedMinutes: 75 },
-      { day: 'Tuesday',   date: '2026-12-22', type: 'easy',  miles: 5,  description: 'Easy 5mi + 4x100m strides. 10K race Saturday if available.', hasStrength: false, estimatedMinutes: 45 },
+      { day: 'Monday',    date: '2026-12-21', type: 'easy',  miles: 5,  description: 'Easy 5mi + Strength (light — last lifting session). TAPER BEGINS. Volume drops, speed stays. Holiday week.', hasStrength: true,  estimatedMinutes: 65 },
+      { day: 'Tuesday',   date: '2026-12-22', type: 'intervals', miles: 7,  description: 'SHARP speed: 7mi — 2mi WU, 5x600m @ 5:25-5:35/mi w/ 90s jog, 2mi CD. Short, fast, DONE. Taper speed work.', hasStrength: false, estimatedMinutes: 55 },
       { day: 'Wednesday', date: '2026-12-23', type: 'easy',  miles: 4,  description: 'Easy 4mi. Merry Christmas Eve-Eve.', hasStrength: false, estimatedMinutes: 34 },
-      { day: 'Thursday',  date: '2026-12-24', type: 'easy',  miles: 3,  description: 'Easy 3mi + strides. Christmas Eve shakeout.', hasStrength: false, estimatedMinutes: 28 },
-      { day: 'Friday',    date: '2026-12-25', type: 'easy',  miles: 5.8,  description: 'Easy 6mi shake-out recovery', hasStrength: false, estimatedMinutes: 48 },
+      { day: 'Thursday',  date: '2026-12-24', type: 'easy',  miles: 3,  description: 'Easy 3mi + 4x100m strides at MP. Christmas Eve shakeout.', hasStrength: false, estimatedMinutes: 28 },
+      { day: 'Friday',    date: '2026-12-25', type: 'easy',  miles: 5,  description: 'Easy 5mi Christmas run', hasStrength: false, estimatedMinutes: 42 },
       { day: 'Saturday',  date: '2026-12-26', type: 'race',  miles: 6.2, description: '🏁 10K TUNE-UP RACE — Goal: 40:30-41:30 (6:32-6:41/mi). Final pre-marathon sharpener. Race hard but controlled. Warm up 2mi first.', hasStrength: false, estimatedMinutes: 60 },
       { day: 'Sunday',    date: '2026-12-27', type: 'rest',  miles: 0, description: 'Full rest day. Foam rolling 10-15 min. Mobility work. Hydrate well.', hasStrength: false, estimatedMinutes: 15 },
     ],
   },
   {
-    week: 40, startDate: '2026-12-28', totalMiles: 35, isDownWeek: false,
+    week: 40, startDate: '2026-12-28', totalMiles: 32, isDownWeek: false,
     days: [
-      { day: 'Monday',    date: '2026-12-28', type: 'easy',  miles: 5,  description: 'Easy 5mi. No more strength this week — stop lifting 10 days before the race.', hasStrength: false, estimatedMinutes: 42 },
-      { day: 'Tuesday',   date: '2026-12-29', type: 'tempo', miles: 7,  description: 'MP run 7mi: 2mi WU, 3mi @ 6:29/mi, 2mi CD. Short and sharp.', hasStrength: false, estimatedMinutes: 55 },
-      { day: 'Wednesday', date: '2026-12-30', type: 'easy',  miles: 6,  description: 'Easy 6mi', hasStrength: false, estimatedMinutes: 50 },
-      { day: 'Thursday',  date: '2026-12-31', type: 'easy',  miles: 6,  description: 'Easy 6mi + 4x100m strides. New Year\'s Eve run.', hasStrength: false, estimatedMinutes: 52 },
-      { day: 'Friday',    date: '2027-01-01', type: 'easy',  miles: 1,  description: 'Easy 1mi shake-out + foam roll', hasStrength: false, estimatedMinutes: 15 },
-      { day: 'Saturday',  date: '2027-01-02', type: 'long',  miles: 10, description: 'Easy 10mi. Legs should feel springy.', hasStrength: false, estimatedMinutes: 82 },
+      { day: 'Monday',    date: '2026-12-28', type: 'easy',  miles: 5,  description: 'Easy 5mi. No more strength — stop lifting 3 weeks before the race.', hasStrength: false, estimatedMinutes: 42 },
+      { day: 'Tuesday',   date: '2026-12-29', type: 'tempo', miles: 7,  description: 'SHARP MP sharpener 7mi: 2mi WU, 3mi @ 6:25-6:29/mi (slightly under goal!), 2mi CD. Short, fast, confident.', hasStrength: false, estimatedMinutes: 55 },
+      { day: 'Wednesday', date: '2026-12-30', type: 'easy',  miles: 4,  description: 'Easy 4mi + 4x100m strides at 5K effort. Keep the neuromuscular system firing.', hasStrength: false, estimatedMinutes: 36 },
+      { day: 'Thursday',  date: '2026-12-31', type: 'intervals', miles: 5,  description: 'Speed sharpener: 5mi — 1.5mi WU, 3x400m @ 5:10-5:20/mi w/ 60s jog, 1.5mi CD. New Year\'s Eve fireworks in your legs.', hasStrength: false, estimatedMinutes: 40 },
+      { day: 'Friday',    date: '2027-01-01', type: 'easy',  miles: 1,  description: 'Easy 1mi shake-out + foam roll. Happy New Year.', hasStrength: false, estimatedMinutes: 15 },
+      { day: 'Saturday',  date: '2027-01-02', type: 'long',  miles: 10, description: 'Easy 10mi: Last 2mi at MP (6:29/mi). Legs feel springy and FAST.', hasStrength: false, estimatedMinutes: 82 },
       { day: 'Sunday',    date: '2027-01-03', type: 'rest',  miles: 0,  description: 'Full rest day. Foam rolling 10-15 min. Mobility work. Hydrate well.', hasStrength: false, estimatedMinutes: 15 },
     ],
   },
   {
-    week: 41, startDate: '2027-01-04', totalMiles: 28, isDownWeek: false,
+    week: 41, startDate: '2027-01-04', totalMiles: 25, isDownWeek: false,
     days: [
-      { day: 'Monday',    date: '2027-01-04', type: 'easy',  miles: 5,  description: 'Easy 5mi. 13 days to race day. Legs should feel fresh and a little anxious.', hasStrength: false, estimatedMinutes: 42 },
-      { day: 'Tuesday',   date: '2027-01-05', type: 'tempo', miles: 6,  description: 'MP sharpener 6mi: 2mi WU, 2mi @ 6:25-6:29/mi + 4x100m strides, 2mi CD. Race pace should feel easy now.', hasStrength: false, estimatedMinutes: 48 },
-      { day: 'Wednesday', date: '2027-01-06', type: 'easy',  miles: 5,  description: 'Easy 5mi', hasStrength: false, estimatedMinutes: 42 },
-      { day: 'Thursday',  date: '2027-01-07', type: 'easy',  miles: 4,  description: 'Easy 4mi + 4x100m strides. Last quality strides session.', hasStrength: false, estimatedMinutes: 36 },
-      { day: 'Friday',    date: '2027-01-08', type: 'easy',  miles: 0,  description: 'Rest or easy 1mi walk. Save everything for next Sunday.', hasStrength: false, estimatedMinutes: 15 },
-      { day: 'Saturday',  date: '2027-01-09', type: 'long',  miles: 8,  description: 'Easy 8mi. Last run over 6 miles before race day.', hasStrength: false, estimatedMinutes: 66 },
+      { day: 'Monday',    date: '2027-01-04', type: 'easy',  miles: 5,  description: 'Easy 5mi. 11 days to race. Legs should feel fresh and a little anxious — that\'s good.', hasStrength: false, estimatedMinutes: 42 },
+      { day: 'Tuesday',   date: '2027-01-05', type: 'intervals', miles: 5,  description: 'Speed sharpener: 5mi — 1.5mi WU, 2x800m @ 5:30/mi + 2x400m @ 5:15/mi w/ 90s jog, 1.5mi CD. Short and SHARP — remind the legs what fast feels like.', hasStrength: false, estimatedMinutes: 40 },
+      { day: 'Wednesday', date: '2027-01-06', type: 'easy',  miles: 4,  description: 'Easy 4mi', hasStrength: false, estimatedMinutes: 34 },
+      { day: 'Thursday',  date: '2027-01-07', type: 'tempo',  miles: 5,  description: 'Final MP sharpener: 5mi — 1.5mi WU, 2mi @ 6:25-6:29/mi, 1.5mi CD. Race pace feels EASY. You are ready.', hasStrength: false, estimatedMinutes: 40 },
+      { day: 'Friday',    date: '2027-01-08', type: 'easy',  miles: 0,  description: 'Rest or easy 1mi walk. Save everything.', hasStrength: false, estimatedMinutes: 15 },
+      { day: 'Saturday',  date: '2027-01-09', type: 'long',  miles: 6,  description: 'Easy 6mi + 4x100m strides at MP. Last run over 5 miles. Everything is locked in.', hasStrength: false, estimatedMinutes: 52 },
       { day: 'Sunday',    date: '2027-01-10', type: 'rest',  miles: 0,  description: 'Full rest day. Foam rolling 10-15 min. Mobility work. Hydrate well.', hasStrength: false, estimatedMinutes: 15 },
     ],
   },
@@ -732,12 +733,12 @@ export function getPhaseForWeek(weekNum: number): TrainingPhase | undefined {
 }
 
 export function getCurrentWeek(today: Date = new Date()): TrainingWeek | null {
-  const todayStr = today.toISOString().split('T')[0];
+  const todayStr = toLocalDateStr(today);
   for (const week of allWeeks) {
-    const weekStart = new Date(week.startDate);
+    const weekStart = new Date(week.startDate + 'T00:00:00');
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekStart.getDate() + 6);
-    const todayDate = new Date(todayStr);
+    const todayDate = new Date(todayStr + 'T00:00:00');
     if (todayDate >= weekStart && todayDate <= weekEnd) {
       return week;
     }
@@ -746,13 +747,12 @@ export function getCurrentWeek(today: Date = new Date()): TrainingWeek | null {
 }
 
 export function getTodayWorkout(today: Date = new Date()) {
-  const todayStr = today.toISOString().split('T')[0];
-  return getWorkoutByDate(todayStr);
+  return getWorkoutByDate(toLocalDateStr(today));
 }
 
 export function getDaysUntil(targetDate: string, fromDate: Date = new Date()): number {
-  const target = new Date(targetDate);
-  const from = new Date(fromDate.toISOString().split('T')[0]);
+  const target = new Date(targetDate + 'T00:00:00');
+  const from = new Date(toLocalDateStr(fromDate) + 'T00:00:00');
   return Math.ceil((target.getTime() - from.getTime()) / (1000 * 60 * 60 * 24));
 }
 

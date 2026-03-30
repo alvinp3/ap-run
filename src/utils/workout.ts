@@ -1,5 +1,13 @@
 import type { WorkoutType } from '@/types';
 
+/** Return a Date's local date as YYYY-MM-DD (avoids the UTC shift of toISOString). */
+export function toLocalDateStr(date: Date = new Date()): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 export function getWorkoutColor(type: WorkoutType): string {
   switch (type) {
     case 'easy':      return '#22C55E';
@@ -90,18 +98,15 @@ export function isHeatSeason(dateStr: string): boolean {
 }
 
 export function isToday(dateStr: string): boolean {
-  const today = new Date().toISOString().split('T')[0];
-  return dateStr === today;
+  return dateStr === toLocalDateStr();
 }
 
 export function isPast(dateStr: string): boolean {
-  const today = new Date().toISOString().split('T')[0];
-  return dateStr < today;
+  return dateStr < toLocalDateStr();
 }
 
 export function isFuture(dateStr: string): boolean {
-  const today = new Date().toISOString().split('T')[0];
-  return dateStr > today;
+  return dateStr > toLocalDateStr();
 }
 
 export function getHeatAdvisoryLevel(heatIndex: number): null | 'warning' | 'danger' | 'extreme' {

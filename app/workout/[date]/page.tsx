@@ -192,7 +192,7 @@ export default function WorkoutDetailPage() {
               </button>
             </div>
           )}
-          <WorkoutSteps description={effectiveWorkout.description} type={effectiveWorkout.type} />
+          <WorkoutSteps description={effectiveWorkout.description} type={effectiveWorkout.type} phase={phase?.phase} />
         </div>
 
         {/* Heat-adjusted paces */}

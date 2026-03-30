@@ -8,8 +8,9 @@ import TodayWorkoutCard from '@/components/ui/TodayWorkoutCard';
 import RaceCountdown from '@/components/ui/RaceCountdown';
 import WeatherStrip from '@/components/ui/WeatherStrip';
 import CoachFAB from '@/components/coach/CoachFAB';
-import { getCurrentWeek, getTodayWorkout, getPhaseForWeek, allWeeks, getDaysUntil } from '@/data/training-plan';
-import { formatMiles } from '@/utils/workout';
+import SleepRecommendation from '@/components/ui/SleepRecommendation';
+import { getCurrentWeek, getTodayWorkout, getWorkoutByDate, getPhaseForWeek, allWeeks, getDaysUntil } from '@/data/training-plan';
+import { formatMiles, toLocalDateStr } from '@/utils/workout';
 import type { WorkoutDay, WorkoutLog } from '@/types';
 
 const TOTAL_WEEKS = 51;
@@ -31,7 +32,7 @@ function calculateStreak(logs: LogState, todayStr: string): number {
   let streak = 0;
   const date = new Date(todayStr + 'T00:00:00');
   for (let i = 0; i < 365; i++) {
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = toLocalDateStr(date);
     const log = logs[dateStr];
     if (log?.completed || log?.skipped) {
       streak++;
@@ -57,8 +58,12 @@ export default function DashboardPage() {
   } | null>(null);
 
   const today = new Date();
-  const todayStr = today.toISOString().split('T')[0];
+  const todayStr = toLocalDateStr(today);
   const todayWorkout = getTodayWorkout(today) as (WorkoutDay & { weekNumber: number; isDownWeek: boolean }) | null;
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowStr = toLocalDateStr(tomorrow);
+  const tomorrowWorkout = getWorkoutByDate(tomorrowStr);
   const currentWeek = getCurrentWeek(today);
   const phase = currentWeek ? getPhaseForWeek(currentWeek.week) : null;
 
@@ -198,6 +203,12 @@ export default function DashboardPage() {
             </div>
           )}
         </section>
+
+        {/* Sleep / Wind-Down Recommendation */}
+        <SleepRecommendation
+          tomorrowWorkout={tomorrowWorkout ? { type: tomorrowWorkout.type, estimatedMinutes: tomorrowWorkout.estimatedMinutes, description: tomorrowWorkout.description } : null}
+          todayStr={todayStr}
+        />
 
         {/* Weekly Mileage Progress */}
         {currentWeek && (

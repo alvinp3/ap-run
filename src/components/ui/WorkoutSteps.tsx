@@ -16,6 +16,7 @@ interface WorkoutStepsProps {
   description: string;
   type: WorkoutType;
   maxBlocks?: number;
+  phase?: number;
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -214,9 +215,9 @@ function BlockRow({
 
 // ── WorkoutSteps ──────────────────────────────────────────────────────────────
 
-export default function WorkoutSteps({ description, type, maxBlocks }: WorkoutStepsProps) {
+export default function WorkoutSteps({ description, type, maxBlocks, phase }: WorkoutStepsProps) {
   const [allVisible, setAllVisible] = useState(false);
-  const blocks = parseWorkoutDescription(description, type);
+  const blocks = parseWorkoutDescription(description, type, phase);
   if (!blocks.length) return null;
 
   const compact        = !!maxBlocks;

@@ -24,8 +24,8 @@ function blockColor(label: string): string {
   return '#52525B';
 }
 
-function WorkoutSegments({ description, type }: { description: string; type: WorkoutType }) {
-  const blocks = parseWorkoutDescription(description, type);
+function WorkoutSegments({ description, type, phase }: { description: string; type: WorkoutType; phase?: number }) {
+  const blocks = parseWorkoutDescription(description, type, phase);
   if (!blocks.length) return null;
 
   // Notes and rest-label blocks add noise — skip them in the compact view
@@ -301,7 +301,7 @@ export default function WeekPage() {
                       </span>
                     )}
                   </div>
-                  <WorkoutSegments description={day.description} type={day.type} />
+                  <WorkoutSegments description={day.description} type={day.type} phase={phase?.phase} />
                 </div>
 
                 {/* Right: miles + status */}

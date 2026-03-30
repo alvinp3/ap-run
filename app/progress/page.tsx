@@ -8,6 +8,7 @@ import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
 import { allWeeks, trainingPhases, getCurrentWeek, getDaysUntil } from '@/data/training-plan';
+import { toLocalDateStr } from '@/utils/workout';
 
 interface LogData {
   date: string;
@@ -108,7 +109,7 @@ export default function ProgressPage() {
   // Completion rate
   const pastWorkouts = allWeeks
     .flatMap((w) => w.days)
-    .filter((d) => d.date < today.toISOString().split('T')[0]);
+    .filter((d) => d.date < toLocalDateStr(today));
   const completedCount = pastWorkouts.filter((d) => logsMap[d.date]?.completed).length;
   const completionRate = pastWorkouts.length > 0
     ? Math.round((completedCount / pastWorkouts.length) * 100)

@@ -143,7 +143,7 @@ export default function TodayWorkoutCard({
 
         {/* Workout steps */}
         <div className="mb-4">
-          <WorkoutSteps description={workout.description} type={workout.type} maxBlocks={4} />
+          <WorkoutSteps description={workout.description} type={workout.type} maxBlocks={4} phase={phase} />
         </div>
 
         {/* Heat-adjusted paces (shown if heat season + phase 2/3) */}
