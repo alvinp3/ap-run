@@ -16,7 +16,9 @@ interface TodayWorkoutCardProps {
   log?: WorkoutLog | null;
   onComplete?: (notes?: string) => Promise<void>;
   onSkip?: () => Promise<void>;
+  onOverride?: () => void;
   heatAdjusted?: boolean;
+  hasOverride?: boolean;
 }
 
 export default function TodayWorkoutCard({
@@ -27,7 +29,9 @@ export default function TodayWorkoutCard({
   log,
   onComplete,
   onSkip,
+  onOverride,
   heatAdjusted = false,
+  hasOverride = false,
 }: TodayWorkoutCardProps) {
   const [showNotes, setShowNotes] = useState(false);
   const [notes, setNotes] = useState('');
@@ -127,6 +131,18 @@ export default function TodayWorkoutCard({
             </span>
           )}
         </div>
+
+        {/* Override indicator */}
+        {hasOverride && (
+          <div
+            className="rounded-lg px-3 py-2 mb-3 flex items-center gap-2"
+            style={{ background: 'rgba(179,136,255,0.1)', border: '1px solid rgba(179,136,255,0.25)' }}
+          >
+            <span className="text-xs font-medium" style={{ color: '#B388FF' }}>
+              Modified — this workout has been overridden
+            </span>
+          </div>
+        )}
 
         {/* Heat advisory for workout */}
         {heatAdjusted && isHeat && workout.type !== 'rest' && (
@@ -241,12 +257,21 @@ export default function TodayWorkoutCard({
             )}
             {!showNotes && (
               <>
+                {onOverride && (
+                  <button
+                    className="btn-secondary"
+                    onClick={onOverride}
+                    style={{ fontSize: 13, padding: '10px 14px', minWidth: 'unset', minHeight: 44, color: '#B388FF' }}
+                  >
+                    Override
+                  </button>
+                )}
                 <Link
                   href={`/workout/${workout.date}`}
                   className="btn-secondary"
                   style={{ fontSize: 13, padding: '10px 14px', minWidth: 'unset', minHeight: 44 }}
                 >
-                  Full Details
+                  Details
                 </Link>
                 <button
                   className="btn-secondary"

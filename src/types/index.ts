@@ -133,3 +133,30 @@ export interface WorkoutOverride {
   reason?: string;
   createdAt?: string;
 }
+
+// ── Quick Override types ─────────────────────────────────────────────────────
+
+export type OverridePreset = 'run-club' | 'cut-short' | 'skip-to-rest' | 'custom';
+
+export interface OverrideFormData {
+  type?: WorkoutType;
+  miles?: number;
+  description?: string;
+  reason?: string;
+  estimatedMinutes?: number;
+}
+
+export interface AdjustmentSuggestion {
+  id: string;
+  targetDate: string;
+  targetDayName: string;
+  currentType: WorkoutType;
+  currentMiles: number;
+  suggestedType?: WorkoutType;
+  suggestedMiles?: number;
+  suggestedDescription?: string;
+  ruleName: string;
+  ruleIcon: string;
+  explanation: string;
+  severity: 'info' | 'warning';
+}

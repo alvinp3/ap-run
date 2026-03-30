@@ -9,9 +9,10 @@ import RaceCountdown from '@/components/ui/RaceCountdown';
 import WeatherStrip from '@/components/ui/WeatherStrip';
 import CoachFAB from '@/components/coach/CoachFAB';
 import SleepRecommendation from '@/components/ui/SleepRecommendation';
+import QuickOverridePanel from '@/components/override/QuickOverridePanel';
 import { getCurrentWeek, getTodayWorkout, getWorkoutByDate, getPhaseForWeek, allWeeks, getDaysUntil } from '@/data/training-plan';
 import { formatMiles, toLocalDateStr } from '@/utils/workout';
-import type { WorkoutDay, WorkoutLog } from '@/types';
+import type { WorkoutDay, WorkoutLog, WorkoutOverride } from '@/types';
 
 const TOTAL_WEEKS = 51;
 const HOUSTON_DATE = '2027-01-17';
@@ -56,6 +57,9 @@ export default function DashboardPage() {
   const [garminHealth, setGarminHealth] = useState<{
     restingHR?: number; sleepScore?: number; bodyBattery?: number; trainingReadiness?: number;
   } | null>(null);
+  const [overridePanelOpen, setOverridePanelOpen] = useState(false);
+  const [todayOverride, setTodayOverride] = useState<WorkoutOverride | null>(null);
+  const [weekOverrides, setWeekOverrides] = useState<Record<string, WorkoutOverride>>({});
 
   const today = new Date();
   const todayStr = toLocalDateStr(today);
@@ -100,16 +104,44 @@ export default function DashboardPage() {
       .catch(() => {});
   }, []);
 
+  // Fetch overrides for the current week
+  useEffect(() => {
+    fetch('/api/workouts/override')
+      .then((r) => r.json())
+      .then((data: Array<{ date: string; description?: string; miles?: number; type?: string; estimated_minutes?: number; reason?: string }>) => {
+        if (!Array.isArray(data)) return;
+        const map: Record<string, WorkoutOverride> = {};
+        data.forEach((o) => {
+          map[o.date] = { date: o.date, description: o.description, miles: o.miles, type: o.type as WorkoutOverride['type'], estimatedMinutes: o.estimated_minutes, reason: o.reason };
+        });
+        setWeekOverrides(map);
+        if (todayStr && map[todayStr]) setTodayOverride(map[todayStr]);
+      })
+      .catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Compute effective workout (merge override with planned)
+  const effectiveTodayWorkout = todayWorkout && todayOverride
+    ? {
+        ...todayWorkout,
+        description: todayOverride.description ?? todayWorkout.description,
+        miles: todayOverride.miles ?? todayWorkout.miles,
+        type: (todayOverride.type ?? todayWorkout.type) as typeof todayWorkout.type,
+        estimatedMinutes: todayOverride.estimatedMinutes ?? todayWorkout.estimatedMinutes,
+      }
+    : todayWorkout;
+
   const handleComplete = useCallback(async (notes?: string) => {
-    if (!todayWorkout) return;
+    if (!effectiveTodayWorkout) return;
     const res = await fetch('/api/logs', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ date: todayWorkout.date, completed: true, actualMiles: todayWorkout.miles, notes }),
+      body: JSON.stringify({ date: effectiveTodayWorkout.date, completed: true, actualMiles: effectiveTodayWorkout.miles, notes }),
     });
     const saved = await res.json();
-    setLogs((prev) => ({ ...prev, [todayWorkout.date]: { ...saved, completed: true } }));
-  }, [todayWorkout]);
+    setLogs((prev) => ({ ...prev, [effectiveTodayWorkout.date]: { ...saved, completed: true } }));
+  }, [effectiveTodayWorkout]);
 
   const handleSkip = useCallback(async () => {
     if (!todayWorkout) return;
@@ -120,6 +152,22 @@ export default function DashboardPage() {
     });
     const saved = await res.json();
     setLogs((prev) => ({ ...prev, [todayWorkout.date]: { ...saved, skipped: true } }));
+  }, [todayWorkout]);
+
+  const handleOverrideApplied = useCallback((override: WorkoutOverride) => {
+    setTodayOverride(override);
+    setWeekOverrides((prev) => ({ ...prev, [override.date]: override }));
+  }, []);
+
+  const handleRevert = useCallback(async () => {
+    if (!todayWorkout) return;
+    await fetch(`/api/workouts/override?date=${todayWorkout.date}`, { method: 'DELETE' });
+    setTodayOverride(null);
+    setWeekOverrides((prev) => {
+      const next = { ...prev };
+      delete next[todayWorkout.date];
+      return next;
+    });
   }, [todayWorkout]);
 
   const todayLog = todayWorkout ? logs[todayWorkout.date] : null;
@@ -180,16 +228,18 @@ export default function DashboardPage() {
 
           {!logsLoaded ? (
             <div className="card skeleton h-48" />
-          ) : todayWorkout && phase ? (
+          ) : effectiveTodayWorkout && phase ? (
             <TodayWorkoutCard
-              workout={todayWorkout}
+              workout={effectiveTodayWorkout}
               phase={phase.phase}
               phaseName={phase.name}
               totalWeeks={TOTAL_WEEKS}
               log={todayLog as WorkoutLog | null}
               onComplete={handleComplete}
               onSkip={handleSkip}
+              onOverride={() => setOverridePanelOpen((v) => !v)}
               heatAdjusted={heatAdvisory}
+              hasOverride={!!todayOverride}
             />
           ) : (
             <div className="card text-center py-8">
@@ -203,6 +253,20 @@ export default function DashboardPage() {
             </div>
           )}
         </section>
+
+        {/* Quick Override Panel */}
+        {overridePanelOpen && effectiveTodayWorkout && currentWeek && (
+          <QuickOverridePanel
+            workout={effectiveTodayWorkout}
+            existingOverride={todayOverride}
+            currentWeek={currentWeek}
+            weekOverrides={weekOverrides}
+            logs={logs}
+            onOverrideApplied={handleOverrideApplied}
+            onRevert={handleRevert}
+            onClose={() => setOverridePanelOpen(false)}
+          />
+        )}
 
         {/* Sleep / Wind-Down Recommendation */}
         <SleepRecommendation
