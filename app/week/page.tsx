@@ -9,7 +9,7 @@ import WorkoutBadge from '@/components/ui/WorkoutBadge';
 import { getCurrentWeek, getPhaseForWeek, getWeekByNumber, allWeeks } from '@/data/training-plan';
 import { formatMiles, formatDuration, isToday, isPast, getWorkoutColor } from '@/utils/workout';
 import { parseWorkoutDescription } from '@/utils/parseWorkout';
-import type { WorkoutDay, WorkoutType } from '@/types';
+import type { WorkoutDay, WorkoutType, WorkoutOverride } from '@/types';
 
 function blockColor(label: string): string {
   const u = label.toUpperCase();
@@ -102,7 +102,7 @@ function WorkoutSegments({ description, type, phase }: { description: string; ty
 export default function WeekPage() {
   const [weekNum, setWeekNumRaw] = useState<number>(1);
   const [logs, setLogs] = useState<Record<string, { completed: boolean; skipped: boolean }>>({});
-  const [overrideDates, setOverrideDates] = useState<Set<string>>(new Set());
+  const [weekOverridesData, setWeekOverridesData] = useState<Record<string, WorkoutOverride>>({});
 
   const today = new Date();
 
@@ -147,12 +147,15 @@ export default function WeekPage() {
 
   useEffect(() => {
     if (!week) return;
-    fetch(`/api/workouts/override`)
+    fetch('/api/workouts/override')
       .then(r => r.json())
-      .then((data: Array<{ date: string }>) => {
+      .then((data: Array<{ date: string; description?: string; miles?: number; type?: string; estimated_minutes?: number; reason?: string }>) => {
         if (!Array.isArray(data)) return;
-        const dates = new Set(data.map(o => o.date));
-        setOverrideDates(dates);
+        const map: Record<string, WorkoutOverride> = {};
+        data.forEach((o) => {
+          map[o.date] = { date: o.date, description: o.description, miles: o.miles, type: o.type as WorkoutOverride['type'], estimatedMinutes: o.estimated_minutes, reason: o.reason };
+        });
+        setWeekOverridesData(map);
       })
       .catch(() => {});
   }, [week]);
@@ -233,7 +236,17 @@ export default function WeekPage() {
             const log = logs[day.date];
             const isCurrentDay = isToday(day.date);
             const isPastDay = isPast(day.date) && !isCurrentDay;
-            const color = getWorkoutColor(day.type);
+            const override = weekOverridesData[day.date];
+            const effectiveDay = override
+              ? {
+                  ...day,
+                  type: (override.type ?? day.type) as WorkoutType,
+                  miles: override.miles ?? day.miles,
+                  description: override.description ?? day.description,
+                  estimatedMinutes: override.estimatedMinutes ?? day.estimatedMinutes,
+                }
+              : day;
+            const color = getWorkoutColor(effectiveDay.type);
 
             return (
               <Link
@@ -283,7 +296,7 @@ export default function WeekPage() {
                 {/* Workout info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <WorkoutBadge type={day.type} size="sm" />
+                    <WorkoutBadge type={effectiveDay.type} size="sm" />
                     {day.hasStrength && (
                       <span
                         className="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
@@ -300,35 +313,35 @@ export default function WeekPage() {
                         TODAY
                       </span>
                     )}
+                    {override && (
+                      <span style={{ fontSize: 10, color: '#B388FF', fontFamily: 'JetBrains Mono, monospace' }}>✎</span>
+                    )}
                   </div>
-                  <WorkoutSegments description={day.description} type={day.type} phase={phase?.phase} />
+                  <WorkoutSegments description={effectiveDay.description} type={effectiveDay.type} phase={phase?.phase} />
                 </div>
 
                 {/* Right: miles + status */}
                 <div className="flex-shrink-0 flex flex-col items-end gap-1" style={{ paddingTop: 2 }}>
-                  {day.miles > 0 && (
+                  {effectiveDay.miles > 0 && (
                     <span
                       className="text-sm font-bold"
-                      style={{ fontFamily: 'DM Mono, monospace', color: 'var(--text-primary)' }}
+                      style={{ fontFamily: 'DM Mono, monospace', color: override ? '#B388FF' : 'var(--text-primary)' }}
                     >
-                      {formatMiles(day.miles)}mi
+                      {formatMiles(effectiveDay.miles)}mi
                     </span>
                   )}
-                  {day.estimatedMinutes > 0 && (
+                  {effectiveDay.estimatedMinutes > 0 && (
                     <span
                       className="text-xs"
                       style={{ color: 'var(--text-tertiary)', fontFamily: 'DM Mono, monospace' }}
                     >
-                      {formatDuration(day.estimatedMinutes)}
+                      {formatDuration(effectiveDay.estimatedMinutes)}
                     </span>
                   )}
                   {log?.completed && <span className="text-base">✅</span>}
                   {log?.skipped && <span className="text-base opacity-50">⏭️</span>}
-                  {!log && isPastDay && day.type !== 'rest' && (
+                  {!log && isPastDay && effectiveDay.type !== 'rest' && (
                     <span className="text-base opacity-30">○</span>
-                  )}
-                  {overrideDates.has(day.date) && (
-                    <span style={{ fontSize: 10, color: '#B388FF', fontFamily: 'JetBrains Mono, monospace' }}>✎</span>
                   )}
                 </div>
               </Link>

@@ -68,6 +68,15 @@ export default function DashboardPage() {
   tomorrow.setDate(tomorrow.getDate() + 1);
   const tomorrowStr = toLocalDateStr(tomorrow);
   const tomorrowWorkout = getWorkoutByDate(tomorrowStr);
+  const tomorrowOverride = weekOverrides[tomorrowStr] ?? null;
+  const effectiveTomorrowWorkout = tomorrowWorkout && tomorrowOverride
+    ? {
+        ...tomorrowWorkout,
+        type: (tomorrowOverride.type ?? tomorrowWorkout.type) as typeof tomorrowWorkout.type,
+        estimatedMinutes: tomorrowOverride.estimatedMinutes ?? tomorrowWorkout.estimatedMinutes,
+        description: tomorrowOverride.description ?? tomorrowWorkout.description,
+      }
+    : tomorrowWorkout;
   const currentWeek = getCurrentWeek(today);
   const phase = currentWeek ? getPhaseForWeek(currentWeek.week) : null;
 
@@ -270,7 +279,7 @@ export default function DashboardPage() {
 
         {/* Sleep / Wind-Down Recommendation */}
         <SleepRecommendation
-          tomorrowWorkout={tomorrowWorkout ? { type: tomorrowWorkout.type, estimatedMinutes: tomorrowWorkout.estimatedMinutes, description: tomorrowWorkout.description } : null}
+          tomorrowWorkout={effectiveTomorrowWorkout ? { type: effectiveTomorrowWorkout.type, estimatedMinutes: effectiveTomorrowWorkout.estimatedMinutes, description: effectiveTomorrowWorkout.description } : null}
           todayStr={todayStr}
         />
 

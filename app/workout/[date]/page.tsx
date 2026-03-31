@@ -9,7 +9,8 @@ import AppNav from '@/components/layout/AppNav';
 import WorkoutBadge from '@/components/ui/WorkoutBadge';
 import PhaseBadge from '@/components/ui/PhaseBadge';
 import CoachFAB from '@/components/coach/CoachFAB';
-import { getWorkoutByDate, getPhaseForWeek } from '@/data/training-plan';
+import { getWorkoutByDate, getPhaseForWeek, getWeekByNumber } from '@/data/training-plan';
+import QuickOverridePanel from '@/components/override/QuickOverridePanel';
 import { formatDate, formatDuration, formatMiles, isHeatSeason } from '@/utils/workout';
 import type { WorkoutDay, WorkoutOverride } from '@/types';
 import WorkoutSteps from '@/components/ui/WorkoutSteps';
@@ -26,9 +27,13 @@ export default function WorkoutDetailPage() {
   const [saved, setSaved] = useState(false);
   const [override, setOverride] = useState<WorkoutOverride | null>(null);
   const [reverting, setReverting] = useState(false);
+  const [overridePanelOpen, setOverridePanelOpen] = useState(false);
+  const [weekOverrides, setWeekOverrides] = useState<Record<string, WorkoutOverride>>({});
+  const [logsState, setLogsState] = useState<Record<string, { completed: boolean; skipped?: boolean; actualMiles?: number }>>({});
 
   const workout = getWorkoutByDate(date) as (WorkoutDay & { weekNumber: number; isDownWeek: boolean }) | null;
   const phase = workout ? getPhaseForWeek(workout.weekNumber) : null;
+  const week = workout ? getWeekByNumber(workout.weekNumber) : undefined;
 
   useEffect(() => {
     if (!date) return;
@@ -46,11 +51,31 @@ export default function WorkoutDetailPage() {
 
   useEffect(() => {
     if (!date) return;
-    fetch(`/api/workouts/override?date=${date}`)
-      .then(r => r.ok ? r.json() : null)
-      .then(d => { if (d) setOverride(d); })
+    fetch('/api/workouts/override')
+      .then(r => r.json())
+      .then((data: Array<{ date: string; description?: string; miles?: number; type?: string; estimated_minutes?: number; reason?: string }>) => {
+        if (!Array.isArray(data)) return;
+        const map: Record<string, WorkoutOverride> = {};
+        data.forEach((o) => {
+          map[o.date] = { date: o.date, description: o.description, miles: o.miles, type: o.type as WorkoutOverride['type'], estimatedMinutes: o.estimated_minutes, reason: o.reason };
+        });
+        setWeekOverrides(map);
+        setOverride(map[date] ?? null);
+      })
       .catch(() => {});
   }, [date]);
+
+  useEffect(() => {
+    fetch('/api/logs')
+      .then(r => r.json())
+      .then((data: Array<{ date: string; completed: boolean; skipped: boolean; actualMiles?: number }>) => {
+        if (!Array.isArray(data)) return;
+        const map: Record<string, { completed: boolean; skipped?: boolean; actualMiles?: number }> = {};
+        data.forEach((l) => { map[l.date] = l; });
+        setLogsState(map);
+      })
+      .catch(() => {});
+  }, []);
 
   if (!workout || !phase) {
     return (
@@ -79,6 +104,7 @@ export default function WorkoutDetailPage() {
     try {
       await fetch(`/api/workouts/override?date=${date}`, { method: 'DELETE' });
       setOverride(null);
+      setWeekOverrides(prev => { const next = { ...prev }; delete next[date]; return next; });
     } finally {
       setReverting(false);
     }
@@ -147,7 +173,7 @@ export default function WorkoutDetailPage() {
               </span>
             )}
           </div>
-          {override && (
+          {override ? (
             <div style={{
               background: 'rgba(179,136,255,0.08)',
               border: '1px solid rgba(179,136,255,0.25)',
@@ -160,7 +186,7 @@ export default function WorkoutDetailPage() {
             }}>
               <div>
                 <div style={{ fontSize: 10, letterSpacing: '0.1em', color: '#B388FF', fontFamily: 'Space Grotesk, sans-serif', textTransform: 'uppercase' }}>
-                  Modified by Coach
+                  Modified
                 </div>
                 {override.reason && (
                   <div style={{ fontSize: 11, color: '#52525B', fontFamily: 'Manrope, sans-serif', marginTop: 2 }}>
@@ -168,32 +194,75 @@ export default function WorkoutDetailPage() {
                   </div>
                 )}
               </div>
-              <button
-                onClick={handleRevert}
-                disabled={reverting}
-                style={{
-                  background: 'transparent',
-                  border: '1px solid #2A2A2A',
-                  borderRadius: 0,
-                  color: '#52525B',
-                  fontSize: 11,
-                  fontFamily: 'Manrope, sans-serif',
-                  padding: '4px 10px',
-                  cursor: 'pointer',
-                  minHeight: 'unset',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 4,
-                  flexShrink: 0,
-                }}
-              >
-                <RotateCcw size={11} strokeWidth={2} />
-                {reverting ? 'Reverting…' : 'Revert'}
-              </button>
+              <div style={{ display: 'flex', gap: 6 }}>
+                <button
+                  onClick={() => setOverridePanelOpen(v => !v)}
+                  style={{
+                    background: 'transparent',
+                    border: '1px solid rgba(179,136,255,0.4)',
+                    borderRadius: 0,
+                    color: '#B388FF',
+                    fontSize: 11,
+                    fontFamily: 'Manrope, sans-serif',
+                    padding: '4px 10px',
+                    cursor: 'pointer',
+                    minHeight: 'unset',
+                  }}
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={handleRevert}
+                  disabled={reverting}
+                  style={{
+                    background: 'transparent',
+                    border: '1px solid #2A2A2A',
+                    borderRadius: 0,
+                    color: '#52525B',
+                    fontSize: 11,
+                    fontFamily: 'Manrope, sans-serif',
+                    padding: '4px 10px',
+                    cursor: 'pointer',
+                    minHeight: 'unset',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4,
+                    flexShrink: 0,
+                  }}
+                >
+                  <RotateCcw size={11} strokeWidth={2} />
+                  {reverting ? 'Reverting…' : 'Revert'}
+                </button>
+              </div>
             </div>
+          ) : (
+            <button
+              className="btn-secondary mb-3 w-full"
+              style={{ fontSize: 13, color: '#B388FF', borderColor: 'rgba(179,136,255,0.3)' }}
+              onClick={() => setOverridePanelOpen(v => !v)}
+            >
+              Override Workout
+            </button>
           )}
           <WorkoutSteps description={effectiveWorkout.description} type={effectiveWorkout.type} phase={phase?.phase} />
         </div>
+
+        {/* Override Panel */}
+        {overridePanelOpen && effectiveWorkout && week && (
+          <QuickOverridePanel
+            workout={effectiveWorkout}
+            existingOverride={override}
+            currentWeek={week}
+            weekOverrides={weekOverrides}
+            logs={logsState}
+            onOverrideApplied={(o) => {
+              setOverride(o);
+              setWeekOverrides(prev => ({ ...prev, [o.date]: o }));
+            }}
+            onRevert={handleRevert}
+            onClose={() => setOverridePanelOpen(false)}
+          />
+        )}
 
         {/* Heat-adjusted paces */}
         {isHeat && effectiveWorkout.type !== 'rest' && (
